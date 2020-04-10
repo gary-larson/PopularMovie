@@ -5,5 +5,7 @@
     <string name="about_creation">Created by Gary Larson</string>
     <string name="about_tmdb_attrition">This product uses the TMDb API
         \nbut is not endorsed or certified by TMDb.</string>
+    <string name="error_message">Unknown Network Error\nPlease check internet connectivity\nThen try again!</string>
+    <string name="movie_poster">Movie Poster</string>
 
 </resources>

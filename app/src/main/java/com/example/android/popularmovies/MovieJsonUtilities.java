@@ -14,16 +14,22 @@ final class MovieJsonUtilities {
      * @return the list of movie results
      * @throws JSONException in case of error
      */
-    static List<MovieResults> getMovieResults (String movieJsonStr) throws JSONException {
-        // Declare and initialize list to return results
+    static MovieInformation getMovieResults (String movieJsonStr) throws JSONException {
+        // Declare and initialize variables to return results
+        MovieInformation movies = new MovieInformation();
         List<MovieResults> movieResults = new ArrayList<>();
 
         // Check if there are actual results
         JSONObject moviesJson = new JSONObject(movieJsonStr);
         if (!moviesJson.has("page")) {
-            return null;
+            movies.setmStatusMessage(moviesJson.getString("status_message"));
+            movies.setmStatusCode(moviesJson.getInt("status_code"));
+            return movies;
         }
 
+        movies.setmPage(moviesJson.getInt("page"));
+        movies.setmTotalResults(moviesJson.getInt("total_results"));
+        movies.setmTotalPages(moviesJson.getInt("total_pages"));
         // extract an array of the results
         JSONArray results = moviesJson.getJSONArray("results");
 
@@ -68,8 +74,8 @@ final class MovieJsonUtilities {
             // add this movie to the list
             movieResults.add(currentMovie);
         }
-
+        movies.setmMovieResults(movieResults);
         // return the list of movie results
-        return movieResults;
+        return movies;
     }
 }

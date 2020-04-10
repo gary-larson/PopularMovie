@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="layout_padding">16dp</dimen>
+    <dimen name="error_message_text_size">20sp</dimen>
+    <dimen name="progress_bar_height_and_width">42dp</dimen>
 </resources>

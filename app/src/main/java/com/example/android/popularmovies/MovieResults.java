@@ -1,6 +1,6 @@
 package com.example.android.popularmovies;
 
-public class MovieResults {
+class MovieResults {
     private String mPosterPath;
     private boolean mAdult;
     private String mOverview;
@@ -23,47 +23,10 @@ public class MovieResults {
     }
 
     /**
-     * Full argument Constructor
-     * @param mPosterPath for movie may be null
-     * @param mAdult for movie
-     * @param mOverview for movie
-     * @param mReleaseDate for movie
-     * @param mGenreIds for movie
-     * @param mId for movie
-     * @param mOriginalTitle for movie
-     * @param mOriginalLanguage for movie
-     * @param mTitle for movie
-     * @param mBackdropPath for movie may be null
-     * @param mPopularity for movie
-     * @param mVoteCount for movie
-     * @param mVideo for movie
-     * @param mVoteAverage for movie
-     */
-    public MovieResults(String mPosterPath, boolean mAdult, String mOverview, String mReleaseDate,
-                        int[] mGenreIds, int mId, String mOriginalTitle, String mOriginalLanguage,
-                        String mTitle, String mBackdropPath, double mPopularity, int mVoteCount,
-                        boolean mVideo, double mVoteAverage) {
-        this.mPosterPath = mPosterPath;
-        this.mAdult = mAdult;
-        this.mOverview = mOverview;
-        this.mReleaseDate = mReleaseDate;
-        this.mGenreIds = mGenreIds;
-        this.mId = mId;
-        this.mOriginalTitle = mOriginalTitle;
-        this.mOriginalLanguage = mOriginalLanguage;
-        this.mTitle = mTitle;
-        this.mBackdropPath = mBackdropPath;
-        this.mPopularity = mPopularity;
-        this.mVoteCount = mVoteCount;
-        this.mVideo = mVideo;
-        this.mVoteAverage = mVoteAverage;
-    }
-
-    /**
      * Method to get the poster Path
      * @return the Poster path or null
      */
-    public String getmPosterPath() {
+    String getmPosterPath() {
         return mPosterPath;
     }
 
@@ -79,7 +42,7 @@ public class MovieResults {
      * Method to get if an Adult movie
      * @return weather it is an adult movie
      */
-    public boolean ismAdult() {
+    boolean ismAdult() {
         return mAdult;
     }
 
@@ -95,7 +58,7 @@ public class MovieResults {
      * Method to get Overview
      * @return Overview
      */
-    public String getmOverview() {
+    String getmOverview() {
         return mOverview;
     }
 
