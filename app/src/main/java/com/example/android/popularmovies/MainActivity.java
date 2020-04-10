@@ -9,10 +9,10 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -20,17 +20,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     // Declare variables
-    private String tmdbApiKey;
+    private String mApiKey;
     private TextView mErrorMessageTextView;
     private ProgressBar mLoadingIndicator;
     private MovieAdapter mAdapter;
     private RecyclerView mMovieList;
+    private int mTotalPages;
+    private MenuItem mPreviousMenuItem;
+    private MenuItem mNextMenuItem;
     static int mWidth;
     static int mHeight;
+    private int mPage = 0;
+    private String mType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +53,10 @@ public class MainActivity extends AppCompatActivity {
         mHeight -= metrics.densityDpi / 2;
 
         // retrieve TMDB API Key from assets folder
-        tmdbApiKey = getTmdbApiKey();
+        mApiKey = getmApiKey();
         mErrorMessageTextView = findViewById(R.id.tv_error_message);
         // display error if no API key is returned
-        if (tmdbApiKey.equals("")) {
+        if (mApiKey.equals("")) {
             showErrorMessage();
             mErrorMessageTextView.setText("API KEY is not available.\nPlease correct and Try again!");
         } else {
@@ -68,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
             mAdapter = new MovieAdapter();
             mMovieList.setAdapter(mAdapter);
             // Set initial query for TMDB
-            String[] myString = {tmdbApiKey,NetworkUtilities.TMDB_POPULAR_REQUEST_URL,"1"};
-            // start background task
-            new FetchMoviesTask().execute(myString);
+            mType = NetworkUtilities.TMDB_POPULAR_REQUEST_URL;
+            mPage = 1;
+            getMovies();
         }
     }
 
@@ -78,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
      * Method to get the api key from the assets folder
      * @return api key or null if not found
      */
-    private String getTmdbApiKey() {
+    private String getmApiKey() {
         String apiKey = "";
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets()
@@ -89,6 +93,12 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return apiKey;
+    }
+
+    private void getMovies() {
+        String[] myString = {mApiKey, mType, Integer.toString(mPage)};
+        // start background task
+        new FetchMoviesTask().execute(myString);
     }
 
     /**
@@ -151,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
             // if results are good load data to adapter
             if (movieData.getmMovieResults() != null) {
                 showMovieDataView();
+                mTotalPages = movieData.getmTotalPages();
                 mAdapter.setMovieData(movieData);
             } else {
                 // if error display status message from TMDB
@@ -178,6 +189,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        mPreviousMenuItem = menu.getItem(1);
+        mNextMenuItem =  menu.getItem(2);
         return true;
     }
 
@@ -190,8 +203,46 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuItemThatWasSelected = item.getItemId();
         switch (menuItemThatWasSelected) {
-            // Show about activity
+            case R.id.action_sort:
+                // if sort is selected switch movies
+                if (item.getTitle().equals("Sort Rating")) {
+                    // get Highest Rated Movies
+                    item.setTitle("Sort Popular");
+                    setTitle("Highest Rated Movies");
+                    mPage = 1;
+                    mPreviousMenuItem.setEnabled(false);
+                    mType = NetworkUtilities.TMDB_HIGHEST_RATED_REQUEST_URL;
+                    getMovies();
+                } else {
+                    // Get Most Popular Movies
+                    item.setTitle("Sort Rating");
+                    setTitle("Popular Movies");
+                    mPage = 1;
+                    mPreviousMenuItem.setEnabled(false);
+                    mType = NetworkUtilities.TMDB_POPULAR_REQUEST_URL;
+                    getMovies();
+                }
+                return true;
+            case R.id.action_previous_page:
+                // Get previous page of Movies
+                mPage--;
+                if (mPage == 1) {
+                    item.setEnabled(false);
+                }
+                mNextMenuItem.setEnabled(true);
+                getMovies();
+                return true;
+            case R.id.action_next_page:
+                // Get Next Page of Movies
+                mPage++;
+                mPreviousMenuItem.setEnabled(true);
+                if (mPage == mTotalPages) {
+                    item.setEnabled(false);
+                }
+                getMovies();
+                return true;
             case R.id.action_about:
+                // Show about activity
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
                 startActivity(aboutIntent);
                 return true;
