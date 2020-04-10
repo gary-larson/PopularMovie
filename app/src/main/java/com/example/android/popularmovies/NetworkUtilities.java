@@ -1,7 +1,6 @@
 package com.example.android.popularmovies;
 
 import android.net.Uri;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,37 +11,37 @@ import java.util.Scanner;
 
 final class NetworkUtilities {
     // Constants for requests (BASE + type + API_KEY_QUERY + apiKey + [PAGE_QUERY + page #])
-    final private static String TMDB_REQUEST_BASE_HTTPS_URL = "https://api.themoviedb.org/3/movie/";
-    final private static String TMDB_REQUEST_BASE_HTTP_URL = "http://api.themoviedb.org/3/movie/";
-    final static String TMDB_POPULAR_REQUEST_URL = "popular";
-    final static String TMDB_HIGHEST_RATED_REQUEST_URL = "top_rated";
-    final private static String TMDB_API_KEY_QUERY_URL = "?api_key=";
-    final private static String TMDB_PAGE_QUERY_URL = "&page=";
+    final private static String REQUEST_BASE_HTTPS_URL = "https://api.themoviedb.org/3/movie/";
+    final private static String REQUEST_BASE_HTTP_URL = "http://api.themoviedb.org/3/movie/";
+    final static String POPULAR_REQUEST_URL = "popular";
+    final static String HIGHEST_RATED_REQUEST_URL = "top_rated";
+    final private static String API_KEY_QUERY_URL = "?api_key=";
+    final private static String PAGE_QUERY_URL = "&page=";
 
     // Constants for poster requests (BASE + SIZE + movieId)
-    final static String TMDB_POSTER_BASE_HTTPS_URL = "https://image.tmdb.org/t/p/";
-    final static String TMDB_POSTER_BASE_HTTP_URL = "http://image.tmdb.org/t/p/";
-    final static String TMDB_POSTER_SIZE = "w185/";
+    final static String POSTER_BASE_HTTPS_URL = "https://image.tmdb.org/t/p/";
+    final static String POSTER_BASE_HTTP_URL = "http://image.tmdb.org/t/p/";
+    final static String POSTER_SIZE = "w185/";
 
     /**
-     * Builds the URL used to talk to the TMDB server using an api key, type, and page number.
+     * Builds the URL used to talk to the The Movie Database server using an api key, type, and page number.
      *
-     * @param apiKey assigned by TMDB.
+     * @param apiKey assigned by The Movie Database.
      * @param type of query (popular or highest rated)
      * @param page to retrieve
-     * @return The URL to use to query the TMDB server.
+     * @return The URL to use to query the The Movie Ddatabase server.
      */
     static URL buildUrl(String apiKey, String type, String page) {
         String urlString;
         // Set whether or not to use ssl based on API build
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
-            urlString = TMDB_REQUEST_BASE_HTTPS_URL +
-                    type + TMDB_API_KEY_QUERY_URL + apiKey +
-                    TMDB_PAGE_QUERY_URL + page;
+            urlString = REQUEST_BASE_HTTPS_URL +
+                    type + API_KEY_QUERY_URL + apiKey +
+                    PAGE_QUERY_URL + page;
         } else{
-            urlString = TMDB_REQUEST_BASE_HTTP_URL +
-                    type + TMDB_API_KEY_QUERY_URL + apiKey +
-                    TMDB_PAGE_QUERY_URL + page;
+            urlString = REQUEST_BASE_HTTP_URL +
+                    type + API_KEY_QUERY_URL + apiKey +
+                    PAGE_QUERY_URL + page;
         }
         // Build Uri
         Uri builtUri = Uri.parse(urlString).buildUpon().build();

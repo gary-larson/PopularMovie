@@ -22,14 +22,14 @@ final class MovieJsonUtilities {
         // Check if there are actual results
         JSONObject moviesJson = new JSONObject(movieJsonStr);
         if (!moviesJson.has("page")) {
-            movies.setmStatusMessage(moviesJson.getString("status_message"));
-            movies.setmStatusCode(moviesJson.getInt("status_code"));
+            movies.setStatusMessage(moviesJson.getString("status_message"));
+            movies.setStatusCode(moviesJson.getInt("status_code"));
             return movies;
         }
 
-        movies.setmPage(moviesJson.getInt("page"));
-        movies.setmTotalResults(moviesJson.getInt("total_results"));
-        movies.setmTotalPages(moviesJson.getInt("total_pages"));
+        movies.setPage(moviesJson.getInt("page"));
+        movies.setTotalResults(moviesJson.getInt("total_results"));
+        movies.setTotalPages(moviesJson.getInt("total_pages"));
         // extract an array of the results
         JSONArray results = moviesJson.getJSONArray("results");
 
@@ -44,11 +44,11 @@ final class MovieJsonUtilities {
             // retrieve the individual elements
             // test for null
             if (!currentMovieJson.isNull("poster_path")) {
-                currentMovie.setmPosterPath(currentMovieJson.getString("poster_path"));
+                currentMovie.setPosterPath(currentMovieJson.getString("poster_path"));
             }
-            currentMovie.setmAdult(currentMovieJson.getBoolean("adult"));
-            currentMovie.setmOverview(currentMovieJson.getString("overview"));
-            currentMovie.setmReleaseDate(currentMovieJson.getString("release_date"));
+            currentMovie.setAdult(currentMovieJson.getBoolean("adult"));
+            currentMovie.setOverview(currentMovieJson.getString("overview"));
+            currentMovie.setReleaseDate(currentMovieJson.getString("release_date"));
 
             // Get the array of genre ids
             JSONArray genreArrayJson = currentMovieJson.getJSONArray("genre_ids");
@@ -56,25 +56,25 @@ final class MovieJsonUtilities {
             for (int j = 0; j < genreArrayJson.length(); j++) {
                 genreArray[j] = genreArrayJson.getInt(j);
             }
-            currentMovie.setmGenreIds(genreArray);
-            currentMovie.setmId(currentMovieJson.getInt("id"));
-            currentMovie.setmOriginalTitle(currentMovieJson.getString("original_title"));
-            currentMovie.setmOriginalLanguage(currentMovieJson.getString("original_language"));
-            currentMovie.setmTitle(currentMovieJson.getString("title"));
+            currentMovie.setGenreIds(genreArray);
+            currentMovie.setId(currentMovieJson.getInt("id"));
+            currentMovie.setOriginalTitle(currentMovieJson.getString("original_title"));
+            currentMovie.setOriginalLanguage(currentMovieJson.getString("original_language"));
+            currentMovie.setTitle(currentMovieJson.getString("title"));
 
             // Test for null
             if (!currentMovieJson.isNull("backdrop_path")) {
-                currentMovie.setmBackdropPath(currentMovieJson.getString("backdrop_path"));
+                currentMovie.setBackdropPath(currentMovieJson.getString("backdrop_path"));
             }
-            currentMovie.setmPopularity(currentMovieJson.getDouble("popularity"));
-            currentMovie.setmVoteCount(currentMovieJson.getInt("vote_count"));
-            currentMovie.setmVideo(currentMovieJson.getBoolean("video"));
-            currentMovie.setmVoteAverage(currentMovieJson.getDouble("vote_average"));
+            currentMovie.setPopularity(currentMovieJson.getDouble("popularity"));
+            currentMovie.setVoteCount(currentMovieJson.getInt("vote_count"));
+            currentMovie.setVideo(currentMovieJson.getBoolean("video"));
+            currentMovie.setVoteAverage(currentMovieJson.getDouble("vote_average"));
 
             // add this movie to the list
             movieResults.add(currentMovie);
         }
-        movies.setmMovieResults(movieResults);
+        movies.setMovieResults(movieResults);
         // return the list of movie results
         return movies;
     }

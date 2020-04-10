@@ -26,7 +26,7 @@ class MovieResults {
      * Method to get the poster Path
      * @return the Poster path or null
      */
-    String getmPosterPath() {
+    String getPosterPath() {
         return mPosterPath;
     }
 
@@ -34,7 +34,7 @@ class MovieResults {
      * Method to set the Poster Path
      * @param mPosterPath of the movie
      */
-    void setmPosterPath(String mPosterPath) {
+    void setPosterPath(String mPosterPath) {
         this.mPosterPath = mPosterPath;
     }
 
@@ -50,7 +50,7 @@ class MovieResults {
      * Method to set if an Adult movie
      * @param mAdult is set
      */
-    void setmAdult(boolean mAdult) {
+    void setAdult(boolean mAdult) {
         this.mAdult = mAdult;
     }
 
@@ -58,7 +58,7 @@ class MovieResults {
      * Method to get Overview
      * @return Overview
      */
-    String getmOverview() {
+    String getOverview() {
         return mOverview;
     }
 
@@ -66,7 +66,7 @@ class MovieResults {
      * Method to set Overview
      * @param mOverview to set
      */
-    void setmOverview(String mOverview) {
+    void setOverview(String mOverview) {
         this.mOverview = mOverview;
     }
 
@@ -74,7 +74,7 @@ class MovieResults {
      * Method to get Release Date
      * @return Release Date
      */
-    String getmReleaseDate() {
+    String getReleaseDate() {
         return mReleaseDate;
     }
 
@@ -82,7 +82,7 @@ class MovieResults {
      * Method to set Release Date
      * @param mReleaseDate to set
      */
-    void setmReleaseDate(String mReleaseDate) {
+    void setReleaseDate(String mReleaseDate) {
         this.mReleaseDate = mReleaseDate;
     }
 
@@ -90,7 +90,7 @@ class MovieResults {
      * Method to get Genre Ids
      * @return Genre Ids
      */
-    int[] getmGenreIds() {
+    int[] getGenreIds() {
         return mGenreIds;
     }
 
@@ -98,7 +98,7 @@ class MovieResults {
      * Method to set Genre Ids
      * @param mGenreIds to set
      */
-    void setmGenreIds(int[] mGenreIds) {
+    void setGenreIds(int[] mGenreIds) {
         this.mGenreIds = mGenreIds;
     }
 
@@ -106,7 +106,7 @@ class MovieResults {
      * Method to get Id
      * @return Id
      */
-    int getmId() {
+    int getId() {
         return mId;
     }
 
@@ -114,7 +114,7 @@ class MovieResults {
      * Method to set Id
      * @param mId to set
      */
-    void setmId(int mId) {
+    void setId(int mId) {
         this.mId = mId;
     }
 
@@ -122,7 +122,7 @@ class MovieResults {
      * Method to get Original Title
      * @return Original Title
      */
-    String getmOriginalTitle() {
+    String getOriginalTitle() {
         return mOriginalTitle;
     }
 
@@ -130,7 +130,7 @@ class MovieResults {
      * Method to set Original Title
      * @param mOriginalTitle to set
      */
-    void setmOriginalTitle(String mOriginalTitle) {
+    void setOriginalTitle(String mOriginalTitle) {
         this.mOriginalTitle = mOriginalTitle;
     }
 
@@ -138,7 +138,7 @@ class MovieResults {
      * Method to get Original Language
      * @return Original Language
      */
-    String getmOriginalLanguage() {
+    String getOriginalLanguage() {
         return mOriginalLanguage;
     }
 
@@ -146,7 +146,7 @@ class MovieResults {
      * Method to set Original Language
      * @param mOriginalLanguage to set
      */
-    void setmOriginalLanguage(String mOriginalLanguage) {
+    void setOriginalLanguage(String mOriginalLanguage) {
         this.mOriginalLanguage = mOriginalLanguage;
     }
 
@@ -154,7 +154,7 @@ class MovieResults {
      * Method to get Title
      * @return Title
      */
-    String getmTitle() {
+    String getTitle() {
         return mTitle;
     }
 
@@ -162,23 +162,23 @@ class MovieResults {
      * Method to set Title
      * @param mTitle to set
      */
-    void setmTitle(String mTitle) {
+    void setTitle(String mTitle) {
         this.mTitle = mTitle;
     }
 
     /**
-     * Method to get Bropback Path
+     * Method to get drop back path
      * @return Backdrop Path
      */
-    String getmBackdropPath() {
+    String getBackdropPath() {
         return mBackdropPath;
     }
 
     /**
-     * Method to set Dropback Path
+     * Method to set drop back path
      * @param mBackdropPath to set
      */
-    void setmBackdropPath(String mBackdropPath) {
+    void setBackdropPath(String mBackdropPath) {
         this.mBackdropPath = mBackdropPath;
     }
 
@@ -186,7 +186,7 @@ class MovieResults {
      * Method to get Popularity
      * @return Popularity
      */
-    double getmPopularity() {
+    double getPopularity() {
         return mPopularity;
     }
 
@@ -194,7 +194,7 @@ class MovieResults {
      * Method to set Popularity
      * @param mPopularity to set
      */
-    void setmPopularity(double mPopularity) {
+    void setPopularity(double mPopularity) {
         this.mPopularity = mPopularity;
     }
 
@@ -202,7 +202,7 @@ class MovieResults {
      * Method to get Vote Count
      * @return Vote Count
      */
-    int getmVoteCount() {
+    int getVoteCount() {
         return mVoteCount;
     }
 
@@ -210,7 +210,7 @@ class MovieResults {
      * Method to set Vote Count
      * @param mVoteCount to set
      */
-    void setmVoteCount(int mVoteCount) {
+    void setVoteCount(int mVoteCount) {
         this.mVoteCount = mVoteCount;
     }
 
@@ -218,7 +218,7 @@ class MovieResults {
      * Method to get if a Video is available
      * @return if a video is available
      */
-    boolean ismVideo() {
+    boolean isVideo() {
         return mVideo;
     }
 
@@ -226,7 +226,7 @@ class MovieResults {
      * Method to set if a video is available
      * @param mVideo to set
      */
-    void setmVideo(boolean mVideo) {
+    void setVideo(boolean mVideo) {
         this.mVideo = mVideo;
     }
 
@@ -234,7 +234,7 @@ class MovieResults {
      * Method to get Vote Average
      * @return Vote Average
      */
-    double getmVoteAverage() {
+    double getVoteAverage() {
         return mVoteAverage;
     }
 
@@ -242,7 +242,7 @@ class MovieResults {
      * Method to set Vote Average
      * @param mVoteAverage to set
      */
-    void setmVoteAverage(double mVoteAverage) {
+    void setVoteAverage(double mVoteAverage) {
         this.mVoteAverage = mVoteAverage;
     }
 

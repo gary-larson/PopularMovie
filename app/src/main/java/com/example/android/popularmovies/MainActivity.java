@@ -12,13 +12,13 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,12 +52,15 @@ public class MainActivity extends AppCompatActivity {
         // adjust height for title bar
         mHeight -= metrics.densityDpi / 2;
 
-        // retrieve TMDB API Key from assets folder
-        mApiKey = getmApiKey();
+        // retrieve The Movie Database API Key from assets folder
+        mApiKey = getApiKey();
         mErrorMessageTextView = findViewById(R.id.tv_error_message);
         // display error if no API key is returned
         if (mApiKey.equals("")) {
-            showErrorMessage();
+            /* First, hide the currently visible data */
+            mMovieList.setVisibility(View.INVISIBLE);
+            /* Then, show the error */
+            mErrorMessageTextView.setVisibility(View.VISIBLE);
             mErrorMessageTextView.setText("API KEY is not available.\nPlease correct and Try again!");
         } else {
             // initialize variables
@@ -71,9 +74,10 @@ public class MainActivity extends AppCompatActivity {
             // setup Movie adapter for RecyclerView
             mAdapter = new MovieAdapter();
             mMovieList.setAdapter(mAdapter);
-            // Set initial query for TMDB
-            mType = NetworkUtilities.TMDB_POPULAR_REQUEST_URL;
+            // Set initial query for The Movie Database
+            mType = NetworkUtilities.POPULAR_REQUEST_URL;
             mPage = 1;
+            setTitle("Pop Movies");
             getMovies();
         }
     }
@@ -82,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
      * Method to get the api key from the assets folder
      * @return api key or null if not found
      */
-    private String getmApiKey() {
+    private String getApiKey() {
         String apiKey = "";
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets()
@@ -98,13 +102,18 @@ public class MainActivity extends AppCompatActivity {
     private void getMovies() {
         String[] myString = {mApiKey, mType, Integer.toString(mPage)};
         // start background task
-        new FetchMoviesTask().execute(myString);
+        new FetchMoviesTask(this).execute(myString);
     }
 
     /**
      * Class to run background task
      */
-    public class FetchMoviesTask extends AsyncTask<String, Void, MovieInformation> {
+    static class FetchMoviesTask extends AsyncTask<String, Void, MovieInformation> {
+        private final WeakReference<MainActivity> activityWeakReference;
+
+        FetchMoviesTask(MainActivity activity) {
+            activityWeakReference = new WeakReference<>(activity);
+        }
 
         /**
          * Method to shoe loading indicator
@@ -112,13 +121,19 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
+
+            MainActivity activity = activityWeakReference.get();
+            if (activity == null || activity.isFinishing()) {
+                return;
+            }
+
+            activity.mLoadingIndicator.setVisibility(View.VISIBLE);
         }
 
         /**
          * Method to run the background task
          * @param params 0: api key, 1: type of query, 2: page number
-         * @return Movie Information resonded from TMDB
+         * @return Movie Information responded from The Movie Database
          */
         @Override
         protected MovieInformation doInBackground(String... params) {
@@ -156,18 +171,25 @@ public class MainActivity extends AppCompatActivity {
          */
         @Override
         protected void onPostExecute(MovieInformation movieData) {
+            MainActivity activity = activityWeakReference.get();
             // turn off loading indicator
-            mLoadingIndicator.setVisibility(View.GONE);
+            activity.mLoadingIndicator.setVisibility(View.GONE);
             // if results are good load data to adapter
-            if (movieData.getmMovieResults() != null) {
-                showMovieDataView();
-                mTotalPages = movieData.getmTotalPages();
-                mAdapter.setMovieData(movieData);
+            if (movieData.getMovieResults() != null) {
+                /* First, make sure the error is invisible */
+                activity.mErrorMessageTextView.setVisibility(View.INVISIBLE);
+                /* Then, make sure the weather data is visible */
+                activity.mMovieList.setVisibility(View.VISIBLE);
+                activity.mTotalPages = movieData.getTotalPages();
+                activity.mAdapter.setMovieData(movieData);
             } else {
-                // if error display status message from TMDB
-                showErrorMessage();
-                if (movieData.getmStatusMessage() != null)
-                mErrorMessageTextView.setText(movieData.getmStatusMessage());
+                // if error display status message from The Movie Database
+                /* First, hide the currently visible data */
+                activity.mMovieList.setVisibility(View.INVISIBLE);
+                /* Then, show the error */
+                activity.mErrorMessageTextView.setVisibility(View.VISIBLE);
+                if (movieData.getStatusMessage() != null)
+                activity.mErrorMessageTextView.setText(movieData.getStatusMessage());
             }
         }
 
@@ -176,8 +198,16 @@ public class MainActivity extends AppCompatActivity {
         protected void onCancelled(MovieInformation movieInformation) {
             super.onCancelled(movieInformation);
             // turn off loading indicator
-            mLoadingIndicator.setVisibility(View.GONE);
-            showErrorMessage();
+            MainActivity activity = activityWeakReference.get();
+            if (activity == null || activity.isFinishing()) {
+                return;
+            }
+
+            activity.mLoadingIndicator.setVisibility(View.GONE);
+            /* First, hide the currently visible data */
+            activity.mMovieList.setVisibility(View.INVISIBLE);
+            /* Then, show the error */
+            activity.mErrorMessageTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -208,18 +238,18 @@ public class MainActivity extends AppCompatActivity {
                 if (item.getTitle().equals("Sort Rating")) {
                     // get Highest Rated Movies
                     item.setTitle("Sort Popular");
-                    setTitle("Highest Rated Movies");
+                    setTitle("Rated Movies");
                     mPage = 1;
                     mPreviousMenuItem.setEnabled(false);
-                    mType = NetworkUtilities.TMDB_HIGHEST_RATED_REQUEST_URL;
+                    mType = NetworkUtilities.HIGHEST_RATED_REQUEST_URL;
                     getMovies();
                 } else {
                     // Get Most Popular Movies
                     item.setTitle("Sort Rating");
-                    setTitle("Popular Movies");
+                    setTitle("Pop Movies");
                     mPage = 1;
                     mPreviousMenuItem.setEnabled(false);
-                    mType = NetworkUtilities.TMDB_POPULAR_REQUEST_URL;
+                    mType = NetworkUtilities.POPULAR_REQUEST_URL;
                     getMovies();
                 }
                 return true;
@@ -248,25 +278,5 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Method to show error message text view and hide RecyclerView
-     */
-    private void showErrorMessage() {
-        /* First, hide the currently visible data */
-        mMovieList.setVisibility(View.INVISIBLE);
-        /* Then, show the error */
-        mErrorMessageTextView.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Method to show RecyclerView and hide Error message text view
-     */
-    private void showMovieDataView() {
-        /* First, make sure the error is invisible */
-        mErrorMessageTextView.setVisibility(View.INVISIBLE);
-        /* Then, make sure the weather data is visible */
-        mMovieList.setVisibility(View.VISIBLE);
     }
 }

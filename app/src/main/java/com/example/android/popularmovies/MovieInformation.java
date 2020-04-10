@@ -20,7 +20,7 @@ class MovieInformation {
      * Method to get the page number
      * @return page
      */
-    int getmPage() {
+    int getPage() {
         return mPage;
     }
 
@@ -28,7 +28,7 @@ class MovieInformation {
      * Method to set the page number
      * @param page number to set
      */
-    void setmPage(int page) {
+    void setPage(int page) {
         this.mPage = page;
     }
 
@@ -36,7 +36,7 @@ class MovieInformation {
      * Method to get the total number of results
      * @return total results
      */
-    int getmTotalResults() {
+    int getTotalResults() {
         return mTotalResults;
     }
 
@@ -44,7 +44,7 @@ class MovieInformation {
      * Method to set the total number of results
      * @param totalResults to set
      */
-    void setmTotalResults(int totalResults) {
+    void setTotalResults(int totalResults) {
         this.mTotalResults = totalResults;
     }
 
@@ -52,7 +52,7 @@ class MovieInformation {
      * Method to get the total number of pages
      * @return the total number of pages
      */
-    int getmTotalPages() {
+    int getTotalPages() {
         return mTotalPages;
     }
 
@@ -60,7 +60,7 @@ class MovieInformation {
      * Method to set the total number of pages
      * @param totalPages to set
      */
-    void setmTotalPages(int totalPages) {
+    void setTotalPages(int totalPages) {
         this.mTotalPages = totalPages;
     }
 
@@ -68,7 +68,7 @@ class MovieInformation {
      * Method to get the status message
      * @return the status message
      */
-    String getmStatusMessage() {
+    String getStatusMessage() {
         return mStatusMessage;
     }
 
@@ -76,7 +76,7 @@ class MovieInformation {
      * Method to set the status message
      * @param statusMessage to set
      */
-    void setmStatusMessage(String statusMessage) {
+    void setStatusMessage(String statusMessage) {
         this.mStatusMessage = statusMessage;
     }
 
@@ -84,7 +84,7 @@ class MovieInformation {
      * Method to get the status code
      * @return the status code
      */
-    int getmStatusCode() {
+    int getStatusCode() {
         return mStatusCode;
     }
 
@@ -92,7 +92,7 @@ class MovieInformation {
      * Method to set the status code
      * @param statusCode to set
      */
-    void setmStatusCode(int statusCode) {
+    void setStatusCode(int statusCode) {
         mStatusCode = statusCode;
     }
 
@@ -100,7 +100,7 @@ class MovieInformation {
      * Method to get the Movie results
      * @return the movie results
      */
-    List<MovieResults> getmMovieResults() {
+    List<MovieResults> getMovieResults() {
         return mMovieResults;
     }
 
@@ -108,7 +108,7 @@ class MovieInformation {
      * Method to set the Movie results
      * @param movieResults to set
      */
-    void setmMovieResults(List<MovieResults> movieResults) {
+    void setMovieResults(List<MovieResults> movieResults) {
         this.mMovieResults = movieResults;
     }
 }
