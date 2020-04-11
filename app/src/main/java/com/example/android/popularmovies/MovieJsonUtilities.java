@@ -3,8 +3,13 @@ package com.example.android.popularmovies;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 final class MovieJsonUtilities {
 
@@ -23,12 +28,9 @@ final class MovieJsonUtilities {
         JSONObject moviesJson = new JSONObject(movieJsonStr);
         if (!moviesJson.has("page")) {
             movies.setStatusMessage(moviesJson.getString("status_message"));
-            movies.setStatusCode(moviesJson.getInt("status_code"));
             return movies;
         }
 
-        movies.setPage(moviesJson.getInt("page"));
-        movies.setTotalResults(moviesJson.getInt("total_results"));
         movies.setTotalPages(moviesJson.getInt("total_pages"));
         // extract an array of the results
         JSONArray results = moviesJson.getJSONArray("results");
@@ -46,29 +48,23 @@ final class MovieJsonUtilities {
             if (!currentMovieJson.isNull("poster_path")) {
                 currentMovie.setPosterPath(currentMovieJson.getString("poster_path"));
             }
-            currentMovie.setAdult(currentMovieJson.getBoolean("adult"));
             currentMovie.setOverview(currentMovieJson.getString("overview"));
-            currentMovie.setReleaseDate(currentMovieJson.getString("release_date"));
-
-            // Get the array of genre ids
-            JSONArray genreArrayJson = currentMovieJson.getJSONArray("genre_ids");
-            int[] genreArray = new int[genreArrayJson.length()];
-            for (int j = 0; j < genreArrayJson.length(); j++) {
-                genreArray[j] = genreArrayJson.getInt(j);
+            // get release date and convert to a date
+            String releaseDate = currentMovieJson.getString("release_date");
+            // Save release date as a Date for better formatting capabilities
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",
+                    Locale.getDefault());
+            Date date = null;
+            try {
+                date = format.parse(releaseDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-            currentMovie.setGenreIds(genreArray);
-            currentMovie.setId(currentMovieJson.getInt("id"));
+            if (date != null) {
+                currentMovie.setReleaseDate(date);
+            }
             currentMovie.setOriginalTitle(currentMovieJson.getString("original_title"));
-            currentMovie.setOriginalLanguage(currentMovieJson.getString("original_language"));
             currentMovie.setTitle(currentMovieJson.getString("title"));
-
-            // Test for null
-            if (!currentMovieJson.isNull("backdrop_path")) {
-                currentMovie.setBackdropPath(currentMovieJson.getString("backdrop_path"));
-            }
-            currentMovie.setPopularity(currentMovieJson.getDouble("popularity"));
-            currentMovie.setVoteCount(currentMovieJson.getInt("vote_count"));
-            currentMovie.setVideo(currentMovieJson.getBoolean("video"));
             currentMovie.setVoteAverage(currentMovieJson.getDouble("vote_average"));
 
             // add this movie to the list

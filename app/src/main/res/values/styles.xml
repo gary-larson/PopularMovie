@@ -17,5 +17,18 @@
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
+    <style name="DetailText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">@dimen/detail_small_padding</item>
+        <item name="android:paddingLeft">@dimen/detail_normal_padding</item>
+        <item name="android:paddingStart">@dimen/detail_normal_padding</item>
+        <item name="android:paddingRight">@dimen/detail_normal_padding</item>
+        <item name="android:paddingEnd">@dimen/detail_normal_padding</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textSize">@dimen/detail_text_size</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
 
 </resources>

@@ -10,5 +10,5 @@
     <string name="sort">Sort Rating</string>
     <string name="next_page">Next Page</string>
     <string name="previous_page">Previous Page</string>
-
+    <string name="movie_detail">MovieDetail</string>
 </resources>

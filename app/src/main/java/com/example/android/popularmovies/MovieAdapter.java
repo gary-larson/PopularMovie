@@ -20,11 +20,18 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     // Declare member variables
     private MovieInformation mMovieData;
 
+    private final MovieAdapterOnClickHandler mClickHandler;
+
+    MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
+        mClickHandler = clickHandler;
+    }
+
 
     /**
      * Class that extends RecyclerView. ViewHolder
      */
-    static class MovieAdapterViewHolder extends RecyclerView.ViewHolder {
+    class MovieAdapterViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
         final ImageView mMovieImageView;
 
         /**
@@ -34,6 +41,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         MovieAdapterViewHolder(View view) {
             super(view);
             mMovieImageView = view.findViewById(R.id.iv_list_item);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            MovieResults movieResults = mMovieData.getMovieResults().get(adapterPosition);
+            mClickHandler.onClick(movieResults);
         }
     }
 
@@ -76,6 +91,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             Picasso.get().load(urlString +
                     NetworkUtilities.POSTER_SIZE +
                     movieResults.get(position).getPosterPath())
+                    .noPlaceholder()
+                    .error(R.drawable.error)
                     .resize(MainActivity.mWidth / 2,MainActivity.mHeight / 2)
                     .into(holder.mMovieImageView);
         }
@@ -101,4 +118,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         mMovieData = movieData;
         notifyDataSetChanged();
     }
+
+    public interface MovieAdapterOnClickHandler {
+
+        void onClick(MovieResults clickedItemResults);
+    }
+
 }

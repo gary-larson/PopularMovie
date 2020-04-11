@@ -1,19 +1,13 @@
 package com.example.android.popularmovies;
 
+import java.util.Date;
+
 class MovieResults {
     private String mPosterPath;
-    private boolean mAdult;
     private String mOverview;
-    private String mReleaseDate;
-    private int[] mGenreIds;
-    private int mId;
+    private Date mReleaseDate;
     private String mOriginalTitle;
-    private String mOriginalLanguage;
     private String mTitle;
-    private String mBackdropPath;
-    private double mPopularity;
-    private int mVoteCount;
-    private boolean mVideo;
     private double mVoteAverage;
 
     /**
@@ -39,22 +33,6 @@ class MovieResults {
     }
 
     /**
-     * Method to get if an Adult movie
-     * @return weather it is an adult movie
-     */
-    boolean ismAdult() {
-        return mAdult;
-    }
-
-    /**
-     * Method to set if an Adult movie
-     * @param mAdult is set
-     */
-    void setAdult(boolean mAdult) {
-        this.mAdult = mAdult;
-    }
-
-    /**
      * Method to get Overview
      * @return Overview
      */
@@ -74,7 +52,7 @@ class MovieResults {
      * Method to get Release Date
      * @return Release Date
      */
-    String getReleaseDate() {
+    Date getReleaseDate() {
         return mReleaseDate;
     }
 
@@ -82,40 +60,8 @@ class MovieResults {
      * Method to set Release Date
      * @param mReleaseDate to set
      */
-    void setReleaseDate(String mReleaseDate) {
+    void setReleaseDate(Date mReleaseDate) {
         this.mReleaseDate = mReleaseDate;
-    }
-
-    /**
-     * Method to get Genre Ids
-     * @return Genre Ids
-     */
-    int[] getGenreIds() {
-        return mGenreIds;
-    }
-
-    /**
-     * Method to set Genre Ids
-     * @param mGenreIds to set
-     */
-    void setGenreIds(int[] mGenreIds) {
-        this.mGenreIds = mGenreIds;
-    }
-
-    /**
-     * Method to get Id
-     * @return Id
-     */
-    int getId() {
-        return mId;
-    }
-
-    /**
-     * Method to set Id
-     * @param mId to set
-     */
-    void setId(int mId) {
-        this.mId = mId;
     }
 
     /**
@@ -135,22 +81,6 @@ class MovieResults {
     }
 
     /**
-     * Method to get Original Language
-     * @return Original Language
-     */
-    String getOriginalLanguage() {
-        return mOriginalLanguage;
-    }
-
-    /**
-     * Method to set Original Language
-     * @param mOriginalLanguage to set
-     */
-    void setOriginalLanguage(String mOriginalLanguage) {
-        this.mOriginalLanguage = mOriginalLanguage;
-    }
-
-    /**
      * Method to get Title
      * @return Title
      */
@@ -164,70 +94,6 @@ class MovieResults {
      */
     void setTitle(String mTitle) {
         this.mTitle = mTitle;
-    }
-
-    /**
-     * Method to get drop back path
-     * @return Backdrop Path
-     */
-    String getBackdropPath() {
-        return mBackdropPath;
-    }
-
-    /**
-     * Method to set drop back path
-     * @param mBackdropPath to set
-     */
-    void setBackdropPath(String mBackdropPath) {
-        this.mBackdropPath = mBackdropPath;
-    }
-
-    /**
-     * Method to get Popularity
-     * @return Popularity
-     */
-    double getPopularity() {
-        return mPopularity;
-    }
-
-    /**
-     * Method to set Popularity
-     * @param mPopularity to set
-     */
-    void setPopularity(double mPopularity) {
-        this.mPopularity = mPopularity;
-    }
-
-    /**
-     * Method to get Vote Count
-     * @return Vote Count
-     */
-    int getVoteCount() {
-        return mVoteCount;
-    }
-
-    /**
-     * Method to set Vote Count
-     * @param mVoteCount to set
-     */
-    void setVoteCount(int mVoteCount) {
-        this.mVoteCount = mVoteCount;
-    }
-
-    /**
-     * Method to get if a Video is available
-     * @return if a video is available
-     */
-    boolean isVideo() {
-        return mVideo;
-    }
-
-    /**
-     * Method to set if a video is available
-     * @param mVideo to set
-     */
-    void setVideo(boolean mVideo) {
-        this.mVideo = mVideo;
     }
 
     /**

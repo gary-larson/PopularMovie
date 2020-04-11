@@ -3,4 +3,11 @@
     <dimen name="layout_padding">16dp</dimen>
     <dimen name="error_message_text_size">20sp</dimen>
     <dimen name="progress_bar_height_and_width">42dp</dimen>
+    <dimen name="detail_extra_large_padding">40dp</dimen>
+    <dimen name="detail_large_padding">32dp</dimen>
+    <dimen name="detail_normal_padding">16dp</dimen>
+    <dimen name="detail_small_padding">8dp</dimen>
+    <dimen name="detail_title_text_size">48sp</dimen>
+    <dimen name="detail_text_size">24sp</dimen>
+    <dimen name="detail_overview_text_size">18sp</dimen>
 </resources>

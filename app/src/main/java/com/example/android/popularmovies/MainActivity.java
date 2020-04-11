@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -21,7 +22,8 @@ import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements MovieAdapter.MovieAdapterOnClickHandler {
     // Declare variables
     private String mApiKey;
     private TextView mErrorMessageTextView;
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             // indicate all poster are the same size
             mMovieList.setHasFixedSize(true);
             // setup Movie adapter for RecyclerView
-            mAdapter = new MovieAdapter();
+            mAdapter = new MovieAdapter(this);
             mMovieList.setAdapter(mAdapter);
             // Set initial query for The Movie Database
             mType = NetworkUtilities.POPULAR_REQUEST_URL;
@@ -103,6 +105,29 @@ public class MainActivity extends AppCompatActivity {
         String[] myString = {mApiKey, mType, Integer.toString(mPage)};
         // start background task
         new FetchMoviesTask(this).execute(myString);
+    }
+
+    @Override
+    public void onClick(MovieResults clickedItemResults) {
+        // Create a bundle to send information to details activity
+        Bundle extras = new Bundle();
+        // Put neccessary information in bundle
+        extras.putString("TITLE",clickedItemResults.getTitle());
+        extras.putString("POSTER_PATH", clickedItemResults.getPosterPath());
+        extras.putLong("RELEASE_DATE", clickedItemResults.getReleaseDate().getTime());
+        extras.putString("ORIGINAL_TITLE", clickedItemResults.getOriginalTitle());
+        extras.putDouble("VOTE_AVERAGE", clickedItemResults.getVoteAverage());
+        extras.putString("OVERVIEW", clickedItemResults.getOverview());
+        // Get the context
+        Context context = this;
+        // Get the recieving activity class
+        Class destinationClass = MovieDetailsActivity.class;
+        // create intent
+        Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+        // add bundle
+        intentToStartDetailActivity.putExtras(extras);
+        // start cetail activity
+        startActivity(intentToStartDetailActivity);
     }
 
     /**
