@@ -36,7 +36,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         mTitleTextView.setText(temp);
-        // Retrieve Poster pathe from bundle and display it
+        // Retrieve Poster path from bundle and display it
         ImageView mMovieImageView = findViewById(R.id.poster_image_view);
         String posterPath = extras.getString("POSTER_PATH");
         if(posterPath != null){
@@ -53,7 +53,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             Picasso.get().load(urlString +
                     NetworkUtilities.POSTER_SIZE + posterPath)
                     .noPlaceholder()
-                    .error(R.drawable.error)
+                    .error(R.mipmap.error)
                     .into(mMovieImageView);
         }
         // Retrieve Release date and display it

@@ -100,7 +100,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                     NetworkUtilities.POSTER_SIZE +
                     movieResults.get(position).getPosterPath())
                     .noPlaceholder()
-                    .error(R.drawable.error)
+                    .error(R.mipmap.error)
                     .resize(mWidth / MainActivity.mNumberHorizontalImages,
                             mHeight / MainActivity.mNumberVerticalImages)
                     .into(holder.mMovieImageView);

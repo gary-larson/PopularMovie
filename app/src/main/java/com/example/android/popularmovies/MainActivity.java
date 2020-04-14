@@ -5,20 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -48,7 +43,7 @@ public class MainActivity extends AppCompatActivity
     private TextView mErrorMessageTextView;
     private ProgressBar mLoadingIndicator;
     private MovieAdapter mAdapter;
-    public RecyclerView mMovieRecyclerView;
+    private RecyclerView mMovieRecyclerView;
     private MenuItem mSortMenuItem;
     private MenuItem mPreviousMenuItem;
     private MenuItem mNextMenuItem;
@@ -186,7 +181,7 @@ public class MainActivity extends AppCompatActivity
     public void onClick(MovieResults clickedItemResults) {
         // Create a bundle to send information to details activity
         Bundle extras = new Bundle();
-        // Put neccessary information in bundle
+        // Put necessary information in bundle
         extras.putString("TITLE",clickedItemResults.getTitle());
         extras.putString("POSTER_PATH", clickedItemResults.getPosterPath());
         extras.putLong("RELEASE_DATE", clickedItemResults.getReleaseDate().getTime());
@@ -195,13 +190,13 @@ public class MainActivity extends AppCompatActivity
         extras.putString("OVERVIEW", clickedItemResults.getOverview());
         // Get the context
         Context context = this;
-        // Get the recieving activity class
+        // Get the receiving activity class
         Class destinationClass = MovieDetailsActivity.class;
         // create intent
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);
         // add bundle
         intentToStartDetailActivity.putExtras(extras);
-        // start cetail activity
+        // start detail activity
         startActivity(intentToStartDetailActivity);
     }
 

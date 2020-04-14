@@ -40,7 +40,7 @@
             app:layout_constraintTop_toBottomOf="@id/title_text_view"
             tools:scaleX="25dp"
             tools:scaleY="38dp"
-            tools:src="@drawable/loading" />
+            tools:src="@drawable/error" />
 
         <TextView
             android:id="@+id/release_date_text_view"
