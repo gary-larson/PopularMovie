@@ -1,18 +1,24 @@
 package com.example.android.popularmovies;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -21,67 +27,129 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements MovieAdapter.MovieAdapterOnClickHandler {
     // Declare variables
     private String mApiKey;
+    // variables to be saved in bundle
+    private List<MovieResults> mMovieList;
+    private int mPage = 0;
+    private String mType;
+    static int mTotalPages;
+    static String mErrorMessage;
+    private String mTitle;
+    private String mSortTitle;
+    private boolean isPreviousEnabled;
+    private boolean isNextEnabled;
+    // variables needed to deal with UI
     private TextView mErrorMessageTextView;
     private ProgressBar mLoadingIndicator;
     private MovieAdapter mAdapter;
-    private RecyclerView mMovieList;
-    private int mTotalPages;
+    public RecyclerView mMovieRecyclerView;
+    private MenuItem mSortMenuItem;
     private MenuItem mPreviousMenuItem;
     private MenuItem mNextMenuItem;
-    static int mWidth;
-    static int mHeight;
-    private int mPage = 0;
-    private String mType;
+    private int mOrientation;
+    static int mNumberHorizontalImages;
+    static int mNumberVerticalImages;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // retrieve the width and height of the screen
-        mWidth  = Resources.getSystem().getDisplayMetrics().widthPixels;
-        mHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+        // Get orientation
+        mOrientation = getResources().getConfiguration().orientation;
+        // set number of images horizontally and vertically depending on orientation of device
+        if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            mNumberHorizontalImages = 2;
+            mNumberVerticalImages = 2;
+            // adjust height for title bar
+        } else {
+            mNumberHorizontalImages = 3;
+            mNumberVerticalImages = 1;
+        }
 
-        // get the display density
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        // adjust height for title bar
-        mHeight -= metrics.densityDpi / 2;
+        // Initialize variables
+        mErrorMessageTextView = findViewById(R.id.tv_error_message);
+        mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
+        mMovieRecyclerView = findViewById(R.id.rv_movies);
 
         // retrieve The Movie Database API Key from assets folder
         mApiKey = getApiKey();
-        mErrorMessageTextView = findViewById(R.id.tv_error_message);
         // display error if no API key is returned
         if (mApiKey.equals("")) {
             /* First, hide the currently visible data */
-            mMovieList.setVisibility(View.INVISIBLE);
+            mMovieRecyclerView.setVisibility(View.INVISIBLE);
             /* Then, show the error */
             mErrorMessageTextView.setVisibility(View.VISIBLE);
             mErrorMessageTextView.setText("API KEY is not available.\nPlease correct and Try again!");
         } else {
-            // initialize variables
-            mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
-            mMovieList = findViewById(R.id.rv_movies);
             // Setup Layout manager for RecyclerView
-            GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-            mMovieList.setLayoutManager(layoutManager);
+            GridLayoutManager layoutManager = new GridLayoutManager(this,
+                    mNumberHorizontalImages);
+            mMovieRecyclerView.setLayoutManager(layoutManager);
             // indicate all poster are the same size
-            mMovieList.setHasFixedSize(true);
+            mMovieRecyclerView.setHasFixedSize(true);
             // setup Movie adapter for RecyclerView
             mAdapter = new MovieAdapter(this);
-            mMovieList.setAdapter(mAdapter);
-            // Set initial query for The Movie Database
-            mType = NetworkUtilities.POPULAR_REQUEST_URL;
-            mPage = 1;
-            setTitle("Pop Movies");
-            getMovies();
+            mMovieRecyclerView.setAdapter(mAdapter);
+            // test for saved bundle
+            if (savedInstanceState == null || !savedInstanceState.containsKey("MOVIES")) {
+                // Setup initial query for The Movie Database
+                mType = NetworkUtilities.POPULAR_REQUEST_URL;
+                mPage = 1;
+                mSortTitle = "Sort Rating";
+                mTitle = "Pop Movies";
+                isPreviousEnabled = false;
+                isNextEnabled = true;
+                // call background thread to get movies from the internet
+                getMovies();
+            } else {
+                // load information from bundle
+                mMovieList = savedInstanceState.getParcelableArrayList("MOVIES");
+                mPage = savedInstanceState.getInt("PAGE");
+                mType = savedInstanceState.getString("TYPE");
+                mTotalPages = savedInstanceState.getInt("TOTAL_PAGES");
+                mErrorMessage = savedInstanceState.getString("ERROR_MESSAGE");
+                mTitle = savedInstanceState.getString("TITLE");
+                mSortTitle = savedInstanceState.getString("SORT");
+                isPreviousEnabled = savedInstanceState.getBoolean("PREVIOUS");
+                isNextEnabled = savedInstanceState.getBoolean("NEXT");
+                // send information to adapter
+                mAdapter.setMovieData(mMovieList);
+            }
+            // set activity title
+            setTitle(mTitle);
         }
+    }
+
+    /**
+     * Method to save information to reduce calls to the internet
+     * @param outState to save information to
+     */
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        // test for information
+        if (mMovieList != null) {
+            // save information to bundle
+            outState.putParcelableArrayList("MOVIES", (ArrayList<? extends Parcelable>) mMovieList);
+            outState.putInt("PAGE", mPage);
+            outState.putString("TYPE", mType);
+            outState.putInt("TOTAL_PAGES", mTotalPages);
+            outState.putString("ERROR_MESSAGE", mErrorMessage);
+            outState.putString("TITLE", mTitle);
+            outState.putString("SORT", mSortTitle);
+            outState.putBoolean("PREVIOUS", isPreviousEnabled);
+            outState.putBoolean("NEXT", isNextEnabled);
+        }
+        // call super to save state
+        super.onSaveInstanceState(outState);
     }
 
     /**
@@ -101,12 +169,19 @@ public class MainActivity extends AppCompatActivity
         return apiKey;
     }
 
+    /**
+     * Method to start background task to get movies from The movie Database
+     */
     private void getMovies() {
         String[] myString = {mApiKey, mType, Integer.toString(mPage)};
         // start background task
         new FetchMoviesTask(this).execute(myString);
     }
 
+    /**
+     * Method to start the movie details activity
+     * @param clickedItemResults the information to send to movie details activity
+     */
     @Override
     public void onClick(MovieResults clickedItemResults) {
         // Create a bundle to send information to details activity
@@ -133,7 +208,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Class to run background task
      */
-    static class FetchMoviesTask extends AsyncTask<String, Void, MovieInformation> {
+    static class FetchMoviesTask extends AsyncTask<String, Void, List<MovieResults>> {
         private final WeakReference<MainActivity> activityWeakReference;
 
         FetchMoviesTask(MainActivity activity) {
@@ -161,7 +236,7 @@ public class MainActivity extends AppCompatActivity
          * @return Movie Information responded from The Movie Database
          */
         @Override
-        protected MovieInformation doInBackground(String... params) {
+        protected List<MovieResults> doInBackground(String... params) {
 
             /* Without information we cannot look up Movies. */
             if (params.length == 0) {
@@ -195,33 +270,34 @@ public class MainActivity extends AppCompatActivity
          * @param movieData to process
          */
         @Override
-        protected void onPostExecute(MovieInformation movieData) {
+        protected void onPostExecute(List<MovieResults> movieData) {
             MainActivity activity = activityWeakReference.get();
             // turn off loading indicator
             activity.mLoadingIndicator.setVisibility(View.GONE);
             // if results are good load data to adapter
-            if (movieData.getMovieResults() != null) {
+            if (movieData != null) {
                 /* First, make sure the error is invisible */
                 activity.mErrorMessageTextView.setVisibility(View.INVISIBLE);
                 /* Then, make sure the weather data is visible */
-                activity.mMovieList.setVisibility(View.VISIBLE);
-                activity.mTotalPages = movieData.getTotalPages();
+                activity.mMovieRecyclerView.setVisibility(View.VISIBLE);
+                activity.mMovieList = movieData;
                 activity.mAdapter.setMovieData(movieData);
             } else {
                 // if error display status message from The Movie Database
                 /* First, hide the currently visible data */
-                activity.mMovieList.setVisibility(View.INVISIBLE);
+                activity.mMovieRecyclerView.setVisibility(View.INVISIBLE);
                 /* Then, show the error */
                 activity.mErrorMessageTextView.setVisibility(View.VISIBLE);
-                if (movieData.getStatusMessage() != null)
-                activity.mErrorMessageTextView.setText(movieData.getStatusMessage());
+                if (activity.mErrorMessageTextView != null) {
+                    activity.mErrorMessageTextView.setText(mErrorMessage);
+                }
             }
         }
 
         // if background task is cancelled show error message
         @Override
-        protected void onCancelled(MovieInformation movieInformation) {
-            super.onCancelled(movieInformation);
+        protected void onCancelled(List<MovieResults> movieResults) {
+            super.onCancelled(movieResults);
             // turn off loading indicator
             MainActivity activity = activityWeakReference.get();
             if (activity == null || activity.isFinishing()) {
@@ -230,7 +306,7 @@ public class MainActivity extends AppCompatActivity
 
             activity.mLoadingIndicator.setVisibility(View.GONE);
             /* First, hide the currently visible data */
-            activity.mMovieList.setVisibility(View.INVISIBLE);
+            activity.mMovieRecyclerView.setVisibility(View.INVISIBLE);
             /* Then, show the error */
             activity.mErrorMessageTextView.setVisibility(View.VISIBLE);
         }
@@ -244,8 +320,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        mSortMenuItem = menu.getItem(0);
         mPreviousMenuItem = menu.getItem(1);
         mNextMenuItem =  menu.getItem(2);
+        mSortMenuItem.setTitle(mSortTitle);
+        mPreviousMenuItem.setEnabled(isPreviousEnabled);
+        mNextMenuItem.setEnabled(isNextEnabled);
         return true;
     }
 
@@ -262,37 +342,43 @@ public class MainActivity extends AppCompatActivity
                 // if sort is selected switch movies
                 if (item.getTitle().equals("Sort Rating")) {
                     // get Highest Rated Movies
-                    item.setTitle("Sort Popular");
-                    setTitle("Rated Movies");
+                    mSortTitle = "Sort Popular";
+                    mTitle = "Rated Movies";
                     mPage = 1;
-                    mPreviousMenuItem.setEnabled(false);
                     mType = NetworkUtilities.HIGHEST_RATED_REQUEST_URL;
                     getMovies();
                 } else {
                     // Get Most Popular Movies
-                    item.setTitle("Sort Rating");
-                    setTitle("Pop Movies");
+                    mSortTitle = "Sort Rating";
+                    mTitle = "Pop Movies";
                     mPage = 1;
-                    mPreviousMenuItem.setEnabled(false);
                     mType = NetworkUtilities.POPULAR_REQUEST_URL;
                     getMovies();
                 }
+                isPreviousEnabled = false;
+                mPreviousMenuItem.setEnabled(isPreviousEnabled);
+                item.setTitle(mSortTitle);
+                setTitle(mTitle);
                 return true;
             case R.id.action_previous_page:
                 // Get previous page of Movies
                 mPage--;
                 if (mPage == 1) {
-                    item.setEnabled(false);
+                    isPreviousEnabled = false;
+                    item.setEnabled(isPreviousEnabled);
                 }
-                mNextMenuItem.setEnabled(true);
+                isNextEnabled = true;
+                mNextMenuItem.setEnabled(isNextEnabled);
                 getMovies();
                 return true;
             case R.id.action_next_page:
                 // Get Next Page of Movies
                 mPage++;
-                mPreviousMenuItem.setEnabled(true);
+                isPreviousEnabled = true;
+                mPreviousMenuItem.setEnabled(isPreviousEnabled);
                 if (mPage == mTotalPages) {
-                    item.setEnabled(false);
+                    isNextEnabled = false;
+                    item.setEnabled(isNextEnabled);
                 }
                 getMovies();
                 return true;

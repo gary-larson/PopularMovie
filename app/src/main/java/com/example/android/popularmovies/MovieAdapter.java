@@ -18,7 +18,9 @@ import java.util.List;
  */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
     // Declare member variables
-    private MovieInformation mMovieData;
+    private int mWidth;
+    private int mHeight;
+    private List<MovieResults> mMovieData;
 
     private final MovieAdapterOnClickHandler mClickHandler;
 
@@ -47,7 +49,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            MovieResults movieResults = mMovieData.getMovieResults().get(adapterPosition);
+            MovieResults movieResults = mMovieData.get(adapterPosition);
             mClickHandler.onClick(movieResults);
         }
     }
@@ -62,6 +64,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public MovieAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
+        // get visible width and height of the recyclerview
+        mWidth  = parent.getMeasuredWidth();
+        mHeight = parent.getMeasuredHeight();
+        // inflate layout
         int layoutIdForListItem = R.layout.image_list_item;
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -77,9 +83,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(@NonNull MovieAdapterViewHolder holder, int position) {
         // Declare a variable of the movie results
-        List<MovieResults> movieResults = mMovieData.getMovieResults();
+        List<MovieResults> movieResults = mMovieData;
         // Test if Poster Path is populated
         if(movieResults.get(position).getPosterPath()!=null){
+
             String urlString;
             // Set whether or not to use ssl based on API build
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
@@ -88,12 +95,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
                 urlString = NetworkUtilities.POSTER_BASE_HTTP_URL;
             }
             // Utilize Picasso to load the poster into the image view
+            // resize images based on height, width and orientation of phone
             Picasso.get().load(urlString +
                     NetworkUtilities.POSTER_SIZE +
                     movieResults.get(position).getPosterPath())
                     .noPlaceholder()
                     .error(R.drawable.error)
-                    .resize(MainActivity.mWidth / 2,MainActivity.mHeight / 2)
+                    .resize(mWidth / MainActivity.mNumberHorizontalImages,
+                            mHeight / MainActivity.mNumberVerticalImages)
                     .into(holder.mMovieImageView);
         }
     }
@@ -107,18 +116,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         if (mMovieData == null) {
             return 0;
         }
-        return mMovieData.getMovieResults().size();
+        return mMovieData.size();
     }
 
     /**
      * Method to set the movie data when it changes and notify the RecyclerView when this happens
      * @param movieData to set
      */
-    void setMovieData(MovieInformation movieData) {
+    void setMovieData(List<MovieResults> movieData) {
         mMovieData = movieData;
         notifyDataSetChanged();
     }
 
+    /**
+     * Interface for on click listener
+     */
     public interface MovieAdapterOnClickHandler {
 
         void onClick(MovieResults clickedItemResults);

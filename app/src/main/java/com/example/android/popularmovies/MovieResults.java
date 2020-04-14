@@ -1,8 +1,15 @@
 package com.example.android.popularmovies;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
-class MovieResults {
+/**
+ * Class to hold data of each movie
+ */
+class MovieResults implements Parcelable {
+    // Declare member variables
     private String mPosterPath;
     private String mOverview;
     private Date mReleaseDate;
@@ -15,6 +22,52 @@ class MovieResults {
      */
     MovieResults() {
     }
+
+    /**
+     * Method to read data from parcel
+     * @param in parcel to read from
+     */
+    private MovieResults (Parcel in) {
+        mPosterPath = in.readString();
+        mOverview = in.readString();
+        mReleaseDate = new Date(in.readLong());
+        mOriginalTitle = in.readString();
+        mTitle = in.readString();
+        mVoteAverage = in.readDouble();
+    }
+
+    /**
+     * Method to provide a description code of the parcel
+     * @return default
+     */
+    @Override
+    public int describeContents() {return 0;}
+
+    /**
+     * Method to data to the parcel
+     * @param parcel to write to
+     * @param i position of data
+     */
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(mPosterPath);
+        parcel.writeString(mOverview);
+        parcel.writeLong(mReleaseDate.getTime());
+        parcel.writeString(mOriginalTitle);
+        parcel.writeString(mTitle);
+        parcel.writeDouble(mVoteAverage);
+    }
+
+    /**
+     * Creator to initialize parcel
+     */
+    public final Parcelable.Creator<MovieResults> CREATOR = new Parcelable.Creator<MovieResults>() {
+        @Override
+        public MovieResults createFromParcel(Parcel parcel) {return new MovieResults(parcel);}
+
+        @Override
+        public MovieResults[] newArray(int i) {return new MovieResults[i];}
+    };
 
     /**
      * Method to get the poster Path
