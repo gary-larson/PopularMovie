@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,12 +16,17 @@ import java.util.Locale;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     private String temp = "";
+    int mWidth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
 
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        //int height = displayMetrics.heightPixels;
+        mWidth = displayMetrics.widthPixels;
         setTitle("MovieDetail");
         //get the intent in the target activity
         Intent intent = getIntent();
@@ -38,8 +44,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         mTitleTextView.setText(temp);
         // Retrieve Poster path from bundle and display it
         ImageView mMovieImageView = findViewById(R.id.poster_image_view);
-        String posterPath = extras.getString("POSTER_PATH");
-        if(posterPath != null){
+       // mWidth = mMovieImageView.getMeasuredWidth();
+        String backDropPath = extras.getString("BACKDROP_PATH");
+        if(backDropPath != null){
             String urlString;
             // Set whether or not to use ssl based on API build
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
@@ -51,9 +58,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
             // using noPlaceHolder because picasso had blank spaces on some emulators
             // and this fixed the issue
             Picasso.get().load(urlString +
-                    NetworkUtilities.POSTER_SIZE + posterPath)
+                    getResources().getString(R.string.backdrop_size) + backDropPath)
                     .noPlaceholder()
                     .error(R.mipmap.error)
+                    .resize(mWidth, (mWidth * 9) / 16)
                     .into(mMovieImageView);
         }
         // Retrieve Release date and display it

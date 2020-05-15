@@ -97,7 +97,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             // Utilize Picasso to load the poster into the image view
             // resize images based on height, width and orientation of phone
             Picasso.get().load(urlString +
-                    NetworkUtilities.POSTER_SIZE +
+                     MainActivity.mPosterSize +
                     movieResults.get(position).getPosterPath())
                     .noPlaceholder()
                     .error(R.mipmap.error)

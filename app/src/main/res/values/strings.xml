@@ -11,4 +11,7 @@
     <string name="next_page">Next Page</string>
     <string name="previous_page">Previous Page</string>
     <string name="movie_detail">MovieDetail</string>
+    <string name="movie_backdrop_poster">Movie Backdrop Poster</string>
+    <string name="backdrop_size">w1280/</string>
+    <string name="poster_size">w500/</string>
 </resources>

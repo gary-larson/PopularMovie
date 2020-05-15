@@ -47,6 +47,7 @@ final class MovieJsonUtilities {
             if (!currentMovieJson.isNull("poster_path")) {
                 currentMovie.setPosterPath(currentMovieJson.getString("poster_path"));
             }
+            currentMovie.setBackDropPath(currentMovieJson.getString("backdrop_path"));
             currentMovie.setOverview(currentMovieJson.getString("overview"));
             // get release date and convert to a date
             String releaseDate = currentMovieJson.getString("release_date");

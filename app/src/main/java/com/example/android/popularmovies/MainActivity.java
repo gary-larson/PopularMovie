@@ -47,10 +47,10 @@ public class MainActivity extends AppCompatActivity
     private MenuItem mSortMenuItem;
     private MenuItem mPreviousMenuItem;
     private MenuItem mNextMenuItem;
-    private int mOrientation;
-    static int mNumberHorizontalImages;
-    static int mNumberVerticalImages;
-
+    // Variables for size, image numbers, etc.
+    public static int mNumberHorizontalImages;
+    public static int mNumberVerticalImages;
+    public static String mPosterSize;
 
 
     @Override
@@ -58,22 +58,14 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Get orientation
-        mOrientation = getResources().getConfiguration().orientation;
-        // set number of images horizontally and vertically depending on orientation of device
-        if (mOrientation == Configuration.ORIENTATION_PORTRAIT) {
-            mNumberHorizontalImages = 2;
-            mNumberVerticalImages = 2;
-            // adjust height for title bar
-        } else {
-            mNumberHorizontalImages = 3;
-            mNumberVerticalImages = 1;
-        }
-
         // Initialize variables
         mErrorMessageTextView = findViewById(R.id.tv_error_message);
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
         mMovieRecyclerView = findViewById(R.id.rv_movies);
+        mNumberVerticalImages = getResources().getInteger(R.integer.number_vertical_posters);
+        mNumberHorizontalImages = getResources().getInteger(R.integer.number_horizontal_posters);
+        mPosterSize = getResources().getString(R.string.poster_size);
+
 
         // retrieve The Movie Database API Key from assets folder
         mApiKey = getApiKey();
@@ -87,7 +79,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             // Setup Layout manager for RecyclerView
             GridLayoutManager layoutManager = new GridLayoutManager(this,
-                    mNumberHorizontalImages);
+                    getResources().getInteger(R.integer.number_horizontal_posters));
             mMovieRecyclerView.setLayoutManager(layoutManager);
             // indicate all poster are the same size
             mMovieRecyclerView.setHasFixedSize(true);
@@ -183,7 +175,7 @@ public class MainActivity extends AppCompatActivity
         Bundle extras = new Bundle();
         // Put necessary information in bundle
         extras.putString("TITLE",clickedItemResults.getTitle());
-        extras.putString("POSTER_PATH", clickedItemResults.getPosterPath());
+        extras.putString("BACKDROP_PATH", clickedItemResults.getBackDropPath());
         extras.putLong("RELEASE_DATE", clickedItemResults.getReleaseDate().getTime());
         extras.putString("ORIGINAL_TITLE", clickedItemResults.getOriginalTitle());
         extras.putDouble("VOTE_AVERAGE", clickedItemResults.getVoteAverage());

@@ -11,6 +11,7 @@ import java.util.Date;
 class MovieResults implements Parcelable {
     // Declare member variables
     private String mPosterPath;
+    private String mBackDropPath;
     private String mOverview;
     private Date mReleaseDate;
     private String mOriginalTitle;
@@ -29,6 +30,7 @@ class MovieResults implements Parcelable {
      */
     private MovieResults (Parcel in) {
         mPosterPath = in.readString();
+        mBackDropPath = in.readString();
         mOverview = in.readString();
         mReleaseDate = new Date(in.readLong());
         mOriginalTitle = in.readString();
@@ -51,6 +53,7 @@ class MovieResults implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(mPosterPath);
+        parcel.writeString(mBackDropPath);
         parcel.writeString(mOverview);
         parcel.writeLong(mReleaseDate.getTime());
         parcel.writeString(mOriginalTitle);
@@ -83,6 +86,22 @@ class MovieResults implements Parcelable {
      */
     void setPosterPath(String mPosterPath) {
         this.mPosterPath = mPosterPath;
+    }
+
+    /**
+     * Method to get the poster Path
+     * @return the Poster path or null
+     */
+    String getBackDropPath() {
+        return mBackDropPath;
+    }
+
+    /**
+     * Method to set the Poster Path
+     * @param mBackDropPath of the movie
+     */
+    void setBackDropPath(String mBackDropPath) {
+        this.mBackDropPath = mBackDropPath;
     }
 
     /**

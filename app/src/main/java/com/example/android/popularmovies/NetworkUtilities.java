@@ -21,8 +21,7 @@ final class NetworkUtilities {
     // Constants for poster requests (BASE + SIZE + movieId)
     final static String POSTER_BASE_HTTPS_URL = "https://image.tmdb.org/t/p/";
     final static String POSTER_BASE_HTTP_URL = "http://image.tmdb.org/t/p/";
-    //final static String POSTER_SIZE = "w185/";
-    final static String POSTER_SIZE = "w342/";
+
 
     /**
      * Builds the URL used to talk to the The Movie Database server using an api key, type, and page number.
