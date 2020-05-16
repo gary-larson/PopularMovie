@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.larsonapps.popularmovies;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,10 +7,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,10 +21,14 @@ import android.widget.TextView;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import android.util.Base64;
+
 
 public class MainActivity extends AppCompatActivity
         implements MovieAdapter.MovieAdapterOnClickHandler {
@@ -152,6 +157,25 @@ public class MainActivity extends AppCompatActivity
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        if (!(apiKey.equals(""))) {
+            try {
+                // Decode
+                byte[] base64decodedBytes = Base64.decode(apiKey, Base64.DEFAULT);
+
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    apiKey = new String(base64decodedBytes, StandardCharsets.UTF_8);
+                }else {
+                    apiKey = new String(base64decodedBytes, "UTF-8");
+                }
+
+            } catch (IllegalArgumentException | UnsupportedEncodingException e) {
+                if (e.getMessage() == null) {
+                    Log.e ("Decode Error :", "Unknown");
+                } else {
+                    Log.e("Decode Error :", e.getMessage());
+                }
+            }
         }
         return apiKey;
     }

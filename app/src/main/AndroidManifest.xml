@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.popularmovies">
+    package="com.larsonapps.popularmovies">
     <!-- This permission is necessary in order for Sunshine to perform network access. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -12,26 +12,26 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MovieDetailsActivity"
+            android:name="com.larsonapps.popularmovies.MovieDetailsActivity"
             android:label="@string/movie_detail"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.larsonapps.popularmovies.MainActivity">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.larsonapps.popularmovies.MainActivity" />
         </activity>
         <activity
-            android:name=".AboutActivity"
+            android:name="com.larsonapps.popularmovies.AboutActivity"
             android:label="@string/about"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.larsonapps.popularmovies.MainActivity">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.larsonapps.popularmovies.MainActivity" />
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name="com.larsonapps.popularmovies.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
