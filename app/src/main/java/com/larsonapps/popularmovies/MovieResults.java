@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * Class to hold data of each movie
  */
-class MovieResults implements Parcelable {
+public class MovieResults implements Parcelable {
     // Declare member variables
     private String mPosterPath;
     private String mBackDropPath;
@@ -21,7 +21,7 @@ class MovieResults implements Parcelable {
     /**
      * No Argument Constructor
      */
-    MovieResults() {
+    public MovieResults() {
     }
 
     /**
@@ -84,7 +84,7 @@ class MovieResults implements Parcelable {
      * Method to set the Poster Path
      * @param mPosterPath of the movie
      */
-    void setPosterPath(String mPosterPath) {
+    public void setPosterPath(String mPosterPath) {
         this.mPosterPath = mPosterPath;
     }
 
@@ -100,7 +100,7 @@ class MovieResults implements Parcelable {
      * Method to set the Poster Path
      * @param mBackDropPath of the movie
      */
-    void setBackDropPath(String mBackDropPath) {
+    public void setBackDropPath(String mBackDropPath) {
         this.mBackDropPath = mBackDropPath;
     }
 
@@ -116,7 +116,7 @@ class MovieResults implements Parcelable {
      * Method to set Overview
      * @param mOverview to set
      */
-    void setOverview(String mOverview) {
+    public void setOverview(String mOverview) {
         this.mOverview = mOverview;
     }
 
@@ -132,7 +132,7 @@ class MovieResults implements Parcelable {
      * Method to set Release Date
      * @param mReleaseDate to set
      */
-    void setReleaseDate(Date mReleaseDate) {
+    public void setReleaseDate(Date mReleaseDate) {
         this.mReleaseDate = mReleaseDate;
     }
 
@@ -148,7 +148,7 @@ class MovieResults implements Parcelable {
      * Method to set Original Title
      * @param mOriginalTitle to set
      */
-    void setOriginalTitle(String mOriginalTitle) {
+    public void setOriginalTitle(String mOriginalTitle) {
         this.mOriginalTitle = mOriginalTitle;
     }
 
@@ -164,7 +164,7 @@ class MovieResults implements Parcelable {
      * Method to set Title
      * @param mTitle to set
      */
-    void setTitle(String mTitle) {
+    public void setTitle(String mTitle) {
         this.mTitle = mTitle;
     }
 
@@ -180,7 +180,7 @@ class MovieResults implements Parcelable {
      * Method to set Vote Average
      * @param mVoteAverage to set
      */
-    void setVoteAverage(double mVoteAverage) {
+    public void setVoteAverage(double mVoteAverage) {
         this.mVoteAverage = mVoteAverage;
     }
 

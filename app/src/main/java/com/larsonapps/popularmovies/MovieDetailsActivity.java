@@ -8,6 +8,7 @@ import android.util.DisplayMetrics;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.larsonapps.popularmovies.utilities.NetworkUtilities;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;

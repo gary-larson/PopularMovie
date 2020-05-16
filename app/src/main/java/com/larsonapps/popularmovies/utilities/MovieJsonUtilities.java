@@ -1,4 +1,7 @@
-package com.larsonapps.popularmovies;
+package com.larsonapps.popularmovies.utilities;
+
+import com.larsonapps.popularmovies.MainActivity;
+import com.larsonapps.popularmovies.MovieResults;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-final class MovieJsonUtilities {
+final public class MovieJsonUtilities {
 
     /**
      * Method to convert a Json string to a list of movie results
@@ -19,18 +22,18 @@ final class MovieJsonUtilities {
      * @return the list of movie results
      * @throws JSONException in case of error
      */
-    static List<MovieResults> getMovieResults (String movieJsonStr) throws JSONException {
+    public static List<MovieResults> getMovieResults (String movieJsonStr) throws JSONException {
         // Declare and initialize variables to return results
         List<MovieResults> movieResults = new ArrayList<>();
 
         // Check if there are actual results
         JSONObject moviesJson = new JSONObject(movieJsonStr);
         if (!moviesJson.has("page")) {
-            MainActivity.mErrorMessage = moviesJson.getString("status_message");
+            MainActivity.setmErrorMessage(moviesJson.getString("status_message"));
             return null;
         }
 
-        MainActivity.mTotalPages = moviesJson.getInt("total_pages");
+        MainActivity.setmTotalPages(moviesJson.getInt("total_pages"));
         // extract an array of the results
         JSONArray results = moviesJson.getJSONArray("results");
 

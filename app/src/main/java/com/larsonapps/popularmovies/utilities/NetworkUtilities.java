@@ -1,26 +1,31 @@
-package com.larsonapps.popularmovies;
+package com.larsonapps.popularmovies.utilities;
 
 import android.net.Uri;
+import android.os.Build;
+import android.util.Base64;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-final class NetworkUtilities {
+final public class NetworkUtilities {
     // Constants for requests (BASE + type + API_KEY_QUERY + apiKey + [PAGE_QUERY + page #])
     final private static String REQUEST_BASE_HTTPS_URL = "https://api.themoviedb.org/3/movie/";
     final private static String REQUEST_BASE_HTTP_URL = "http://api.themoviedb.org/3/movie/";
-    final static String POPULAR_REQUEST_URL = "popular";
-    final static String HIGHEST_RATED_REQUEST_URL = "top_rated";
+    final public static String POPULAR_REQUEST_URL = "popular";
+    final public static String HIGHEST_RATED_REQUEST_URL = "top_rated";
     final private static String API_KEY_QUERY_URL = "?api_key=";
     final private static String PAGE_QUERY_URL = "&page=";
 
     // Constants for poster requests (BASE + SIZE + movieId)
-    final static String POSTER_BASE_HTTPS_URL = "https://image.tmdb.org/t/p/";
-    final static String POSTER_BASE_HTTP_URL = "http://image.tmdb.org/t/p/";
+    final public static String POSTER_BASE_HTTPS_URL = "https://image.tmdb.org/t/p/";
+    final public static String POSTER_BASE_HTTP_URL = "http://image.tmdb.org/t/p/";
 
 
     /**
@@ -31,8 +36,9 @@ final class NetworkUtilities {
      * @param page to retrieve
      * @return The URL to use to query the The Movie Database server.
      */
-    static URL buildUrl(String apiKey, String type, String page) {
+    public static URL buildUrl(String apiKey, String type, String page) {
         String urlString;
+        apiKey = prepareApiKey(apiKey);
         // Set whether or not to use ssl based on API build
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
             urlString = REQUEST_BASE_HTTPS_URL +
@@ -63,7 +69,7 @@ final class NetworkUtilities {
      * @return the response
      * @throws IOException in case of error
      */
-    static String getResponseFromHttpUrl(URL url) throws IOException {
+    public static String getResponseFromHttpUrl(URL url) throws IOException {
         // Declare variable for the connection
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
@@ -90,5 +96,28 @@ final class NetworkUtilities {
             // disconnect stream
             urlConnection.disconnect();
         }
+    }
+
+    private static String prepareApiKey (String apiKey) {
+        if (!(apiKey.equals(""))) {
+            try {
+                // Decode
+                byte[] base64decodedBytes = Base64.decode(apiKey, Base64.DEFAULT);
+
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    apiKey = new String(base64decodedBytes, StandardCharsets.UTF_8);
+                }else {
+                    apiKey = new String(base64decodedBytes, "UTF-8");
+                }
+
+            } catch (IllegalArgumentException | UnsupportedEncodingException e) {
+                if (e.getMessage() == null) {
+                    Log.e ("Decode Error :", "Unknown");
+                } else {
+                    Log.e("Decode Error :", e.getMessage());
+                }
+            }
+        }
+        return apiKey;
     }
 }

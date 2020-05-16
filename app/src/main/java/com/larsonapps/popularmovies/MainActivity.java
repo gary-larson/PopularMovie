@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 import android.util.Base64;
 
+import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
+import com.larsonapps.popularmovies.utilities.NetworkUtilities;
+
 
 public class MainActivity extends AppCompatActivity
         implements MovieAdapter.MovieAdapterOnClickHandler {
@@ -38,8 +41,8 @@ public class MainActivity extends AppCompatActivity
     private List<MovieResults> mMovieList;
     private int mPage = 0;
     private String mType;
-    static int mTotalPages;
-    static String mErrorMessage;
+    private static int mTotalPages;
+    private static String mErrorMessage;
     private String mTitle;
     private String mSortTitle;
     private boolean isPreviousEnabled;
@@ -158,25 +161,7 @@ public class MainActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (!(apiKey.equals(""))) {
-            try {
-                // Decode
-                byte[] base64decodedBytes = Base64.decode(apiKey, Base64.DEFAULT);
 
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    apiKey = new String(base64decodedBytes, StandardCharsets.UTF_8);
-                }else {
-                    apiKey = new String(base64decodedBytes, "UTF-8");
-                }
-
-            } catch (IllegalArgumentException | UnsupportedEncodingException e) {
-                if (e.getMessage() == null) {
-                    Log.e ("Decode Error :", "Unknown");
-                } else {
-                    Log.e("Decode Error :", e.getMessage());
-                }
-            }
-        }
         return apiKey;
     }
 
@@ -400,5 +385,25 @@ public class MainActivity extends AppCompatActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public String getmApiKey() {
+        return mApiKey;
+    }
+
+    public static int getmTotalPages() {
+        return mTotalPages;
+    }
+
+    public static String getmErrorMessage() {
+        return mErrorMessage;
+    }
+
+    public static void setmTotalPages(int mTotalPages) {
+        MainActivity.mTotalPages = mTotalPages;
+    }
+
+    public static void setmErrorMessage(String mErrorMessage) {
+        MainActivity.mErrorMessage = mErrorMessage;
     }
 }
