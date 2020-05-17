@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <dimen name="detail_extra_large_padding">48dp</dimen>
+    <dimen name="detail_large_padding">40dp</dimen>
+    <dimen name="detail_normal_padding">24dp</dimen>
+    <dimen name="detail_small_padding">16dp</dimen>
+</resources>

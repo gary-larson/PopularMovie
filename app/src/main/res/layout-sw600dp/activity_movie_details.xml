@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MovieDetailsActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/detailTitleBackground"
+            android:paddingStart="@dimen/detail_large_padding"
+            android:paddingLeft="@dimen/detail_large_padding"
+            android:paddingTop="@dimen/detail_extra_large_padding"
+            android:paddingEnd="@dimen/detail_large_padding"
+            android:paddingRight="@dimen/detail_large_padding"
+            android:paddingBottom="@dimen/detail_extra_large_padding"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/detail_title_text_size"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Birds of Prey (and the Fantabulous Emancipation of One Harley Quinn)"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.6667" />
+
+
+        <ImageView
+            android:id="@+id/poster_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/movie_backdrop_poster"
+            android:paddingBottom="@dimen/detail_large_padding"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/title_text_view"
+            tools:scaleX="25dp"
+            tools:scaleY="38dp"
+            tools:src="@drawable/error" />
+
+        <TextView
+            android:id="@+id/release_date_text_view"
+            style="@style/DetailText"
+            app:layout_constraintLeft_toLeftOf="@id/guideline"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_text_view"
+            tools:text="Feb 5, 2020"/>
+
+        <TextView
+            android:id="@+id/original_title_text_view"
+            style="@style/DetailText"
+            android:textStyle="italic"
+            app:layout_constraintLeft_toRightOf="@id/guideline"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/release_date_text_view"
+            tools:text="Birds of Prey (and the Fantabulous Emancipation of One Harley Quinn)" />
+
+        <TextView
+            android:id="@+id/voter_rating_text_view"
+            style="@style/DetailText"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="@id/guideline"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/original_title_text_view"
+            tools:text="7.2/10"/>
+
+        <TextView
+            android:id="@+id/overview_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/detail_normal_padding"
+            android:paddingLeft="@dimen/detail_normal_padding"
+            android:paddingTop="@dimen/detail_small_padding"
+            android:paddingEnd="@dimen/detail_normal_padding"
+            android:paddingRight="@dimen/detail_normal_padding"
+            android:textSize="@dimen/detail_overview_text_size"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/poster_image_view"
+            tools:text="Harley Quinn joins forces with a singer, an assassin and a police detective to help a young girl who has a hit placed on her after she stole a rare diamond from a crime lord." />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

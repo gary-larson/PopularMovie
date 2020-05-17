@@ -2,4 +2,6 @@
 <resources>
     <integer name="number_vertical_posters">3</integer>
     <integer name="number_horizontal_posters">3</integer>
+    <integer name="backdrop_divisor">3</integer>
+    <integer name="backdrop_multiplier">2</integer>
 </resources>

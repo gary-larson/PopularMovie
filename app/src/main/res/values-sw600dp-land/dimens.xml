@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="layout_padding">22dp</dimen>
+    <dimen name="error_message_text_size">26sp</dimen>
+    <dimen name="progress_bar_height_and_width">48dp</dimen>
+    <dimen name="detail_extra_large_padding">46dp</dimen>
+    <dimen name="detail_large_padding">38dp</dimen>
+    <dimen name="detail_normal_padding">22dp</dimen>
+    <dimen name="detail_small_padding">14dp</dimen>
+    <dimen name="detail_title_text_size">54sp</dimen>
+    <dimen name="detail_text_size">30sp</dimen>
+    <dimen name="detail_overview_text_size">24sp</dimen>
+</resources>

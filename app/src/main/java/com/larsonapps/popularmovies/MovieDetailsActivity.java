@@ -27,7 +27,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         //int height = displayMetrics.heightPixels;
-        mWidth = displayMetrics.widthPixels;
+        mWidth = (displayMetrics.widthPixels /
+                getResources().getInteger(R.integer.backdrop_divisor) *
+                getResources().getInteger(R.integer.backdrop_multiplier));
         setTitle("MovieDetail");
         //get the intent in the target activity
         Intent intent = getIntent();
