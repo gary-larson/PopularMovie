@@ -14,6 +14,7 @@ public class MovieResults implements Parcelable {
     private String mBackDropPath;
     private String mOverview;
     private Date mReleaseDate;
+    private int movieID;
     private String mOriginalTitle;
     private String mTitle;
     private double mVoteAverage;
@@ -33,6 +34,7 @@ public class MovieResults implements Parcelable {
         mBackDropPath = in.readString();
         mOverview = in.readString();
         mReleaseDate = new Date(in.readLong());
+        movieID = in.readInt();
         mOriginalTitle = in.readString();
         mTitle = in.readString();
         mVoteAverage = in.readDouble();
@@ -56,6 +58,7 @@ public class MovieResults implements Parcelable {
         parcel.writeString(mBackDropPath);
         parcel.writeString(mOverview);
         parcel.writeLong(mReleaseDate.getTime());
+        parcel.writeInt(movieID);
         parcel.writeString(mOriginalTitle);
         parcel.writeString(mTitle);
         parcel.writeDouble(mVoteAverage);
@@ -134,6 +137,22 @@ public class MovieResults implements Parcelable {
      */
     public void setReleaseDate(Date mReleaseDate) {
         this.mReleaseDate = mReleaseDate;
+    }
+
+    /**
+     * Getter for movie id
+     * @return movie id
+     */
+    public int getMovieID() {
+        return movieID;
+    }
+
+    /**
+     * Setter for movie id
+     * @param movieID to set
+     */
+    public void setMovieID(int movieID) {
+        this.movieID = movieID;
     }
 
     /**

@@ -66,6 +66,7 @@ final public class MovieJsonUtilities {
             if (date != null) {
                 currentMovie.setReleaseDate(date);
             }
+            currentMovie.setMovieID(currentMovieJson.getInt("id"));
             currentMovie.setOriginalTitle(currentMovieJson.getString("original_title"));
             currentMovie.setTitle(currentMovieJson.getString("title"));
             currentMovie.setVoteAverage(currentMovieJson.getDouble("vote_average"));
@@ -76,4 +77,7 @@ final public class MovieJsonUtilities {
         // return the list of movie results
         return movieResults;
     }
+    // TODO create GetMovieDetails for runtime
+    // TODO create GetMovieVideos
+    // TODO create GetMovieReviews
 }
