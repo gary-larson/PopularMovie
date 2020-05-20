@@ -1,6 +1,7 @@
 package com.larsonapps.popularmovies.utilities;
 
 import com.larsonapps.popularmovies.MainActivity;
+import com.larsonapps.popularmovies.MovieDetails;
 import com.larsonapps.popularmovies.MovieResults;
 
 import org.json.JSONArray;
@@ -29,11 +30,11 @@ final public class MovieJsonUtilities {
         // Check if there are actual results
         JSONObject moviesJson = new JSONObject(movieJsonStr);
         if (!moviesJson.has("page")) {
-            MainActivity.setmErrorMessage(moviesJson.getString("status_message"));
+            MainActivity.setErrorMessage(moviesJson.getString("status_message"));
             return null;
         }
 
-        MainActivity.setmTotalPages(moviesJson.getInt("total_pages"));
+        MainActivity.setTotalPages(moviesJson.getInt("total_pages"));
         // extract an array of the results
         JSONArray results = moviesJson.getJSONArray("results");
 
@@ -77,7 +78,19 @@ final public class MovieJsonUtilities {
         // return the list of movie results
         return movieResults;
     }
-    // TODO create GetMovieDetails for runtime
+
+    // COMPLETED create GetMovieDetails for runtime
+    public static MovieDetails getMovieDetails (String movieDetailsJsonStr) throws JSONException {
+        // Check if there are actual results
+        JSONObject moviesDetailsJson = new JSONObject(movieDetailsJsonStr);
+        if (!moviesDetailsJson.has("runtime")) {
+            MainActivity.setErrorMessage(moviesDetailsJson.getString("status_message"));
+            return null;
+        }
+        int runtime = moviesDetailsJson.getInt("runtime");
+        return new MovieDetails(runtime);
+    }
+
     // TODO create GetMovieVideos
     // TODO create GetMovieReviews
 }

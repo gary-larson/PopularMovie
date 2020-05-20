@@ -8,10 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,13 +19,10 @@ import android.widget.TextView;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import android.util.Base64;
 
 import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
 import com.larsonapps.popularmovies.utilities.NetworkUtilities;
@@ -36,6 +31,8 @@ import com.larsonapps.popularmovies.utilities.NetworkUtilities;
 public class MainActivity extends AppCompatActivity
         implements MovieAdapter.MovieAdapterOnClickHandler {
     // Declare variables
+    // Constants
+    private static final int ID_MOVIE_LOADER = 6684;
     private String mApiKey;
     // variables to be saved in bundle
     private List<MovieResults> mMovieList;
@@ -76,7 +73,7 @@ public class MainActivity extends AppCompatActivity
 
 
         // retrieve The Movie Database API Key from assets folder
-        mApiKey = getApiKey();
+        mApiKey = loadApiKey();
         // display error if no API key is returned
         if (mApiKey.equals("")) {
             /* First, hide the currently visible data */
@@ -151,7 +148,7 @@ public class MainActivity extends AppCompatActivity
      * Method to get the api key from the assets folder
      * @return api key or null if not found
      */
-    private String getApiKey() {
+    private String loadApiKey() {
         String apiKey = "";
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets()
@@ -171,7 +168,7 @@ public class MainActivity extends AppCompatActivity
     private void getMovies() {
         String[] myString = {mApiKey, mType, Integer.toString(mPage)};
         // start background task
-        new FetchMoviesTask(this).execute(myString);
+        new FetchMovieListTask(this).execute(myString);
     }
 
     /**
@@ -186,9 +183,11 @@ public class MainActivity extends AppCompatActivity
         extras.putString("TITLE",clickedItemResults.getTitle());
         extras.putString("BACKDROP_PATH", clickedItemResults.getBackDropPath());
         extras.putLong("RELEASE_DATE", clickedItemResults.getReleaseDate().getTime());
+        extras.putInt("MOVIE_ID", clickedItemResults.getMovieID());
         extras.putString("ORIGINAL_TITLE", clickedItemResults.getOriginalTitle());
         extras.putDouble("VOTE_AVERAGE", clickedItemResults.getVoteAverage());
         extras.putString("OVERVIEW", clickedItemResults.getOverview());
+        extras.putString("API_KEY", mApiKey);
         // Get the context
         Context context = this;
         // Get the receiving activity class
@@ -204,10 +203,10 @@ public class MainActivity extends AppCompatActivity
     /**
      * Class to run background task
      */
-    static class FetchMoviesTask extends AsyncTask<String, Void, List<MovieResults>> {
+    static class FetchMovieListTask extends AsyncTask<String, Void, List<MovieResults>> {
         private final WeakReference<MainActivity> activityWeakReference;
 
-        FetchMoviesTask(MainActivity activity) {
+        FetchMovieListTask(MainActivity activity) {
             activityWeakReference = new WeakReference<>(activity);
         }
 
@@ -240,7 +239,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             // build url
-            URL movieRequestUrl = NetworkUtilities.buildUrl(params[0], params[1], params[2]);
+            URL movieRequestUrl = NetworkUtilities.buildResultsUrl(params[0], params[1], params[2]);
 
             try {
                 // attempt to get movie information
@@ -274,7 +273,7 @@ public class MainActivity extends AppCompatActivity
             if (movieData != null) {
                 /* First, make sure the error is invisible */
                 activity.mErrorMessageTextView.setVisibility(View.INVISIBLE);
-                /* Then, make sure the weather data is visible */
+                /* Then, make sure the movie data is visible */
                 activity.mMovieRecyclerView.setVisibility(View.VISIBLE);
                 activity.mMovieList = movieData;
                 activity.mAdapter.setMovieData(movieData);
@@ -387,23 +386,11 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public String getmApiKey() {
-        return mApiKey;
-    }
-
-    public static int getmTotalPages() {
-        return mTotalPages;
-    }
-
-    public static String getmErrorMessage() {
-        return mErrorMessage;
-    }
-
-    public static void setmTotalPages(int mTotalPages) {
+    public static void setTotalPages(int mTotalPages) {
         MainActivity.mTotalPages = mTotalPages;
     }
 
-    public static void setmErrorMessage(String mErrorMessage) {
+    public static void setErrorMessage(String mErrorMessage) {
         MainActivity.mErrorMessage = mErrorMessage;
     }
 }

@@ -20,6 +20,8 @@ final public class NetworkUtilities {
     final private static String REQUEST_BASE_HTTP_URL = "http://api.themoviedb.org/3/movie/";
     final public static String POPULAR_REQUEST_URL = "popular";
     final public static String HIGHEST_RATED_REQUEST_URL = "top_rated";
+    final private static String VIDEO_REQUEST_URL = "/videos";
+    final private static String REVIEW_REQUEST_URL = "/reviews";
     final private static String API_KEY_QUERY_URL = "?api_key=";
     final private static String PAGE_QUERY_URL = "&page=";
 
@@ -36,7 +38,7 @@ final public class NetworkUtilities {
      * @param page to retrieve
      * @return The URL to use to query the The Movie Database server.
      */
-    public static URL buildUrl(String apiKey, String type, String page) {
+    public static URL buildResultsUrl(String apiKey, String type, String page) {
         String urlString;
         apiKey = prepareApiKey(apiKey);
         // Set whether or not to use ssl based on API build
@@ -48,6 +50,112 @@ final public class NetworkUtilities {
             urlString = REQUEST_BASE_HTTP_URL +
                     type + API_KEY_QUERY_URL + apiKey +
                     PAGE_QUERY_URL + page;
+        }
+        // Build Uri
+        Uri builtUri = Uri.parse(urlString).buildUpon().build();
+        URL url = null;
+        // Convert to URL
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        // return url
+        return url;
+    }
+
+    /**
+     * Builds the URL used to talk to the The Movie Database server using an api key, type, and page number.
+     *
+     * @param apiKey assigned by The Movie Database.
+     * @param movieId to retrieve
+     * @return The URL to use to query the The Movie Database server.
+     */
+    public static URL buildDetailsUrl(String apiKey, int movieId) {
+        String urlString;
+        apiKey = prepareApiKey(apiKey);
+        // Set whether or not to use ssl based on API build
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+            urlString = REQUEST_BASE_HTTPS_URL +
+                    movieId +
+                    API_KEY_QUERY_URL + apiKey;
+        } else{
+            urlString = REQUEST_BASE_HTTP_URL +
+                    movieId +
+                    API_KEY_QUERY_URL + apiKey;
+        }
+        // Build Uri
+        Uri builtUri = Uri.parse(urlString).buildUpon().build();
+        URL url = null;
+        // Convert to URL
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        // return url
+        return url;
+    }
+
+    /**
+     * Builds the URL used to talk to the The Movie Database server using an api key, type, and page number.
+     *
+     * @param apiKey assigned by The Movie Database.
+     * @param movieId to retrieve
+     * @return The URL to use to query the The Movie Database server.
+     */
+    public static URL buildVideosUrl(String apiKey, int movieId) {
+        String urlString;
+        apiKey = prepareApiKey(apiKey);
+        // Set whether or not to use ssl based on API build
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+            urlString = REQUEST_BASE_HTTPS_URL +
+                    movieId +
+                    NetworkUtilities.VIDEO_REQUEST_URL +
+                    API_KEY_QUERY_URL + apiKey;
+        } else{
+            urlString = REQUEST_BASE_HTTP_URL +
+                    movieId +
+                    NetworkUtilities.VIDEO_REQUEST_URL +
+                    API_KEY_QUERY_URL + apiKey;
+        }
+        // Build Uri
+        Uri builtUri = Uri.parse(urlString).buildUpon().build();
+        URL url = null;
+        // Convert to URL
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        // return url
+        return url;
+    }
+
+    /**
+     * Builds the URL used to talk to the The Movie Database server using an api key, type, and page number.
+     *
+     * @param apiKey assigned by The Movie Database.
+     * @param movieId to retrieve
+     * @return The URL to use to query the The Movie Database server.
+     */
+    public static URL buildReviewsUrl(String apiKey, int movieId) {
+        String urlString;
+        apiKey = prepareApiKey(apiKey);
+        // Set whether or not to use ssl based on API build
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+            urlString = REQUEST_BASE_HTTPS_URL +
+                    movieId +
+                    NetworkUtilities.REVIEW_REQUEST_URL +
+                    API_KEY_QUERY_URL + apiKey;
+        } else{
+            urlString = REQUEST_BASE_HTTP_URL +
+                    movieId +
+                    NetworkUtilities.REVIEW_REQUEST_URL +
+                    API_KEY_QUERY_URL + apiKey;
         }
         // Build Uri
         Uri builtUri = Uri.parse(urlString).buildUpon().build();
