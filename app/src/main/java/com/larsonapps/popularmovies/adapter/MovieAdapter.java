@@ -1,4 +1,4 @@
-package com.larsonapps.popularmovies;
+package com.larsonapps.popularmovies.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,9 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.larsonapps.popularmovies.MainActivity;
+import com.larsonapps.popularmovies.R;
+import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.utilities.NetworkUtilities;
 import com.squareup.picasso.Picasso;
 
@@ -21,11 +24,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     // Declare member variables
     private int mWidth;
     private int mHeight;
-    private List<MovieResults> mMovieData;
+    private List<MovieResult> mMovieData;
 
     private final MovieAdapterOnClickHandler mClickHandler;
 
-    MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
+    public MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }
 
@@ -50,8 +53,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            MovieResults movieResults = mMovieData.get(adapterPosition);
-            mClickHandler.onClick(movieResults);
+            MovieResult movieResult = mMovieData.get(adapterPosition);
+            mClickHandler.onClick(movieResult);
         }
     }
 
@@ -84,7 +87,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(@NonNull MovieAdapterViewHolder holder, int position) {
         // Declare a variable of the movie results
-        List<MovieResults> movieResults = mMovieData;
+        List<MovieResult> movieResults = mMovieData;
         // Test if Poster Path is populated
         if(movieResults.get(position).getPosterPath()!=null){
 
@@ -124,7 +127,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      * Method to set the movie data when it changes and notify the RecyclerView when this happens
      * @param movieData to set
      */
-    void setMovieData(List<MovieResults> movieData) {
+    public void setMovieData(List<MovieResult> movieData) {
         mMovieData = movieData;
         notifyDataSetChanged();
     }
@@ -134,7 +137,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
      */
     public interface MovieAdapterOnClickHandler {
 
-        void onClick(MovieResults clickedItemResults);
+        void onClick(MovieResult clickedItemResults);
     }
 
 }

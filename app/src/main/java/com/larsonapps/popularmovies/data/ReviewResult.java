@@ -1,4 +1,4 @@
-package com.larsonapps.popularmovies;
+package com.larsonapps.popularmovies.data;
 
 public class ReviewResult {
     // Declare variables

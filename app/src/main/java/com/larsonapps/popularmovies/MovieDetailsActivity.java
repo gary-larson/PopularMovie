@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.larsonapps.popularmovies.data.MovieDetails;
 import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
 import com.larsonapps.popularmovies.utilities.NetworkUtilities;
 import com.squareup.picasso.Picasso;
@@ -19,7 +20,6 @@ import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class MovieDetailsActivity extends AppCompatActivity {

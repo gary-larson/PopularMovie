@@ -1,4 +1,4 @@
-package com.larsonapps.popularmovies;
+package com.larsonapps.popularmovies.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * Class to hold data of each movie
  */
-public class MovieResults implements Parcelable {
+public class MovieResult implements Parcelable {
     // Declare member variables
     private String mPosterPath;
     private String mBackDropPath;
@@ -22,14 +22,14 @@ public class MovieResults implements Parcelable {
     /**
      * No Argument Constructor
      */
-    public MovieResults() {
+    public MovieResult() {
     }
 
     /**
      * Method to read data from parcel
      * @param in parcel to read from
      */
-    private MovieResults (Parcel in) {
+    private MovieResult(Parcel in) {
         mPosterPath = in.readString();
         mBackDropPath = in.readString();
         mOverview = in.readString();
@@ -67,19 +67,19 @@ public class MovieResults implements Parcelable {
     /**
      * Creator to initialize parcel
      */
-    public final Parcelable.Creator<MovieResults> CREATOR = new Parcelable.Creator<MovieResults>() {
+    public final Parcelable.Creator<MovieResult> CREATOR = new Parcelable.Creator<MovieResult>() {
         @Override
-        public MovieResults createFromParcel(Parcel parcel) {return new MovieResults(parcel);}
+        public MovieResult createFromParcel(Parcel parcel) {return new MovieResult(parcel);}
 
         @Override
-        public MovieResults[] newArray(int i) {return new MovieResults[i];}
+        public MovieResult[] newArray(int i) {return new MovieResult[i];}
     };
 
     /**
      * Method to get the poster Path
      * @return the Poster path or null
      */
-    String getPosterPath() {
+    public String getPosterPath() {
         return mPosterPath;
     }
 
@@ -95,7 +95,7 @@ public class MovieResults implements Parcelable {
      * Method to get the poster Path
      * @return the Poster path or null
      */
-    String getBackDropPath() {
+    public String getBackDropPath() {
         return mBackDropPath;
     }
 
@@ -111,7 +111,7 @@ public class MovieResults implements Parcelable {
      * Method to get Overview
      * @return Overview
      */
-    String getOverview() {
+    public String getOverview() {
         return mOverview;
     }
 
@@ -127,7 +127,7 @@ public class MovieResults implements Parcelable {
      * Method to get Release Date
      * @return Release Date
      */
-    Date getReleaseDate() {
+    public Date getReleaseDate() {
         return mReleaseDate;
     }
 
@@ -159,7 +159,7 @@ public class MovieResults implements Parcelable {
      * Method to get Original Title
      * @return Original Title
      */
-    String getOriginalTitle() {
+    public String getOriginalTitle() {
         return mOriginalTitle;
     }
 
@@ -175,7 +175,7 @@ public class MovieResults implements Parcelable {
      * Method to get Title
      * @return Title
      */
-    String getTitle() {
+    public String getTitle() {
         return mTitle;
     }
 
@@ -191,7 +191,7 @@ public class MovieResults implements Parcelable {
      * Method to get Vote Average
      * @return Vote Average
      */
-    double getVoteAverage() {
+    public double getVoteAverage() {
         return mVoteAverage;
     }
 

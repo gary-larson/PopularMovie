@@ -1,11 +1,11 @@
 package com.larsonapps.popularmovies.utilities;
 
 import com.larsonapps.popularmovies.MainActivity;
-import com.larsonapps.popularmovies.MovieDetails;
-import com.larsonapps.popularmovies.MovieResults;
-import com.larsonapps.popularmovies.MovieReview;
-import com.larsonapps.popularmovies.MovieVideo;
-import com.larsonapps.popularmovies.ReviewResult;
+import com.larsonapps.popularmovies.data.MovieDetails;
+import com.larsonapps.popularmovies.data.MovieResult;
+import com.larsonapps.popularmovies.data.MovieReview;
+import com.larsonapps.popularmovies.data.MovieVideo;
+import com.larsonapps.popularmovies.data.ReviewResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,9 +26,9 @@ final public class MovieJsonUtilities {
      * @return the list of movie results
      * @throws JSONException in case of error
      */
-    public static List<MovieResults> getMovieResults (String movieJsonStr) throws JSONException {
+    public static List<MovieResult> getMovieResults (String movieJsonStr) throws JSONException {
         // Declare and initialize variables to return results
-        List<MovieResults> movieResults = new ArrayList<>();
+        List<MovieResult> movieResults = new ArrayList<>();
 
         // Check if there are actual results
         JSONObject moviesJson = new JSONObject(movieJsonStr);
@@ -47,7 +47,7 @@ final public class MovieJsonUtilities {
             JSONObject currentMovieJson = results.getJSONObject(i);
 
             // declare and initialize variable to hold the current movie
-            MovieResults currentMovie = new MovieResults();
+            MovieResult currentMovie = new MovieResult();
 
             // retrieve the individual elements
             // test for null

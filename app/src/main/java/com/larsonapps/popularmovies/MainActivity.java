@@ -24,18 +24,19 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
 import com.larsonapps.popularmovies.utilities.NetworkUtilities;
+import com.larsonapps.popularmovies.adapter.MovieAdapter;
 
 
 public class MainActivity extends AppCompatActivity
         implements MovieAdapter.MovieAdapterOnClickHandler {
     // Declare variables
     // Constants
-    private static final int ID_MOVIE_LOADER = 6684;
     private String mApiKey;
     // variables to be saved in bundle
-    private List<MovieResults> mMovieList;
+    private List<MovieResult> mMovieList;
     private int mPage = 0;
     private String mType;
     private static int mTotalPages;
@@ -121,6 +122,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+//    private void setupViewModel() {
+//        MovieViewModel viewModel = new ViewModelProvider(this).get(MovieViewModel.class);
+//
+//        viewModel.getMovies().observe(this, new Observer<List<TaskEntry>>() {
+//            @Override
+//            public void onChanged(@Nullable List<TaskEntry> taskEntries) {
+//                Log.d(TAG, "Updating list of tasks from LiveData in ViewModel");
+//                mAdapter.setTasks(taskEntries);
+//            }
+//        });
+//    }
+
     /**
      * Method to save information to reduce calls to the internet
      * @param outState to save information to
@@ -176,7 +189,7 @@ public class MainActivity extends AppCompatActivity
      * @param clickedItemResults the information to send to movie details activity
      */
     @Override
-    public void onClick(MovieResults clickedItemResults) {
+    public void onClick(MovieResult clickedItemResults) {
         // Create a bundle to send information to details activity
         Bundle extras = new Bundle();
         // Put necessary information in bundle
@@ -203,7 +216,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Class to run background task
      */
-    static class FetchMovieListTask extends AsyncTask<String, Void, List<MovieResults>> {
+    static class FetchMovieListTask extends AsyncTask<String, Void, List<MovieResult>> {
         private final WeakReference<MainActivity> activityWeakReference;
 
         FetchMovieListTask(MainActivity activity) {
@@ -231,7 +244,7 @@ public class MainActivity extends AppCompatActivity
          * @return Movie Information responded from The Movie Database
          */
         @Override
-        protected List<MovieResults> doInBackground(String... params) {
+        protected List<MovieResult> doInBackground(String... params) {
 
             /* Without information we cannot look up Movies. */
             if (params.length == 0) {
@@ -265,7 +278,7 @@ public class MainActivity extends AppCompatActivity
          * @param movieData to process
          */
         @Override
-        protected void onPostExecute(List<MovieResults> movieData) {
+        protected void onPostExecute(List<MovieResult> movieData) {
             MainActivity activity = activityWeakReference.get();
             // turn off loading indicator
             activity.mLoadingIndicator.setVisibility(View.GONE);
@@ -291,7 +304,7 @@ public class MainActivity extends AppCompatActivity
 
         // if background task is cancelled show error message
         @Override
-        protected void onCancelled(List<MovieResults> movieResults) {
+        protected void onCancelled(List<MovieResult> movieResults) {
             super.onCancelled(movieResults);
             // turn off loading indicator
             MainActivity activity = activityWeakReference.get();

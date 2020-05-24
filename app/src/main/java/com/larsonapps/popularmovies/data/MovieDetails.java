@@ -1,4 +1,4 @@
-package com.larsonapps.popularmovies;
+package com.larsonapps.popularmovies.data;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class MovieDetails {
      * Getter for movie runtime
      * @return movie runtime
      */
-    int getRuntime() {
+    public int getRuntime() {
         return mRuntime;
     }
 

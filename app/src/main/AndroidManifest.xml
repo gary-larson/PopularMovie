@@ -11,10 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <!-- <activity android:name=".MovieActivity"></activity> -->
         <activity
-            android:name="com.larsonapps.popularmovies.MovieDetailsActivity"
+            android:name=".MovieDetailsActivity"
             android:label="@string/movie_detail"
-            android:parentActivityName="com.larsonapps.popularmovies.MainActivity">
+            android:parentActivityName=".MainActivity">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -22,16 +23,17 @@
                 android:value="com.larsonapps.popularmovies.MainActivity" />
         </activity>
         <activity
-            android:name="com.larsonapps.popularmovies.AboutActivity"
+            android:name=".AboutActivity"
             android:label="@string/about"
-            android:parentActivityName="com.larsonapps.popularmovies.MainActivity">
+            android:parentActivityName=".MainActivity">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.larsonapps.popularmovies.MainActivity" />
         </activity>
-        <activity android:name="com.larsonapps.popularmovies.MainActivity">
+        <!-- <activity android:name=".MainActivity"> -->
+        <activity android:name=".MovieActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
