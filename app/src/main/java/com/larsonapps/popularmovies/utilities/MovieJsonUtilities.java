@@ -1,6 +1,5 @@
 package com.larsonapps.popularmovies.utilities;
 
-import com.larsonapps.popularmovies.MainActivity;
 import com.larsonapps.popularmovies.data.MovieDetails;
 import com.larsonapps.popularmovies.data.MovieMain;
 import com.larsonapps.popularmovies.data.MovieResult;
@@ -90,7 +89,8 @@ final public class MovieJsonUtilities {
         // Create JSON object and Check if there are actual results
         JSONObject moviesDetailsJson = new JSONObject(movieDetailsJsonStr);
         if (!moviesDetailsJson.has("runtime")) {
-            MainActivity.setErrorMessage(moviesDetailsJson.getString("status_message"));
+            MovieDetails movieDetails = new MovieDetails();
+            movieDetails.setErrorMessage(moviesDetailsJson.getString("status_message"));
             return null;
         }
         // Get runtime
@@ -148,6 +148,6 @@ final public class MovieJsonUtilities {
         int totalReviews = movieReviewsJson.getInt("total_results");
         // Create Movie review object and populate
         MovieReview movieReview = new MovieReview (page, reviews, totalPages, totalReviews);
-        return new MovieDetails(runtime, videos, movieReview);
+        return new MovieDetails("", runtime, videos, movieReview);
     }
 }

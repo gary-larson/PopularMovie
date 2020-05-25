@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.larsonapps.popularmovies.MainActivity;
 import com.larsonapps.popularmovies.MovieActivity;
 import com.larsonapps.popularmovies.MovieItemFragment.OnListFragmentInteractionListener;
 import com.larsonapps.popularmovies.R;

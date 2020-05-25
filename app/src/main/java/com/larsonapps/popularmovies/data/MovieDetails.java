@@ -4,9 +4,17 @@ import java.util.List;
 
 public class MovieDetails {
     //Declare variables
+    private String mErrorMessage;
     private int mRuntime;
     private List<MovieVideo> mVideos;
     private MovieReview mMovieReview;
+
+    /**
+     * Default Constructor
+     */
+    public MovieDetails () {
+
+    }
 
     /**
      * Constructor for all variables
@@ -14,7 +22,9 @@ public class MovieDetails {
      * @param videos to set
      * @param review to set
      */
-    public MovieDetails (int runtime, List<MovieVideo> videos, MovieReview review) {
+    public MovieDetails (String errorMessage, int runtime, List<MovieVideo> videos,
+                         MovieReview review) {
+        this.mErrorMessage = errorMessage;
         this.mRuntime = runtime;
         this.mVideos = videos;
         this.mMovieReview = review;
@@ -66,5 +76,13 @@ public class MovieDetails {
      */
     public void setReviews(MovieReview mMovieReview) {
         this.mMovieReview = mMovieReview;
+    }
+
+    /**
+     * Setter for error message
+     * @param mErrorMessage to set
+     */
+    public void setErrorMessage(String mErrorMessage) {
+        this.mErrorMessage = mErrorMessage;
     }
 }
