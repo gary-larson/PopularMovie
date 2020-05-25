@@ -23,7 +23,7 @@ public class MovieMain {
         this.mPage = mPage;
     }
 
-    public List<MovieResult> getMovieList() {
+    List<MovieResult> getMovieList() {
         return mMovieList;
     }
 
@@ -49,5 +49,9 @@ public class MovieMain {
 
     public List<String> getPosterUrls () {
         return mPosterUrls;
+    }
+
+    void setPosterUrls (List<String> posterUrls) {
+        mPosterUrls = posterUrls;
     }
 }

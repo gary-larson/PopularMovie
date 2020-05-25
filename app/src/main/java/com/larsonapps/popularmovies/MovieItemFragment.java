@@ -3,6 +3,7 @@ package com.larsonapps.popularmovies;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -14,8 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.larsonapps.popularmovies.adapter.MovieItemRecyclerViewAdapter;
+import com.larsonapps.popularmovies.data.MovieMain;
 import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 
 import java.util.ArrayList;
@@ -36,6 +40,9 @@ public class MovieItemFragment extends Fragment {
     private OnListFragmentInteractionListener mListener;
     private MovieListViewModel mViewModel;
     private MovieItemRecyclerViewAdapter mAdapter;
+    private TextView errorMessageTextView;
+    private ProgressBar loadingIndicatorProgressBar;
+    private RecyclerView mMovieRecyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -68,18 +75,26 @@ public class MovieItemFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_item_list, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(MovieListViewModel.class);
+        errorMessageTextView = view.findViewById(R.id.tv_error_message);
+        loadingIndicatorProgressBar = view.findViewById(R.id.pb_loading_indicator);
         // Set the adapter
 
-        if (view instanceof RecyclerView) {
-            mColumnCount = getResources().getInteger(R.integer.number_horizontal_posters);
-            final Context context = view.getContext();
-            final RecyclerView mMovieRecyclerView = (RecyclerView) view;
 
-            //mMovieRecyclerView.setAdapter(mAdapter);
-            // Create the observer which updates the UI.
-            final Observer<List<String>> posterUrlsObserver = new Observer<List<String>>() {
-                @Override
-                public void onChanged(@Nullable final List<String> newPosterUrls) {
+        mColumnCount = getResources().getInteger(R.integer.number_horizontal_posters);
+        final Context context = view.getContext();
+        mMovieRecyclerView = view.findViewById(R.id.rv_list);
+
+        //mMovieRecyclerView.setAdapter(mAdapter);
+        // Create the observer which updates the UI.
+        final Observer<MovieMain> movieMainObserver = new Observer<MovieMain>() {
+            @Override
+            public void onChanged(@Nullable final MovieMain newMovieMain) {
+                if (newMovieMain == null) {
+                    showErrorMessage();
+                } else if (!newMovieMain.getErrorMessage().equals("")) {
+                    errorMessageTextView.setText(newMovieMain.getErrorMessage());
+                    showErrorMessage();
+                } else {
                     // Update the UI, in this case, an adapter.
                     // Setup layout manager
                     if (mColumnCount <= 1) {
@@ -90,21 +105,19 @@ public class MovieItemFragment extends Fragment {
                     // indicate all poster are the same size
                     mMovieRecyclerView.setHasFixedSize(true);
                     // setup Movie adapter for RecyclerView
-                    List<String> posterUrls = new ArrayList<>();
-                    mAdapter = new MovieItemRecyclerViewAdapter(newPosterUrls, mListener);
+                    List<String> posterUrls = newMovieMain.getPosterUrls();
+                    mAdapter = new MovieItemRecyclerViewAdapter(posterUrls, mListener);
                     mMovieRecyclerView.setAdapter(mAdapter);
-
-                    //mMovieRecyclerView.setAdapter((new MovieItemRecyclerViewAdapter(newPosterUrls, mListener)));
+                    showRecyclerView();
                 }
-            };
-            mViewModel.getPosterUrls().observe(getViewLifecycleOwner(), posterUrlsObserver);
-        }
+            }
+        };
+        mViewModel.getMovieMain().observe(getViewLifecycleOwner(), movieMainObserver);
         return view;
     }
 
-
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
@@ -133,5 +146,17 @@ public class MovieItemFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // COMPLETED: Update argument type and name
         void onListFragmentInteraction(int position);
+    }
+
+    private void showErrorMessage() {
+        errorMessageTextView.setVisibility(View.VISIBLE);
+        loadingIndicatorProgressBar.setVisibility(View.INVISIBLE);
+        mMovieRecyclerView.setVisibility(View.INVISIBLE);
+    }
+
+    private void showRecyclerView() {
+        errorMessageTextView.setVisibility(View.GONE);
+        loadingIndicatorProgressBar.setVisibility(View.INVISIBLE);
+        mMovieRecyclerView.setVisibility(View.VISIBLE);
     }
 }

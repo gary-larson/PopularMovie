@@ -1,76 +1,78 @@
 package com.larsonapps.popularmovies.viewmodels;
 
 import android.app.Application;
-import android.os.AsyncTask;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.larsonapps.popularmovies.adapter.MovieItemRecyclerViewAdapter;
+
 import com.larsonapps.popularmovies.data.MovieListRepository;
-import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
+import com.larsonapps.popularmovies.data.MovieMain;
 import com.larsonapps.popularmovies.utilities.NetworkUtilities;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 
 public class MovieListViewModel extends AndroidViewModel {
     // Declare Variables
     private Application mApplication;
-    MovieListRepository mMovieListRepository;
-
-
-
-    private MutableLiveData<List<String>> mPosterUrls;
+    private MovieListRepository mMovieListRepository;
+    private int mPage;
+    private String mType;
+    // Declare LiveData variables
+    private MutableLiveData<MovieMain> mMovieMain;
 
     public MovieListViewModel(Application application) {
         super(application);
         this.mApplication = application;
         mMovieListRepository = new MovieListRepository(mApplication);
-        mMovieListRepository.getPosterUrls().observeForever(posterUrlsObserver);
+        mPage = 1;
+        mType = NetworkUtilities.POPULAR_REQUEST_URL;
+        mMovieListRepository.getMovieMain(mType, mPage).observeForever(movieMainObserver);
     }
 
     @Override
     protected void onCleared() {
-        mMovieListRepository.getPosterUrls().removeObserver(posterUrlsObserver);
+        mMovieListRepository.getMovieMain(mType, mPage).removeObserver(movieMainObserver);
         super.onCleared();
     }
 
-//    public List<MovieResult> getMovieResultList () {
-//        if (mMovieMain.getMovieList() == null) {
-//            getMovies();
-//        }
-//        return mMovieMain.getMovieList();
-//    }
-
-    public MutableLiveData<List<String>> getPosterUrls() {
-        if (mPosterUrls == null) {
-            mPosterUrls = new MutableLiveData<List<String>>();
+    public MutableLiveData<MovieMain> getMovieMain() {
+        if (mMovieMain == null) {
+            mMovieMain = new MutableLiveData<>();
         }
-        return mPosterUrls;
+        return mMovieMain;
     }
 
-    final Observer<List<String>> posterUrlsObserver = new Observer<List<String>>() {
+    public void retrieveMovieMain() {
+        mMovieListRepository.getMovieMain(mType, mPage);
+    }
+
+    final private Observer<MovieMain> movieMainObserver = new Observer<MovieMain>() {
         @Override
-        public void onChanged(@Nullable final List<String> newPosterUrls) {
+        public void onChanged(@Nullable final MovieMain newMovieMain) {
             // Update the UI, in this case, an adapter.
-            mPosterUrls.setValue(newPosterUrls);
+            mMovieMain.setValue(newMovieMain);
         }
     };
 
+    public int getmPage() {return mPage;}
+
+    public void setmPage(int mPage) {
+        this.mPage = mPage;
+    }
+
+    public void setmType(String mType) {
+        this.mType = mType;
+    }
+
+    public int getTotalPages () {
+        if (mMovieMain != null && mMovieMain.getValue() != null) {
+            return mMovieMain.getValue().getTotalPages();
+        } else {
+            return 0;
+        }
+    }
 }
-
-
- // TODO Put posterurls in room

@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.larsonapps.popularmovies.data.MovieMain;
 import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
 import com.larsonapps.popularmovies.utilities.NetworkUtilities;
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity
                 isPreviousEnabled = false;
                 isNextEnabled = true;
                 // call background thread to get movies from the internet
-                getMovies();
+                //getMovies();
             } else {
                 // load information from bundle
                 mMovieList = savedInstanceState.getParcelableArrayList("MOVIES");
@@ -175,15 +176,15 @@ public class MainActivity extends AppCompatActivity
         return apiKey;
     }
 
-    /**
-     * Method to start background task to get movies from The movie Database
-     */
-    private void getMovies() {
-        String[] myString = {mApiKey, mType, Integer.toString(mPage)};
-        // start background task
-        new FetchMovieListTask(this).execute(myString);
-    }
-
+//    /**
+//     * Method to start background task to get movies from The movie Database
+//     */
+//    private void getMovies() {
+//        String[] myString = {mApiKey, mType, Integer.toString(mPage)};
+//        // start background task
+//        new FetchMovieListTask(this).execute(myString);
+//    }
+//
     /**
      * Method to start the movie details activity
      * @param clickedItemResults the information to send to movie details activity
@@ -212,113 +213,113 @@ public class MainActivity extends AppCompatActivity
         // start detail activity
         startActivity(intentToStartDetailActivity);
     }
-
-    /**
-     * Class to run background task
-     */
-    static class FetchMovieListTask extends AsyncTask<String, Void, List<MovieResult>> {
-        private final WeakReference<MainActivity> activityWeakReference;
-
-        FetchMovieListTask(MainActivity activity) {
-            activityWeakReference = new WeakReference<>(activity);
-        }
-
-        /**
-         * Method to shoe loading indicator
-         */
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            MainActivity activity = activityWeakReference.get();
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-
-            activity.mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        /**
-         * Method to run the background task
-         * @param params 0: api key, 1: type of query, 2: page number
-         * @return Movie Information responded from The Movie Database
-         */
-        @Override
-        protected List<MovieResult> doInBackground(String... params) {
-
-            /* Without information we cannot look up Movies. */
-            if (params.length == 0) {
-                return null;
-            }
-
-            // build url
-            URL movieRequestUrl = NetworkUtilities.buildResultsUrl(params[0], params[1], params[2]);
-
-            try {
-                // attempt to get movie information
-                String jsonMovieResponse = NetworkUtilities
-                        .getResponseFromHttpUrl(movieRequestUrl);
-                // if null cancel task (Unknown error)
-                if (jsonMovieResponse == null) {
-                    cancel(true);
-                }
-                // return Json decoded movie Information
-                return MovieJsonUtilities
-                        .getMovieResults(jsonMovieResponse);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // in case of an error return null
-                return null;
-            }
-        }
-
-        /**
-         * Method to clean up
-         * @param movieData to process
-         */
-        @Override
-        protected void onPostExecute(List<MovieResult> movieData) {
-            MainActivity activity = activityWeakReference.get();
-            // turn off loading indicator
-            activity.mLoadingIndicator.setVisibility(View.GONE);
-            // if results are good load data to adapter
-            if (movieData != null) {
-                /* First, make sure the error is invisible */
-                activity.mErrorMessageTextView.setVisibility(View.INVISIBLE);
-                /* Then, make sure the movie data is visible */
-                activity.mMovieRecyclerView.setVisibility(View.VISIBLE);
-                activity.mMovieList = movieData;
-                activity.mAdapter.setMovieData(movieData);
-            } else {
-                // if error display status message from The Movie Database
-                /* First, hide the currently visible data */
-                activity.mMovieRecyclerView.setVisibility(View.INVISIBLE);
-                /* Then, show the error */
-                activity.mErrorMessageTextView.setVisibility(View.VISIBLE);
-                if (activity.mErrorMessageTextView != null) {
-                    activity.mErrorMessageTextView.setText(mErrorMessage);
-                }
-            }
-        }
-
-        // if background task is cancelled show error message
-        @Override
-        protected void onCancelled(List<MovieResult> movieResults) {
-            super.onCancelled(movieResults);
-            // turn off loading indicator
-            MainActivity activity = activityWeakReference.get();
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-
-            activity.mLoadingIndicator.setVisibility(View.GONE);
-            /* First, hide the currently visible data */
-            activity.mMovieRecyclerView.setVisibility(View.INVISIBLE);
-            /* Then, show the error */
-            activity.mErrorMessageTextView.setVisibility(View.VISIBLE);
-        }
-    }
+//
+//    /**
+//     * Class to run background task
+//     */
+//    static class FetchMovieListTask extends AsyncTask<String, Void, MovieMain> {
+//        private final WeakReference<MainActivity> activityWeakReference;
+//
+//        FetchMovieListTask(MainActivity activity) {
+//            activityWeakReference = new WeakReference<>(activity);
+//        }
+//
+//        /**
+//         * Method to shoe loading indicator
+//         */
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            MainActivity activity = activityWeakReference.get();
+//            if (activity == null || activity.isFinishing()) {
+//                return;
+//            }
+//
+//            activity.mLoadingIndicator.setVisibility(View.VISIBLE);
+//        }
+//
+//        /**
+//         * Method to run the background task
+//         * @param params 0: api key, 1: type of query, 2: page number
+//         * @return Movie Information responded from The Movie Database
+//         */
+//        @Override
+//        protected MovieMain doInBackground(String... params) {
+//
+//            /* Without information we cannot look up Movies. */
+//            if (params.length == 0) {
+//                return null;
+//            }
+//
+//            // build url
+//            URL movieRequestUrl = NetworkUtilities.buildResultsUrl(params[0], params[1], params[2]);
+//
+//            try {
+//                // attempt to get movie information
+//                String jsonMovieResponse = NetworkUtilities
+//                        .getResponseFromHttpUrl(movieRequestUrl);
+//                // if null cancel task (Unknown error)
+//                if (jsonMovieResponse == null) {
+//                    cancel(true);
+//                }
+//                // return Json decoded movie Information
+//                return MovieJsonUtilities
+//                        .getMovieResults(jsonMovieResponse);
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                // in case of an error return null
+//                return null;
+//            }
+//        }
+//
+//        /**
+//         * Method to clean up
+//         * @param movieData to process
+//         */
+//        @Override
+//        protected void onPostExecute(List<MovieResult> movieData) {
+//            MainActivity activity = activityWeakReference.get();
+//            // turn off loading indicator
+//            activity.mLoadingIndicator.setVisibility(View.GONE);
+//            // if results are good load data to adapter
+//            if (movieData != null) {
+//                /* First, make sure the error is invisible */
+//                activity.mErrorMessageTextView.setVisibility(View.INVISIBLE);
+//                /* Then, make sure the movie data is visible */
+//                activity.mMovieRecyclerView.setVisibility(View.VISIBLE);
+//                activity.mMovieList = movieData;
+//                activity.mAdapter.setMovieData(movieData);
+//            } else {
+//                // if error display status message from The Movie Database
+//                /* First, hide the currently visible data */
+//                activity.mMovieRecyclerView.setVisibility(View.INVISIBLE);
+//                /* Then, show the error */
+//                activity.mErrorMessageTextView.setVisibility(View.VISIBLE);
+//                if (activity.mErrorMessageTextView != null) {
+//                    activity.mErrorMessageTextView.setText(mErrorMessage);
+//                }
+//            }
+//        }
+//
+//        // if background task is cancelled show error message
+//        @Override
+//        protected void onCancelled(List<MovieResult> movieResults) {
+//            super.onCancelled(movieResults);
+//            // turn off loading indicator
+//            MainActivity activity = activityWeakReference.get();
+//            if (activity == null || activity.isFinishing()) {
+//                return;
+//            }
+//
+//            activity.mLoadingIndicator.setVisibility(View.GONE);
+//            /* First, hide the currently visible data */
+//            activity.mMovieRecyclerView.setVisibility(View.INVISIBLE);
+//            /* Then, show the error */
+//            activity.mErrorMessageTextView.setVisibility(View.VISIBLE);
+//        }
+//    }
 
     /**
      * Inflate the main menu
@@ -354,14 +355,14 @@ public class MainActivity extends AppCompatActivity
                     mTitle = "Rated Movies";
                     mPage = 1;
                     mType = NetworkUtilities.HIGHEST_RATED_REQUEST_URL;
-                    getMovies();
+                    //getMovies();
                 } else {
                     // Get Most Popular Movies
                     mSortTitle = "Sort Rating";
                     mTitle = "Pop Movies";
                     mPage = 1;
                     mType = NetworkUtilities.POPULAR_REQUEST_URL;
-                    getMovies();
+                    //getMovies();
                 }
                 isPreviousEnabled = false;
                 mPreviousMenuItem.setEnabled(isPreviousEnabled);
@@ -377,7 +378,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 isNextEnabled = true;
                 mNextMenuItem.setEnabled(isNextEnabled);
-                getMovies();
+                //getMovies();
                 return true;
             case R.id.action_next_page:
                 // Get Next Page of Movies
@@ -388,7 +389,7 @@ public class MainActivity extends AppCompatActivity
                     isNextEnabled = false;
                     item.setEnabled(isNextEnabled);
                 }
-                getMovies();
+               // getMovies();
                 return true;
             case R.id.action_about:
                 // Show about activity

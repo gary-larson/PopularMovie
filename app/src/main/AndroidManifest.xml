@@ -15,22 +15,22 @@
         <activity
             android:name=".MovieDetailsActivity"
             android:label="@string/movie_detail"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MovieActivity">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.larsonapps.popularmovies.MainActivity" />
+                android:value="com.larsonapps.popularmovies.MovieActivity" />
         </activity>
         <activity
             android:name=".AboutActivity"
             android:label="@string/about"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MovieActivity">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.larsonapps.popularmovies.MainActivity" />
+                android:value="com.larsonapps.popularmovies.MovieActivity" />
         </activity>
         <!-- <activity android:name=".MainActivity"> -->
         <activity android:name=".MovieActivity">

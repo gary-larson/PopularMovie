@@ -25,35 +25,32 @@ public class MovieListRepository {
     private static String mApiKey;
 
     private static String mType;
-    private static MovieMain mMovieMain;
     private MovieDetails mMovieDetails;
     private Application mApplication;
-    private static MutableLiveData<List<String>> mPosterUrls = new MutableLiveData<List<String>>();
+    private static MutableLiveData<MovieMain> mMovieMain = new MutableLiveData<>();
 
     public MovieListRepository (Application application) {
         mApplication = application;
         mApiKey = loadApiKey();
-        mMovieMain = new MovieMain();
-        mType = NetworkUtilities.POPULAR_REQUEST_URL;
     }
 
     /**
      * Method to start background task to get movies from The movie Database
      */
-    public MutableLiveData<List<String>> getPosterUrls() {
+    public MutableLiveData<MovieMain> getMovieMain(String mType, int page) {
 //        if (mPosterUrls.getValue().size() > 0) {
 //            return mPosterUrls;
 //        }
-        String[] myString = {mApiKey, mType, Integer.toString(mMovieMain.getPage())};
+        String[] myString = {mApiKey, mType, Integer.toString(page)};
         // start background task
         new FetchMovieListTask().execute(myString);
-        return mPosterUrls;
+        return mMovieMain;
     }
 
     /**
      * Class to run background task
      */
-    static class FetchMovieListTask extends AsyncTask<String, Void, List<MovieResult>> {
+    static class FetchMovieListTask extends AsyncTask<String, Void, MovieMain> {
 
         /**
          * Method to run the background task
@@ -61,7 +58,7 @@ public class MovieListRepository {
          * @return Movie Information responded from The Movie Database
          */
         @Override
-        protected List<MovieResult> doInBackground(String... params) {
+        protected MovieMain doInBackground(String... params) {
 
             /* Without information we cannot look up Movies. */
             if (params.length == 0) {
@@ -95,29 +92,26 @@ public class MovieListRepository {
          * @param movieData to process
          */
         @Override
-        protected void onPostExecute(List<MovieResult> movieData) {
+        protected void onPostExecute(MovieMain movieData) {
             // if results are good load data to adapter
-            if (movieData != null) {
-                mMovieMain.setMovieList(movieData); // TODO replace with put in room
+            if (movieData.getErrorMessage().equals("")) {
                 List<String> posterUrls = new ArrayList<>();
-                for (int i = 0; i < movieData.size(); i++) {
-                    posterUrls.add(movieData.get(i).getPosterPath());
+                List<MovieResult> movieResults = movieData.getMovieList();
+                for (int i = 0; i < movieResults.size(); i++) {
+                    posterUrls.add(movieResults.get(i).getPosterPath());
                 }
-                mPosterUrls.postValue(posterUrls);
-            } else {
-                // if error display status message from The Movie Database
-                /* First, hide the currently visible data */
-                mMovieMain.setErrorMessage("Error retrieving Data");
+                movieData.setPosterUrls(posterUrls);
             }
+            mMovieMain.postValue(movieData); // TODO replace with put in room
         }
 
         // if background task is cancelled show error message
         @Override
-        protected void onCancelled(List<MovieResult> movieResults) {
-            super.onCancelled(movieResults);
+        protected void onCancelled(MovieMain movieData) {
+            super.onCancelled(movieData);
             // turn off loading indicator
 
-            mMovieMain = null;
+            mMovieMain.postValue(null);
         }
     }
 

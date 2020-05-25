@@ -2,6 +2,7 @@ package com.larsonapps.popularmovies.utilities;
 
 import com.larsonapps.popularmovies.MainActivity;
 import com.larsonapps.popularmovies.data.MovieDetails;
+import com.larsonapps.popularmovies.data.MovieMain;
 import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.data.MovieReview;
 import com.larsonapps.popularmovies.data.MovieVideo;
@@ -26,18 +27,19 @@ final public class MovieJsonUtilities {
      * @return the list of movie results
      * @throws JSONException in case of error
      */
-    public static List<MovieResult> getMovieResults (String movieJsonStr) throws JSONException {
+    public static MovieMain getMovieResults (String movieJsonStr) throws JSONException {
         // Declare and initialize variables to return results
+        MovieMain movieMain = new MovieMain();
         List<MovieResult> movieResults = new ArrayList<>();
 
         // Check if there are actual results
         JSONObject moviesJson = new JSONObject(movieJsonStr);
         if (!moviesJson.has("page")) {
-            MainActivity.setErrorMessage(moviesJson.getString("status_message"));
-            return null;
+            movieMain.setErrorMessage(moviesJson.getString("status_message"));
+            return movieMain;
         }
 
-        MainActivity.setTotalPages(moviesJson.getInt("total_pages"));
+        movieMain.setTotalPages(moviesJson.getInt("total_pages"));
         // extract an array of the results
         JSONArray results = moviesJson.getJSONArray("results");
 
@@ -78,8 +80,9 @@ final public class MovieJsonUtilities {
             // add this movie to the list
             movieResults.add(currentMovie);
         }
+        movieMain.setMovieList(movieResults);
         // return the list of movie results
-        return movieResults;
+        return movieMain;
     }
 
     // COMPLETED create GetMovieDetails for runtime

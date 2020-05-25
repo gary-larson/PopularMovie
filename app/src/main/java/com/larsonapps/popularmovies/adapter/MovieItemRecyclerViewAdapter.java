@@ -1,5 +1,6 @@
 package com.larsonapps.popularmovies.adapter;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,6 +31,7 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
     private int mHeight;
     private ViewModel mViewModel;
     private List<String> mMovieData;
+    private Context context;
 
     //private final MovieItemRecyclerViewAdapterOnClickHandler mClickHandler;
 
@@ -45,9 +47,10 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
         mListener = listener;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
+        context = parent.getContext();
         // get visible width and height of the recyclerview
         mWidth  = parent.getMeasuredWidth();
         mHeight = parent.getMeasuredHeight();
@@ -59,7 +62,7 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
       /*  holder.mItem = mMovieData.get(position);
         holder.mIdView.setText(mMovieData.get(position).id);
         holder.mContentView.setText(mMovieData.get(position).content); */
@@ -81,8 +84,8 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
             Picasso.get().load(urlString +
                      MovieActivity.mPosterSize +
                     urlStrings.get(position))
-                    .noPlaceholder()
                     .error(R.mipmap.error)
+                    .noPlaceholder()
                     .resize(mWidth / MovieActivity.mNumberHorizontalImages,
                             mHeight / MovieActivity.mNumberVerticalImages)
                     .into(holder.mMovieImageView);
@@ -108,11 +111,11 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
         return mMovieData.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final ImageView mMovieImageView;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final View mView;
+        final ImageView mMovieImageView;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mMovieImageView = view.findViewById(R.id.iv_list_item);
@@ -128,12 +131,4 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
         mMovieData = movieData;
         notifyDataSetChanged();
     }
-
-    /**
-     * Interface for on click listener
-     */
-   // public interface MovieItemRecyclerViewAdapterOnClickHandler {
-
-  //      void onClick(MovieResult clickedItemResults);
-  //  }
 }
