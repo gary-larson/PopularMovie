@@ -8,10 +8,10 @@
     tools:context=".MovieActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/list"
-        android:name="com.larsonapps.popularmovies.MovieItemFragment"
+        android:id="@+id/movie_fragment_container_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:name="com.larsonapps.popularmovies.MovieItemFragment" />
 
 
 </LinearLayout>

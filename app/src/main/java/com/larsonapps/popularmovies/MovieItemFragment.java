@@ -22,7 +22,6 @@ import com.larsonapps.popularmovies.adapter.MovieItemRecyclerViewAdapter;
 import com.larsonapps.popularmovies.data.MovieMain;
 import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,7 +37,7 @@ public class MovieItemFragment extends Fragment {
     // COMPLETED: Customize parameters
     private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
-    private MovieListViewModel mViewModel;
+    private MovieListViewModel mMovieListViewModel;
     private MovieItemRecyclerViewAdapter mAdapter;
     private TextView errorMessageTextView;
     private ProgressBar loadingIndicatorProgressBar;
@@ -74,7 +73,7 @@ public class MovieItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_item_list, container, false);
-        mViewModel = new ViewModelProvider(requireActivity()).get(MovieListViewModel.class);
+        mMovieListViewModel = new ViewModelProvider(requireActivity()).get(MovieListViewModel.class);
         errorMessageTextView = view.findViewById(R.id.tv_error_message);
         loadingIndicatorProgressBar = view.findViewById(R.id.pb_loading_indicator);
         // Set the adapter
@@ -89,30 +88,32 @@ public class MovieItemFragment extends Fragment {
         final Observer<MovieMain> movieMainObserver = new Observer<MovieMain>() {
             @Override
             public void onChanged(@Nullable final MovieMain newMovieMain) {
-                if (newMovieMain == null) {
-                    showErrorMessage();
-                } else if (!newMovieMain.getErrorMessage().equals("")) {
-                    errorMessageTextView.setText(newMovieMain.getErrorMessage());
-                    showErrorMessage();
-                } else {
-                    // Update the UI, in this case, an adapter.
-                    // Setup layout manager
-                    if (mColumnCount <= 1) {
-                        mMovieRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+                if (mMovieRecyclerView != null) {
+                    if (newMovieMain == null) {
+                        showErrorMessage();
+                    } else if (!newMovieMain.getErrorMessage().equals("")) {
+                        errorMessageTextView.setText(newMovieMain.getErrorMessage());
+                        showErrorMessage();
                     } else {
-                        mMovieRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                        // Update the UI, in this case, an adapter.
+                        // Setup layout manager
+                        if (mColumnCount <= 1) {
+                            mMovieRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+                        } else {
+                            mMovieRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                        }
+                        // indicate all poster are the same size
+                        mMovieRecyclerView.setHasFixedSize(true);
+                        // setup Movie adapter for RecyclerView
+                        List<String> posterUrls = newMovieMain.getPosterUrls();
+                        mAdapter = new MovieItemRecyclerViewAdapter(posterUrls, mListener);
+                        mMovieRecyclerView.setAdapter(mAdapter);
+                        showRecyclerView();
                     }
-                    // indicate all poster are the same size
-                    mMovieRecyclerView.setHasFixedSize(true);
-                    // setup Movie adapter for RecyclerView
-                    List<String> posterUrls = newMovieMain.getPosterUrls();
-                    mAdapter = new MovieItemRecyclerViewAdapter(posterUrls, mListener);
-                    mMovieRecyclerView.setAdapter(mAdapter);
-                    showRecyclerView();
                 }
             }
         };
-        mViewModel.getMovieMain().observe(getViewLifecycleOwner(), movieMainObserver);
+        mMovieListViewModel.getMovieMain().observe(getViewLifecycleOwner(), movieMainObserver);
         return view;
     }
 

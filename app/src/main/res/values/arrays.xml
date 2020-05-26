@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="setting_movie_list_option_labels">
+        <item>@string/setting_movie_list_popular_label</item>
+        <item>@string/setting_movie_list_top_rated_label</item>
+        <item>@string/setting_movie_list_favorite_label</item>
+    </array>
+
+    <array name="setting_movie_list_option_values">
+        <item>@string/setting_movie_list_popular_value</item>
+        <item>@string/setting_movie_list_top_rated_value</item>
+        <item>@string/setting_movie_list_favorite_value</item>
+    </array>
+    <!-- Reply Preference -->
+    <string-array name="reply_entries">
+        <item>Reply</item>
+        <item>Reply to all</item>
+    </string-array>
+
+    <string-array name="reply_values">
+        <item>reply</item>
+        <item>reply_all</item>
+    </string-array>
+</resources>

@@ -14,4 +14,30 @@
     <string name="movie_backdrop_poster">Movie Backdrop Poster</string>
     <string name="backdrop_size">w342/</string>
     <string name="poster_size">w185/</string>
+    <string name="setting_movie_list_label">Movie List Type</string>
+    <string name="setting_movie_list_popular_label">Popular Movies</string>
+    <string name="setting_movie_list_top_rated_label">Top Rated Movies</string>
+    <string name="setting_movie_list_favorite_label">Favorite Movies</string>
+    <string name="setting_movie_list_key" translatable="false">movie_list</string>
+    <string name="setting_movie_list_popular_value" translatable="false">popular</string>
+    <string name="setting_movie_list_top_rated_value" translatable="false">top_rated</string>
+    <string name="setting_movie_list_favorite_value" translatable="false">favorite</string>
+    <string name="setting_movie_list_title">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="settings_movie_list_category_title">Movie List</string>
 </resources>

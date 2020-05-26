@@ -56,7 +56,7 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
 
         // Inflate layout
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.movie_fragment_item, parent, false);
+                .inflate(R.layout.fragment_movie_item, parent, false);
         return new ViewHolder(view);
     }
 

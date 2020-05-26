@@ -1,14 +1,17 @@
 package com.larsonapps.popularmovies.viewmodels;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.preference.PreferenceManager;
 
 
+import com.larsonapps.popularmovies.R;
 import com.larsonapps.popularmovies.data.MovieListRepository;
 import com.larsonapps.popularmovies.data.MovieMain;
 import com.larsonapps.popularmovies.utilities.NetworkUtilities;
@@ -21,42 +24,42 @@ public class MovieListViewModel extends AndroidViewModel {
     private MovieListRepository mMovieListRepository;
     private int mPage;
     private String mType;
+    private SharedPreferences mSharedPreferences;
     // Declare LiveData variables
-    private MutableLiveData<MovieMain> mMovieMain;
+    private LiveData<MovieMain> mMovieMain;
 
     public MovieListViewModel(Application application) {
         super(application);
         this.mApplication = application;
         mMovieListRepository = new MovieListRepository(mApplication);
         mPage = 1;
+//        mSharedPreferences = PreferenceManager.getDefaultSharedPreference(application.getApplicationContext());
+//        mType = mSharedPreferences.getString(
+//                application.getString(R.string.setting_movie_list_key),
+//                application.getString(R.string.setting_movie_list_popular_value));
         mType = NetworkUtilities.POPULAR_REQUEST_URL;
-        mMovieListRepository.getMovieMain(mType, mPage).observeForever(movieMainObserver);
+        //mMovieMain = mMovieListRepository.getMovieMain(mType, mPage);
     }
 
     @Override
     protected void onCleared() {
-        mMovieListRepository.getMovieMain(mType, mPage).removeObserver(movieMainObserver);
         super.onCleared();
     }
 
-    public MutableLiveData<MovieMain> getMovieMain() {
+    public LiveData<MovieMain> getMovieMain() {
         if (mMovieMain == null) {
-            mMovieMain = new MutableLiveData<>();
+            //mMovieMain = new MutableLiveData<>();
+            mMovieMain = mMovieListRepository.getMovieMain(mType, mPage);
         }
         return mMovieMain;
     }
 
     public void retrieveMovieMain() {
+        if (mType.equals(mApplication.getString(R.string.setting_movie_list_favorite_value))) {
+            // TODO process favorite
+        }
         mMovieListRepository.getMovieMain(mType, mPage);
     }
-
-    final private Observer<MovieMain> movieMainObserver = new Observer<MovieMain>() {
-        @Override
-        public void onChanged(@Nullable final MovieMain newMovieMain) {
-            // Update the UI, in this case, an adapter.
-            mMovieMain.setValue(newMovieMain);
-        }
-    };
 
     public int getmPage() {return mPage;}
 

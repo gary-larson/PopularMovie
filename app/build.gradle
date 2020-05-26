@@ -31,12 +31,17 @@ android {
 }
 
 dependencies {
-    // Room Dependencies
+    // Definitions
+    def preference_version = "1.1.1"
     def room_version = "2.2.5"
 
+    // Room Dependencies
     implementation "androidx.room:room-runtime:$room_version"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.preference:preference:1.1.1'
     annotationProcessor "androidx.room:room-compiler:$room_version"
+    // Preference Dependencies
+    implementation "androidx.preference:preference:$preference_version"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
