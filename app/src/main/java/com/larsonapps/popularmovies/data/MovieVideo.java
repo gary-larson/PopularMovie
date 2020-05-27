@@ -17,29 +17,6 @@ public class MovieVideo {
     public MovieVideo() {}
 
     /**
-     * Constructor for all variables
-     * @param id to set
-     * @param iso_639_1 to set
-     * @param iso_3166_1 to set
-     * @param key to set
-     * @param name to set
-     * @param site to set
-     * @param size to set
-     * @param type to set
-     */
-    public MovieVideo (String id, String iso_639_1, String iso_3166_1, String key, String name,
-                       String site, int size, String type) {
-        this.mId = id;
-        this.mIso_639_1 = iso_639_1;
-        this.mIso_3166_1 = iso_3166_1;
-        this.mKey = key;
-        this.mName = name;
-        this.mSite = site;
-        this.mSize = size;
-        this.mType = type;
-    }
-
-    /**
      * Getter for id
      * @return id
      */

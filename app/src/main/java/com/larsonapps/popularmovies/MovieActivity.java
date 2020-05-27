@@ -9,12 +9,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 
 public class MovieActivity extends AppCompatActivity implements
         MovieItemFragment.OnListFragmentInteractionListener {
+    // Declare CONSTANTS
+    public final static String DETAIL_MOVIE_ID_KEY = "movie_id";
+    // Declare variables
     public static int mNumberHorizontalImages;
     public static int mNumberVerticalImages;
     public static String mPosterSize;
@@ -49,15 +51,16 @@ public class MovieActivity extends AppCompatActivity implements
         } else {
             mTitle = getString(R.string.setting_movie_list_top_rated_label);
         }
-        mMovieListViewModel.setmType(type);
+        mMovieListViewModel.setType(type);
         setTitle(mTitle);
     }
 
 
     @Override
     public void onListFragmentInteraction(int position) {
-        Toast.makeText(this, "You have pressed movie in position: " + position,
-                Toast.LENGTH_SHORT).show();
+        Intent detailIntent = new Intent(this, MovieDetailsActivity.class);
+        detailIntent.putExtra(DETAIL_MOVIE_ID_KEY, mMovieListViewModel.getMovieId(position));
+        startActivity(detailIntent);
     }
 
     /**
@@ -86,8 +89,8 @@ public class MovieActivity extends AppCompatActivity implements
         switch (menuItemThatWasSelected) {
             case R.id.action_previous_page:
                 // Get previous page of Movies
-                mMovieListViewModel.setmPage(mMovieListViewModel.getmPage() - 1);
-                if (mMovieListViewModel.getmPage() == 1) {
+                mMovieListViewModel.setPage(mMovieListViewModel.getPage() - 1);
+                if (mMovieListViewModel.getPage() == 1) {
                     isPreviousEnabled = false;
                     item.setEnabled(isPreviousEnabled);
                 }
@@ -97,10 +100,10 @@ public class MovieActivity extends AppCompatActivity implements
                 return true;
             case R.id.action_next_page:
                 // Get Next Page of Movies
-                mMovieListViewModel.setmPage(mMovieListViewModel.getmPage() + 1);
+                mMovieListViewModel.setPage(mMovieListViewModel.getPage() + 1);
                 isPreviousEnabled = true;
                 mPreviousMenuItem.setEnabled(isPreviousEnabled);
-                if (mMovieListViewModel.getmPage() == mMovieListViewModel.getTotalPages()) {
+                if (mMovieListViewModel.getPage() == mMovieListViewModel.getTotalPages()) {
                     isNextEnabled = false;
                     item.setEnabled(isNextEnabled);
                 }

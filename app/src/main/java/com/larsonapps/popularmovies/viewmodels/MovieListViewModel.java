@@ -33,12 +33,7 @@ public class MovieListViewModel extends AndroidViewModel {
         this.mApplication = application;
         mMovieListRepository = new MovieListRepository(mApplication);
         mPage = 1;
-//        mSharedPreferences = PreferenceManager.getDefaultSharedPreference(application.getApplicationContext());
-//        mType = mSharedPreferences.getString(
-//                application.getString(R.string.setting_movie_list_key),
-//                application.getString(R.string.setting_movie_list_popular_value));
         mType = NetworkUtilities.POPULAR_REQUEST_URL;
-        //mMovieMain = mMovieListRepository.getMovieMain(mType, mPage);
     }
 
     @Override
@@ -61,14 +56,18 @@ public class MovieListViewModel extends AndroidViewModel {
         mMovieListRepository.getMovieMain(mType, mPage);
     }
 
-    public int getmPage() {return mPage;}
+    public int getPage() {return mPage;}
 
-    public void setmPage(int mPage) {
+    public void setPage(int mPage) {
         this.mPage = mPage;
     }
 
-    public void setmType(String mType) {
+    public void setType(String mType) {
         this.mType = mType;
+    }
+
+    public int getMovieId(int position) {
+        return mMovieMain.getValue().getMovieList().get(position).getMovieID();
     }
 
     public int getTotalPages () {

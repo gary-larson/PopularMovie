@@ -38,9 +38,6 @@ public class MovieListRepository {
      * Method to start background task to get movies from The movie Database
      */
     public MutableLiveData<MovieMain> getMovieMain(String mType, int page) {
-//        if (mPosterUrls.getValue().size() > 0) {
-//            return mPosterUrls;
-//        }
         String[] myString = {mApiKey, mType, Integer.toString(page)};
         // start background task
         new FetchMovieListTask().execute(myString);

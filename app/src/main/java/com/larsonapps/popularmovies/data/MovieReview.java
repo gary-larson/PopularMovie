@@ -15,21 +15,6 @@ public class MovieReview {
     public MovieReview () {}
 
     /**
-     * Constructor to create class with all items
-     * @param page to set
-     * @param reviews to set
-     * @param totalPages to set
-     * @param totalReviews to set
-     */
-    public MovieReview (int page, List<ReviewResult> reviews,
-                        int totalPages, int totalReviews) {
-        this.mPage = page;
-        this.mReviews = reviews;
-        this.mTotalPages = totalPages;
-        this.mTotalReviews = totalReviews;
-    }
-
-    /**
      * Getter for page number
      * @return page number
      */

@@ -1,11 +1,17 @@
 package com.larsonapps.popularmovies.data;
 
+import java.util.Date;
 import java.util.List;
 
 public class MovieDetails {
     //Declare variables
     private String mErrorMessage;
     private int mRuntime;
+    private String mTitle;
+    private Date mReleaseDate;
+    private String mBackdropPath;
+    private double mVoteAverage;
+    private String mOverview;
     private List<MovieVideo> mVideos;
     private MovieReview mMovieReview;
 
@@ -46,6 +52,46 @@ public class MovieDetails {
         this.mRuntime = mRuntime;
     }
 
+    public Date getReleaseDate() {
+        return mReleaseDate;
+    }
+
+    public void setReleaseDate(Date mReleaseDate) {
+        this.mReleaseDate = mReleaseDate;
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setTitle(String mTitle) {
+        this.mTitle = mTitle;
+    }
+
+    public String getBackdropPath() {
+        return mBackdropPath;
+    }
+
+    public void setBackdropPath(String mBackdropPath) {
+        this.mBackdropPath = mBackdropPath;
+    }
+
+    public double getVoteAverage() {
+        return mVoteAverage;
+    }
+
+    public void setVoteAverage(double voteAverage) {
+        mVoteAverage = voteAverage;
+    }
+
+    public String getOverview() {
+        return mOverview;
+    }
+
+    public void setOverview(String mOverview) {
+        this.mOverview = mOverview;
+    }
+
     /**
      * Getter for movie video list
      * @return movie video list
@@ -76,6 +122,14 @@ public class MovieDetails {
      */
     public void setReviews(MovieReview mMovieReview) {
         this.mMovieReview = mMovieReview;
+    }
+
+    /**
+     * Getter for movie review
+     * @return movie error message
+     */
+    public String getErrorMessage() {
+        return mErrorMessage;
     }
 
     /**

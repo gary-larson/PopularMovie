@@ -1,8 +1,14 @@
 package com.larsonapps.popularmovies;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
+import android.graphics.Movie;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -11,24 +17,31 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.larsonapps.popularmovies.adapter.MovieItemRecyclerViewAdapter;
 import com.larsonapps.popularmovies.data.MovieDetails;
+import com.larsonapps.popularmovies.data.MovieMain;
 import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
 import com.larsonapps.popularmovies.utilities.NetworkUtilities;
+import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
+import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     // declare variables
-    private String temp = "";
+    //private String temp = "";
+    MovieDetails mMovieDetails;
+    private MovieDetailViewModel mMovieDetailViewModel;
     int mWidth;
     int mMovieId;
     TextView mErrorMessageTextView;
-    ProgressBar mLoadingIndicator;
+    ProgressBar mLoadingIndicatorProgressBar;
     TextView mTitleTextView;
     ImageView mMovieImageView;
     TextView mReleaseDateTextView;
@@ -53,7 +66,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 getResources().getInteger(R.integer.backdrop_multiplier));
         setTitle("MovieDetail");
         // initialize variables
-        mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
+        mMovieDetailViewModel = new ViewModelProvider(this).get(MovieDetailViewModel.class);
+        mLoadingIndicatorProgressBar = findViewById(R.id.pb_loading_indicator);
         mErrorMessageTextView = findViewById(R.id.tv_error_message);
         mTitleTextView = findViewById(R.id.title_text_view);
         mMovieImageView = findViewById(R.id.poster_image_view);
@@ -65,154 +79,83 @@ public class MovieDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         //get the attached bundle from the intent
         Bundle extras = intent.getExtras();
-        //Retrieve Title from the bundle and displaying it
-        // Lint is producing a warning of a possible null pointer exception
-        // I believe it is an error but am covering it anyway.
-        try {
-            temp = extras.getString("TITLE");
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        mTitleTextView.setText(temp);
-        // Retrieve Poster path from bundle and display it
-       // mWidth = mMovieImageView.getMeasuredWidth();
-        String backDropPath = extras.getString("BACKDROP_PATH");
-        if(backDropPath != null){
-            String urlString;
-            // Set whether or not to use ssl based on API build
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
-                urlString = NetworkUtilities.POSTER_BASE_HTTPS_URL;
-            } else{
-                urlString = NetworkUtilities.POSTER_BASE_HTTP_URL;
-            }
-            // Utilize Picasso to load the poster into the image view
-            // using noPlaceHolder because picasso had blank spaces on some emulators
-            // and this fixed the issue
-            Picasso.get().load(urlString +
-                    getResources().getString(R.string.backdrop_size) + backDropPath)
-                    .noPlaceholder()
-                    .error(R.mipmap.error)
-                    .resize(mWidth, (mWidth * 9) / 16)
-                    .into(mMovieImageView);
-        }
-        // Retrieve Release date and display it
-        // Release date is stored as a Date type so we can format the Date
-        Date releaseDate = new Date(extras.getLong("RELEASE_DATE"));
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy",
-                Locale.getDefault());
-        mReleaseDateTextView.setText(dateFormat.format(releaseDate));
         // Retrieve the Movie Id from bundle
-        mMovieId = extras.getInt("MOVIE_ID");
-        // Retrieve Voter average from bundle and display it
-        String tempString = String.format(Locale.getDefault(), "%.1f/10", extras.getDouble("VOTE_AVERAGE"));
-        mVoteAverageTextView.setText(tempString);
-        // Retrieve overview from bundle and display it
-        mOverviewTextView.setText(extras.getString("OVERVIEW"));
-        mApiKey = extras.getString("API_KEY");
-        getMovieDetails();
-    }
+        mMovieId = extras.getInt(MovieActivity.DETAIL_MOVIE_ID_KEY);
 
-    private void getMovieDetails() {
-            String[] myString = {mApiKey, Integer.toString(mMovieId)};
-            // start background task
-            new FetchMovieDetailsTask(this).execute(myString);
-    }
-
-    /**
-     * Class to run background task
-     */
-    static class FetchMovieDetailsTask extends AsyncTask<String, Void, MovieDetails> {
-        private final WeakReference<MovieDetailsActivity> activityWeakReference;
-
-        FetchMovieDetailsTask(MovieDetailsActivity activity) {
-            activityWeakReference = new WeakReference<>(activity);
-        }
-
-        /**
-         * Method to show loading indicator
-         */
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            MovieDetailsActivity activity = activityWeakReference.get();
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
-
-            activity.mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        /**
-         * Method to run the background task
-         * @param params 0: api key, 1: type of query, 2: page number
-         * @return Movie Information responded from The Movie Database
-         */
-        @Override
-        protected MovieDetails doInBackground(String... params) {
-
-            /* Without information we cannot look up Movies. */
-            if (params.length == 0) {
-                return null;
-            }
-
-            // build url
-            int movieId = Integer.parseInt(params[1]);
-            URL movieRequestUrl = NetworkUtilities.buildDetailsUrl(params[0],movieId);
-            try {
-                // attempt to get movie information
-                String jsonMovieResponse = NetworkUtilities
-                        .getResponseFromHttpUrl(movieRequestUrl);
-                // if null cancel task (Unknown error)
-                if (jsonMovieResponse == null) {
-                    cancel(true);
-                }
-                // return Json decoded movie Information
-                return MovieJsonUtilities
-                        .getMovieDetails(jsonMovieResponse);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // in case of an error return null
-                return null;
-            }
-        }
-
-        /**
-         * Method to clean up
-         * @param details to process
-         */
-        @Override
-        protected void onPostExecute(MovieDetails details) {
-            MovieDetailsActivity activity = activityWeakReference.get();
-            // turn off loading indicator
-            activity.mLoadingIndicator.setVisibility(View.GONE);
-            // if results are good load data to adapter
-            if (details != null) {
-                activity.mRuntimeTextView.setText(String.format(Locale.getDefault(),
-                        "%d Minutes", details.getRuntime()));
-
-            } else {
-                // if error display status message from The Movie Database
-                if (mDetailsErrorMessage != null) {
-                    activity.mRuntimeTextView.setText(mDetailsErrorMessage);
+        final Observer<MovieDetails> movieDetailsObserver = new Observer<MovieDetails>() {
+            @Override
+            public void onChanged(@Nullable final MovieDetails newMovieDetails) {
+                if (newMovieDetails == null) {
+                    showErrorMessage();
+                } else if (newMovieDetails.getErrorMessage() != null &&
+                        !newMovieDetails.getErrorMessage().equals("")) {
+                    mErrorMessageTextView.setText(newMovieDetails.getErrorMessage());
+                    showErrorMessage();
+                } else {
+                    // Update the UI.
+                    // Retrieve Title and display
+                    mTitleTextView.setText(newMovieDetails.getTitle());
+                    // Retrieve Backdrop path and display
+                    String backDropPath = newMovieDetails.getBackdropPath();
+                    if(backDropPath != null){
+                        String urlString;
+                        // Set whether or not to use ssl based on API build
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+                            urlString = NetworkUtilities.POSTER_BASE_HTTPS_URL;
+                        } else{
+                            urlString = NetworkUtilities.POSTER_BASE_HTTP_URL;
+                        }
+                        // Utilize Picasso to load the poster into the image view
+                        // using noPlaceHolder because picasso had blank spaces on some emulators
+                        // and this fixed the issue
+                        Picasso.get().load(urlString +
+                                getResources().getString(R.string.backdrop_size) + backDropPath)
+                                .noPlaceholder()
+                                .error(R.mipmap.error)
+                                .resize(mWidth, (mWidth * 9) / 16)
+                                .into(mMovieImageView);
+                    }
+                    // Retrieve Release date and display it
+                    // Release date is stored as a Date type so we can format the Date
+                    Date releaseDate = newMovieDetails.getReleaseDate();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy",
+                            Locale.getDefault());
+                    mReleaseDateTextView.setText(dateFormat.format(releaseDate));
+                    // Retrieve runtime and display it
+                    String tempString = String.format(Locale.getDefault(), "%d Minutes",
+                            newMovieDetails.getRuntime());
+                    mRuntimeTextView.setText(tempString);
+                    // Retrieve Voter average and display it
+                    tempString = String.format(Locale.getDefault(), "%.1f/10",
+                            newMovieDetails.getVoteAverage());
+                    mVoteAverageTextView.setText(tempString);
+                    // Retrieve overview and display it
+                    mOverviewTextView.setText(newMovieDetails.getOverview());
                 }
             }
-        }
+        };
+        mMovieDetailViewModel.getMovieDetails(mMovieId).observe(this, movieDetailsObserver);
+    }
 
-        // if background task is cancelled show error message
-        @Override
-        protected void onCancelled(MovieDetails movieDetails) {
-            super.onCancelled(movieDetails);
-            // turn off loading indicator
-            MovieDetailsActivity activity = activityWeakReference.get();
-            if (activity == null || activity.isFinishing()) {
-                return;
-            }
+    private void showErrorMessage() {
+        mErrorMessageTextView.setVisibility(View.VISIBLE);
+        mLoadingIndicatorProgressBar.setVisibility(View.INVISIBLE);
+        mTitleTextView.setVisibility(View.INVISIBLE);
+        mMovieImageView.setVisibility(View.INVISIBLE);
+        mReleaseDateTextView.setVisibility(View.INVISIBLE);
+        mRuntimeTextView.setVisibility(View.INVISIBLE);
+        mVoteAverageTextView.setVisibility(View.INVISIBLE);
+        mOverviewTextView.setVisibility(View.INVISIBLE);
+    }
 
-            activity.mLoadingIndicator.setVisibility(View.GONE);
-            /* Then, show the error */
-            activity.mErrorMessageTextView.setVisibility(View.VISIBLE);
-        }
+    private void showDetails() {
+        mErrorMessageTextView.setVisibility(View.GONE);
+        mLoadingIndicatorProgressBar.setVisibility(View.INVISIBLE);
+        mTitleTextView.setVisibility(View.VISIBLE);
+        mMovieImageView.setVisibility(View.VISIBLE);
+        mReleaseDateTextView.setVisibility(View.VISIBLE);
+        mRuntimeTextView.setVisibility(View.VISIBLE);
+        mVoteAverageTextView.setVisibility(View.VISIBLE);
+        mOverviewTextView.setVisibility(View.VISIBLE);
     }
 }

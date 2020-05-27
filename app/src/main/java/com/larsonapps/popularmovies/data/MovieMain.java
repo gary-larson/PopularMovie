@@ -4,26 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MovieMain {
-    private int mPage;
     private List<MovieResult> mMovieList;
     private int mTotalPages;
     private String mErrorMessage;
     private List<String> mPosterUrls;
 
     public MovieMain () {
-        mPage = 1;
         mErrorMessage = "";
     }
 
-    public int getPage() {
-        return mPage;
-    }
-
-    public void setPage(int mPage) {
-        this.mPage = mPage;
-    }
-
-    List<MovieResult> getMovieList() {
+    public List<MovieResult> getMovieList() {
         return mMovieList;
     }
 
