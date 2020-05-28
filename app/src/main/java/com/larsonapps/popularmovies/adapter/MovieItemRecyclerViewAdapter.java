@@ -14,38 +14,43 @@ import android.widget.ImageView;
 import com.larsonapps.popularmovies.MovieActivity;
 import com.larsonapps.popularmovies.MovieItemFragment.OnListFragmentInteractionListener;
 import com.larsonapps.popularmovies.R;
+import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.utilities.NetworkUtilities;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a image and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * COMPLETED: Replace the implementation with code for your data type.
+ * Class to display movie list items
  */
 public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItemRecyclerViewAdapter.ViewHolder> {
     // Declare member variables
     private int mWidth;
     private int mHeight;
     private ViewModel mViewModel;
-    private List<String> mMovieData;
+    private List<MovieResult> mMovieData;
     private Context context;
 
-    //private final MovieItemRecyclerViewAdapterOnClickHandler mClickHandler;
-
-   // MovieItemRecyclerViewAdapter(MovieItemRecyclerViewAdapterOnClickHandler clickHandler) {
-   //     mClickHandler = clickHandler;
-   // }
-
-    //private final List<DummyItem> mValues;
+    // Variable for listener
     private final OnListFragmentInteractionListener mListener;
 
-    public MovieItemRecyclerViewAdapter(List<String> items, OnListFragmentInteractionListener listener) {
+    /**
+     * Constructor for adapter
+     * @param items
+     * @param listener
+     */
+    public MovieItemRecyclerViewAdapter(List<MovieResult> items,
+                                        OnListFragmentInteractionListener listener) {
         mMovieData = items;
         mListener = listener;
     }
 
+    /**
+     * Method to create individual view holders
+     * @param parent of the view holders MovieItemFragment
+     * @param viewType to use
+     * @return the completed view holder
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -60,16 +65,18 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
         return new ViewHolder(view);
     }
 
+    /**
+     * Method to bind data to the view holder
+     * @param holder to bind the data to
+     * @param position of the item in the holder
+     */
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-      /*  holder.mItem = mMovieData.get(position);
-        holder.mIdView.setText(mMovieData.get(position).id);
-        holder.mContentView.setText(mMovieData.get(position).content); */
 
         // Declare a variable of the movie results
-        List<String> urlStrings = mMovieData;
+        final List<MovieResult> movieResults = mMovieData;
         // Test if Poster Path is populated
-        if(urlStrings.get(position) !=null ){
+        if(movieResults.get(position) !=null ){
 
             String urlString;
             // Set whether or not to use ssl based on API build
@@ -82,7 +89,7 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
             // resize images based on height, width and orientation of phone
             Picasso.get().load(urlString +
                      MovieActivity.mPosterSize +
-                    urlStrings.get(position))
+                    movieResults.get(position).getPosterPath())
                     .error(R.mipmap.error)
                     .noPlaceholder()
                     .resize(mWidth / MovieActivity.mNumberHorizontalImages,
@@ -90,18 +97,24 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
                     .into(holder.mMovieImageView);
         }
 
+        // set up on click listener
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.getAdapterPosition());
+                    mListener.onListFragmentInteraction(holder.getAdapterPosition(),
+                            movieResults.get(holder.getAdapterPosition()).getMovieID());
                 }
             }
         });
     }
 
+    /**
+     * Method to get the number of items in the list
+     * @return the number of items in the list
+     */
     @Override
     public int getItemCount() {
         if (mMovieData == null) {
@@ -110,13 +123,22 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
         return mMovieData.size();
     }
 
+    /**
+     * Class for the view holders
+     */
     class ViewHolder extends RecyclerView.ViewHolder {
+        // Declare variables
         final View mView;
         final ImageView mMovieImageView;
 
+        /**
+         * Constructor for the view holder class
+         * @param view
+         */
         ViewHolder(View view) {
             super(view);
             mView = view;
+            // TODO Convert to binding
             mMovieImageView = view.findViewById(R.id.iv_list_item);
         }
 
@@ -126,7 +148,7 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
      * Method to set the movie data when it changes and notify the RecyclerView when this happens
      * @param movieData to set
      */
-    public void setMovieData(List<String> movieData) {
+    public void setMovieData(List<MovieResult> movieData) {
         mMovieData = movieData;
         notifyDataSetChanged();
     }

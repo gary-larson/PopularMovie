@@ -14,6 +14,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
+/**
+ * Class to deal with url's and retrieveing data from the internet
+ */
 final public class NetworkUtilities {
     // Constants for requests (BASE + type + API_KEY_QUERY + apiKey + [PAGE_QUERY + page #])
     final private static String REQUEST_BASE_HTTPS_URL = "https://api.themoviedb.org/3/movie/";
@@ -28,13 +31,14 @@ final public class NetworkUtilities {
     final private static String APPEND_VIDEOS_QUERY_URL =
             "&append_to_response=videos,images,reviews";
 
-    // Constants for poster requests (BASE + SIZE + movieId)
+    // Constants for API level requests (BASE + SIZE + movieId)
     final public static String POSTER_BASE_HTTPS_URL = "https://image.tmdb.org/t/p/";
     final public static String POSTER_BASE_HTTP_URL = "http://image.tmdb.org/t/p/";
 
 
     /**
-     * Builds the URL used to talk to the The Movie Database server using an api key, type, and page number.
+     * Builds the URL used to talk to the The Movie Database server using an api key, type,
+     *  and page number.
      *
      * @param apiKey assigned by The Movie Database.
      * @param type of query (popular or highest rated)
@@ -69,7 +73,7 @@ final public class NetworkUtilities {
     }
 
     /**
-     * Builds the URL used to talk to the The Movie Database server using an api key, type, and page number.
+     * Builds the URL used to talk to the The Movie Database server using an api key, and movie id.
      *
      * @param apiKey assigned by The Movie Database.
      * @param movieId to retrieve
@@ -91,6 +95,48 @@ final public class NetworkUtilities {
                     API_KEY_QUERY_URL + apiKey +
                     LANGUAGE_QUERY_URL +
                     APPEND_VIDEOS_QUERY_URL;
+        }
+        // Build Uri
+        Uri builtUri = Uri.parse(urlString).buildUpon().build();
+        URL url = null;
+        // Convert to URL
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        // return url
+        return url;
+    }
+
+    /**
+     * Builds the URL used to talk to the The Movie Database server using an api key, movie id,
+     *  and page number.
+     *
+     * @param apiKey assigned by The Movie Database.
+     * @param movieId to retrieve
+     * @param page to retrieve
+     * @return The URL to use to query the The Movie Database server.
+     */
+    public static URL buildReviewsUrl(String apiKey, int movieId, int page) {
+        String urlString;
+        apiKey = prepareApiKey(apiKey);
+        // Set whether or not to use ssl based on API build
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+            urlString = REQUEST_BASE_HTTPS_URL +
+                    movieId +
+                    REVIEW_REQUEST_URL +
+                    API_KEY_QUERY_URL + apiKey +
+                    LANGUAGE_QUERY_URL +
+                    PAGE_QUERY_URL;
+        } else{
+            urlString = REQUEST_BASE_HTTP_URL +
+                    movieId +
+                    REVIEW_REQUEST_URL +
+                    API_KEY_QUERY_URL + apiKey +
+                    LANGUAGE_QUERY_URL +
+                    PAGE_QUERY_URL;
         }
         // Build Uri
         Uri builtUri = Uri.parse(urlString).buildUpon().build();
@@ -141,6 +187,11 @@ final public class NetworkUtilities {
         }
     }
 
+    /**
+     * Method to convert the api key to a usable form
+     * @param apiKey to prepare
+     * @return prepared api key
+     */
     private static String prepareApiKey (String apiKey) {
         if (!(apiKey.equals(""))) {
             try {

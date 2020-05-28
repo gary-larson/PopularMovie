@@ -1,20 +1,21 @@
-package com.larsonapps.popularmovies.data;
+package com.larsonapps.popularmovies.database;
 
 import androidx.room.Embedded;
 import androidx.room.Relation;
 
 import java.util.List;
 
-public class MovieFavoriteVideosReviews {
-    @Embedded MovieFavoriteEntity favorite;
+public class MovieVideosReviews {
+    @Embedded
+    MovieEntity favorite;
     @Relation(
             parentColumn = "favoriteKeyId",
             entityColumn = "videoFavoriteKeyId"
     )
-    List<MovieFavoriteVideoEntity> videos;
+    List<MovieVideoEntity> videos;
     @Relation(
             parentColumn = "favoriteKeyId",
             entityColumn = "statFavoriteKeyId"
     )
-    List<MovieFavoriteReviewStatsReviews> statsReviews;
+    List<MovieReviewStatsReviews> statsReviews;
 }

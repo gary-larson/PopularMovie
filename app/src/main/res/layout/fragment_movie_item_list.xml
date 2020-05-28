@@ -11,9 +11,9 @@
         android:name="com.larsonapps.popularmovies.MovieItemFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="invisible"
         tools:context=".MovieItemFragment"
-        tools:listitem="@layout/fragment_movie_item"
-        android:visibility="invisible"/>
+        tools:listitem="@layout/fragment_movie_item" />
 
     <TextView
         android:id="@+id/tv_error_message"

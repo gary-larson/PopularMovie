@@ -1,4 +1,4 @@
-package com.larsonapps.popularmovies.data;
+package com.larsonapps.popularmovies.database;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -11,7 +11,7 @@ import java.util.Date;
  * Class of the room table named favorites
  */
 @Entity (tableName = "favorites")
-public class MovieFavoriteEntity {
+public class MovieEntity {
 
     // Generate columns
     @PrimaryKey(autoGenerate = true)
@@ -36,9 +36,9 @@ public class MovieFavoriteEntity {
      * @param voteAverage to set
      */
     @Ignore
-    public MovieFavoriteEntity (String posterPath, String backDropPath, String overview,
-                                OffsetDateTime releaseDate, int movieId, String originalTitle,
-                                String title, double voteAverage) {
+    public MovieEntity(String posterPath, String backDropPath, String overview,
+                       OffsetDateTime releaseDate, int movieId, String originalTitle,
+                       String title, double voteAverage) {
         this.posterPath = posterPath;
         this.backDropPath = backDropPath;
         this.overview = overview;
@@ -60,9 +60,9 @@ public class MovieFavoriteEntity {
      * @param title to set
      * @param voteAverage to set
      */
-    public MovieFavoriteEntity (int favoriteKeyId, String posterPath, String backDropPath,
-                                String overview, OffsetDateTime releaseDate, int movieId,
-                                String originalTitle, String title, double voteAverage) {
+    public MovieEntity(int favoriteKeyId, String posterPath, String backDropPath,
+                       String overview, OffsetDateTime releaseDate, int movieId,
+                       String originalTitle, String title, double voteAverage) {
         this.favoriteKeyId = favoriteKeyId;
         this.posterPath = posterPath;
         this.backDropPath = backDropPath;

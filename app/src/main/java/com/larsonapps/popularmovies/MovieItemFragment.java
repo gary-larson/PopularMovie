@@ -25,16 +25,11 @@ import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 import java.util.List;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ * Class to deal with a list fragment
  */
 public class MovieItemFragment extends Fragment {
 
-    // COMPLETED: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // COMPLETED: Customize parameters
+    // Declare variables
     private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
     private MovieListViewModel mMovieListViewModel;
@@ -42,56 +37,47 @@ public class MovieItemFragment extends Fragment {
     private TextView errorMessageTextView;
     private ProgressBar loadingIndicatorProgressBar;
     private RecyclerView mMovieRecyclerView;
+    private MovieActivity mMovieActivity;
 
     /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
+     * Default constructor for movie item fragment
      */
-    public MovieItemFragment() {
-    }
+    public MovieItemFragment() {}
 
-    // COMPLETED: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static MovieItemFragment newInstance(int columnCount) {
-        MovieItemFragment fragment = new MovieItemFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
-    }
-
+    /**
+     * Method to create movie item fragment view
+     * @param inflater to use to convert xml
+     * @param container that holds this fragment
+     * @param savedInstanceState for state changes
+     * @return the view created
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_item_list, container, false);
+        // Initialize movie list view model from activity
         mMovieListViewModel = new ViewModelProvider(requireActivity()).get(MovieListViewModel.class);
+        mMovieActivity = (MovieActivity) getActivity();
+        // TODO replace with binding
         errorMessageTextView = view.findViewById(R.id.tv_error_message);
         loadingIndicatorProgressBar = view.findViewById(R.id.pb_loading_indicator);
-        // Set the adapter
-
-
-        mColumnCount = getResources().getInteger(R.integer.number_horizontal_posters);
-        final Context context = view.getContext();
         mMovieRecyclerView = view.findViewById(R.id.rv_list);
+        // set the column based on screen size and orientation
+        mColumnCount = getResources().getInteger(R.integer.number_horizontal_posters);
+        // get the context
+        final Context context = view.getContext();
 
-        //mMovieRecyclerView.setAdapter(mAdapter);
-        // Create the observer which updates the UI.
+        // Create the observer which updates the UI and sets the adapter
         final Observer<MovieMain> movieMainObserver = new Observer<MovieMain>() {
             @Override
             public void onChanged(@Nullable final MovieMain newMovieMain) {
+                // test if recyclerview exists
                 if (mMovieRecyclerView != null) {
+                    // test if data is available
                     if (newMovieMain == null) {
                         showErrorMessage();
-                    } else if (!newMovieMain.getErrorMessage().equals("")) {
+                        // test if there is an error
+                    } else if (newMovieMain.getErrorMessage() != null) {
                         errorMessageTextView.setText(newMovieMain.getErrorMessage());
                         showErrorMessage();
                     } else {
@@ -100,13 +86,22 @@ public class MovieItemFragment extends Fragment {
                         if (mColumnCount <= 1) {
                             mMovieRecyclerView.setLayoutManager(new LinearLayoutManager(context));
                         } else {
-                            mMovieRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                            mMovieRecyclerView.setLayoutManager(new GridLayoutManager(context,
+                                    mColumnCount));
+                        }
+                        // if menu exists set its state
+                        if (mMovieActivity.getMoreMovieMenuItem() != null) {
+                            if (mMovieListViewModel.getPage() == newMovieMain.getTotalPages()) {
+                                mMovieActivity.getMoreMovieMenuItem().setEnabled(false);
+                            } else {
+                                mMovieActivity.getMoreMovieMenuItem().setEnabled(true);
+                            }
                         }
                         // indicate all poster are the same size
                         mMovieRecyclerView.setHasFixedSize(true);
                         // setup Movie adapter for RecyclerView
-                        List<String> posterUrls = newMovieMain.getPosterUrls();
-                        mAdapter = new MovieItemRecyclerViewAdapter(posterUrls, mListener);
+                        mAdapter = new MovieItemRecyclerViewAdapter(newMovieMain.getMovieList(),
+                                mListener);
                         mMovieRecyclerView.setAdapter(mAdapter);
                         showRecyclerView();
                     }
@@ -128,6 +123,9 @@ public class MovieItemFragment extends Fragment {
         }
     }
 
+    /**
+     * Method to remove listener
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -135,26 +133,25 @@ public class MovieItemFragment extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Interface for the click listener in the activity containing the fragment
      */
     public interface OnListFragmentInteractionListener {
-        // COMPLETED: Update argument type and name
-        void onListFragmentInteraction(int position);
+        // set arguments type and name
+        void onListFragmentInteraction(int position, int movieId);
     }
 
+    /**
+     * Method to show error message while hiding loading indicator and recyclerview
+     */
     private void showErrorMessage() {
         errorMessageTextView.setVisibility(View.VISIBLE);
         loadingIndicatorProgressBar.setVisibility(View.INVISIBLE);
         mMovieRecyclerView.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Method to Show recyclerview while hiding error message and loading indicator
+     */
     private void showRecyclerView() {
         errorMessageTextView.setVisibility(View.GONE);
         loadingIndicatorProgressBar.setVisibility(View.INVISIBLE);

@@ -12,6 +12,9 @@ import android.view.MenuItem;
 
 import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 
+/**
+ * Class for Movie activity
+ */
 public class MovieActivity extends AppCompatActivity implements
         MovieItemFragment.OnListFragmentInteractionListener {
     // Declare CONSTANTS
@@ -21,29 +24,34 @@ public class MovieActivity extends AppCompatActivity implements
     public static int mNumberVerticalImages;
     public static String mPosterSize;
     MovieListViewModel mMovieListViewModel;
-    private String mTitle;
-    private boolean isPreviousEnabled;
-    private boolean isNextEnabled;
-    private MenuItem mSortMenuItem;
-    private MenuItem mPreviousMenuItem;
-    private MenuItem mNextMenuItem;
-    private SharedPreferences mSharedPreferences;
+    String mTitle;
+    boolean isNextEnabled;
+    private MenuItem mMoreMovieMenuItem;
+    SharedPreferences mSharedPreferences;
 
+    /**
+     * Method to create the movie activity
+     * @param savedInstanceState variables for state persistence
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 
+        // TODO save and restore state in all activities and fragments
+        // Get information from demension to apply changes is screen size and orientation
         mNumberVerticalImages = getResources().getInteger(R.integer.number_vertical_posters);
         mNumberHorizontalImages = getResources().getInteger(R.integer.number_horizontal_posters);
         mPosterSize = getResources().getString(R.string.poster_size);
+        // initialize the movie list view model
         mMovieListViewModel = new ViewModelProvider(this).get(MovieListViewModel.class);
-        isPreviousEnabled = false;
-        isNextEnabled = true;
+        // initialize information for menus
+        // Get shared preferences
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String type = mSharedPreferences.getString(
                 getString(R.string.setting_movie_list_key),
                 getString(R.string.setting_movie_list_popular_value));
+        // Set title based on movie list type preference
         if (type.equals(getString(R.string.setting_movie_list_popular_value))) {
             mTitle = getString(R.string.setting_movie_list_popular_label);
         } else if (type.equals(getString(R.string.setting_movie_list_favorite_value))) {
@@ -51,15 +59,21 @@ public class MovieActivity extends AppCompatActivity implements
         } else {
             mTitle = getString(R.string.setting_movie_list_top_rated_label);
         }
+        // set movie list preference in view model
         mMovieListViewModel.setType(type);
+        // set title of activity
         setTitle(mTitle);
     }
 
-
+    /**
+     * Listener for the adapter to react to movie clicked
+     * @param position of the movie clicked
+     * @param movieId of the movie clicked
+     */
     @Override
-    public void onListFragmentInteraction(int position) {
+    public void onListFragmentInteraction(int position, int movieId) {
         Intent detailIntent = new Intent(this, MovieDetailsActivity.class);
-        detailIntent.putExtra(DETAIL_MOVIE_ID_KEY, mMovieListViewModel.getMovieId(position));
+        detailIntent.putExtra(DETAIL_MOVIE_ID_KEY, movieId);
         startActivity(detailIntent);
     }
 
@@ -71,10 +85,7 @@ public class MovieActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        mPreviousMenuItem = menu.getItem(0);
-        mNextMenuItem =  menu.getItem(1);
-        mPreviousMenuItem.setEnabled(isPreviousEnabled);
-        mNextMenuItem.setEnabled(isNextEnabled);
+        mMoreMovieMenuItem =  menu.getItem(0);
         return true;
     }
 
@@ -87,22 +98,9 @@ public class MovieActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuItemThatWasSelected = item.getItemId();
         switch (menuItemThatWasSelected) {
-            case R.id.action_previous_page:
-                // Get previous page of Movies
-                mMovieListViewModel.setPage(mMovieListViewModel.getPage() - 1);
-                if (mMovieListViewModel.getPage() == 1) {
-                    isPreviousEnabled = false;
-                    item.setEnabled(isPreviousEnabled);
-                }
-                isNextEnabled = true;
-                mNextMenuItem.setEnabled(isNextEnabled);
-                mMovieListViewModel.retrieveMovieMain();
-                return true;
-            case R.id.action_next_page:
+            case R.id.action_more_movies:
                 // Get Next Page of Movies
                 mMovieListViewModel.setPage(mMovieListViewModel.getPage() + 1);
-                isPreviousEnabled = true;
-                mPreviousMenuItem.setEnabled(isPreviousEnabled);
                 if (mMovieListViewModel.getPage() == mMovieListViewModel.getTotalPages()) {
                     isNextEnabled = false;
                     item.setEnabled(isNextEnabled);
@@ -121,5 +119,9 @@ public class MovieActivity extends AppCompatActivity implements
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public MenuItem getMoreMovieMenuItem () {
+        return mMoreMovieMenuItem;
     }
 }

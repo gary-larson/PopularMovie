@@ -1,11 +1,11 @@
-package com.larsonapps.popularmovies.data;
+package com.larsonapps.popularmovies.database;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity (tableName = "videos")
-public class MovieFavoriteVideoEntity {
+public class MovieVideoEntity {
 
     @PrimaryKey(autoGenerate = true)
     private int videoKeyId;
@@ -30,8 +30,8 @@ public class MovieFavoriteVideoEntity {
      * @param type to set
      */
     @Ignore
-    public MovieFavoriteVideoEntity (int videoFavoriteKeyId, String iso_639_1, String iso_3166_1,
-                                     String key, String name, String site, int size, String type) {
+    public MovieVideoEntity(int videoFavoriteKeyId, String iso_639_1, String iso_3166_1,
+                            String key, String name, String site, int size, String type) {
         this.videoFavoriteKeyId = videoFavoriteKeyId;
         this.iso_639_1 = iso_639_1;
         this.iso_3166_1 = iso_3166_1;
@@ -54,9 +54,9 @@ public class MovieFavoriteVideoEntity {
      * @param size to set
      * @param type to set
      */
-    public MovieFavoriteVideoEntity (int videoKeyId, int videoFavoriteKeyId, String iso_639_1,
-                                     String iso_3166_1, String key, String name, String site,
-                                     int size, String type) {
+    public MovieVideoEntity(int videoKeyId, int videoFavoriteKeyId, String iso_639_1,
+                            String iso_3166_1, String key, String name, String site,
+                            int size, String type) {
         this.videoKeyId = videoKeyId;
         this.videoFavoriteKeyId = videoFavoriteKeyId;
         this.iso_639_1 = iso_639_1;

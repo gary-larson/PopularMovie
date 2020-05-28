@@ -4,12 +4,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
-import android.graphics.Movie;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -17,26 +13,18 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.larsonapps.popularmovies.adapter.MovieItemRecyclerViewAdapter;
+import com.larsonapps.popularmovies.data.MovieDetailInfo;
 import com.larsonapps.popularmovies.data.MovieDetails;
-import com.larsonapps.popularmovies.data.MovieMain;
-import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
 import com.larsonapps.popularmovies.utilities.NetworkUtilities;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
-import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 import com.squareup.picasso.Picasso;
 
-import java.lang.ref.WeakReference;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
+/**
+ * Activity class for movie details
+ */
 public class MovieDetailsActivity extends AppCompatActivity {
     // declare variables
-    //private String temp = "";
-    MovieDetails mMovieDetails;
+    MovieDetails mMovieDetailInfo;
     private MovieDetailViewModel mMovieDetailViewModel;
     int mWidth;
     int mMovieId;
@@ -44,37 +32,32 @@ public class MovieDetailsActivity extends AppCompatActivity {
     ProgressBar mLoadingIndicatorProgressBar;
     TextView mTitleTextView;
     ImageView mMovieImageView;
-    TextView mReleaseDateTextView;
-    TextView mRuntimeTextView;
-    TextView mVoteAverageTextView;
-    TextView mOverviewTextView;
-    private static String mDetailsErrorMessage;
-    private static String mVideosErrorMessage;
-    private static String mReviewsErrorMessage;
-    private String mApiKey;
 
+    /**
+     * Method to create movie detail activity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
 
+        // Get width of screen
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        //int height = displayMetrics.heightPixels;
+        // adjust screen width depending on screen size and orientation
         mWidth = (displayMetrics.widthPixels /
                 getResources().getInteger(R.integer.backdrop_divisor) *
                 getResources().getInteger(R.integer.backdrop_multiplier));
         setTitle("MovieDetail");
         // initialize variables
+        // Get View model
         mMovieDetailViewModel = new ViewModelProvider(this).get(MovieDetailViewModel.class);
+        // TODO Relace with binding
         mLoadingIndicatorProgressBar = findViewById(R.id.pb_loading_indicator);
         mErrorMessageTextView = findViewById(R.id.tv_error_message);
         mTitleTextView = findViewById(R.id.title_text_view);
         mMovieImageView = findViewById(R.id.poster_image_view);
-        mReleaseDateTextView = findViewById(R.id.release_date_text_view);
-        mRuntimeTextView = findViewById(R.id.runtime_text_view);
-        mVoteAverageTextView = findViewById(R.id.voter_rating_text_view);
-        mOverviewTextView = findViewById(R.id.overview_text_view);
         //get the intent in the target activity
         Intent intent = getIntent();
         //get the attached bundle from the intent
@@ -82,21 +65,27 @@ public class MovieDetailsActivity extends AppCompatActivity {
         // Retrieve the Movie Id from bundle
         mMovieId = extras.getInt(MovieActivity.DETAIL_MOVIE_ID_KEY);
 
-        final Observer<MovieDetails> movieDetailsObserver = new Observer<MovieDetails>() {
+        // Setup observer for Live data
+        final Observer<MovieDetailInfo> movieDetailInfoObserver = new Observer<MovieDetailInfo>() {
             @Override
-            public void onChanged(@Nullable final MovieDetails newMovieDetails) {
-                if (newMovieDetails == null) {
+            public void onChanged(@Nullable final MovieDetailInfo newMovieDetailInfo) {
+                // Test for data
+                if (newMovieDetailInfo == null) {
+                    // if no error message use default message
                     showErrorMessage();
-                } else if (newMovieDetails.getErrorMessage() != null &&
-                        !newMovieDetails.getErrorMessage().equals("")) {
-                    mErrorMessageTextView.setText(newMovieDetails.getErrorMessage());
+                    // test for actual error message
+                } else if (newMovieDetailInfo.getErrorMessage() != null &&
+                        !newMovieDetailInfo.getErrorMessage().equals("")) {
+                    // Display error message
+                    mErrorMessageTextView.setText(newMovieDetailInfo.getErrorMessage());
+                    // set visability to see error message
                     showErrorMessage();
                 } else {
                     // Update the UI.
                     // Retrieve Title and display
-                    mTitleTextView.setText(newMovieDetails.getTitle());
+                    mTitleTextView.setText(newMovieDetailInfo.getTitle());
                     // Retrieve Backdrop path and display
-                    String backDropPath = newMovieDetails.getBackdropPath();
+                    String backDropPath = newMovieDetailInfo.getBackdropPath();
                     if(backDropPath != null){
                         String urlString;
                         // Set whether or not to use ssl based on API build
@@ -115,47 +104,32 @@ public class MovieDetailsActivity extends AppCompatActivity {
                                 .resize(mWidth, (mWidth * 9) / 16)
                                 .into(mMovieImageView);
                     }
-                    // Retrieve Release date and display it
-                    // Release date is stored as a Date type so we can format the Date
-                    Date releaseDate = newMovieDetails.getReleaseDate();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy",
-                            Locale.getDefault());
-                    mReleaseDateTextView.setText(dateFormat.format(releaseDate));
-                    // Retrieve runtime and display it
-                    String tempString = String.format(Locale.getDefault(), "%d Minutes",
-                            newMovieDetails.getRuntime());
-                    mRuntimeTextView.setText(tempString);
-                    // Retrieve Voter average and display it
-                    tempString = String.format(Locale.getDefault(), "%.1f/10",
-                            newMovieDetails.getVoteAverage());
-                    mVoteAverageTextView.setText(tempString);
-                    // Retrieve overview and display it
-                    mOverviewTextView.setText(newMovieDetails.getOverview());
                 }
             }
         };
-        mMovieDetailViewModel.getMovieDetails(mMovieId).observe(this, movieDetailsObserver);
+        // Initialize observing of live data
+        mMovieDetailViewModel.getMovieDetailInfo(mMovieId).observe(this, movieDetailInfoObserver);
     }
 
+    /**
+     * Method to show error message and hide other information
+     */
     private void showErrorMessage() {
+        // TODO adjust for fragments
         mErrorMessageTextView.setVisibility(View.VISIBLE);
         mLoadingIndicatorProgressBar.setVisibility(View.INVISIBLE);
         mTitleTextView.setVisibility(View.INVISIBLE);
         mMovieImageView.setVisibility(View.INVISIBLE);
-        mReleaseDateTextView.setVisibility(View.INVISIBLE);
-        mRuntimeTextView.setVisibility(View.INVISIBLE);
-        mVoteAverageTextView.setVisibility(View.INVISIBLE);
-        mOverviewTextView.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Method to hide error message and show other information
+     */
     private void showDetails() {
+        // TODO adjust for fragments
         mErrorMessageTextView.setVisibility(View.GONE);
         mLoadingIndicatorProgressBar.setVisibility(View.INVISIBLE);
         mTitleTextView.setVisibility(View.VISIBLE);
         mMovieImageView.setVisibility(View.VISIBLE);
-        mReleaseDateTextView.setVisibility(View.VISIBLE);
-        mRuntimeTextView.setVisibility(View.VISIBLE);
-        mVoteAverageTextView.setVisibility(View.VISIBLE);
-        mOverviewTextView.setVisibility(View.VISIBLE);
     }
 }

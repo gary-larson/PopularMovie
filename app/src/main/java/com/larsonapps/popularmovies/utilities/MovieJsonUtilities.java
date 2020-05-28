@@ -1,11 +1,14 @@
 package com.larsonapps.popularmovies.utilities;
 
+import com.larsonapps.popularmovies.data.MovieDetailInfo;
+import com.larsonapps.popularmovies.data.MovieDetailReviewInfo;
+import com.larsonapps.popularmovies.data.MovieDetailSummary;
 import com.larsonapps.popularmovies.data.MovieDetails;
 import com.larsonapps.popularmovies.data.MovieMain;
 import com.larsonapps.popularmovies.data.MovieResult;
-import com.larsonapps.popularmovies.data.MovieReview;
-import com.larsonapps.popularmovies.data.MovieVideo;
-import com.larsonapps.popularmovies.data.ReviewResult;
+import com.larsonapps.popularmovies.data.MovieDetailReview;
+import com.larsonapps.popularmovies.data.MovieDetailVideo;
+import com.larsonapps.popularmovies.data.MovieDetailReviewResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +21,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Class to parse data fron JSON objects
+ */
 final public class MovieJsonUtilities {
     // Declare constants
     private final static String ID = "id";
@@ -90,7 +96,7 @@ final public class MovieJsonUtilities {
             movieResults.add(currentMovie);
         }
         movieMain.setMovieList(movieResults);
-        // return the list of movie results
+        // return the movie results
         return movieMain;
     }
 
@@ -105,14 +111,24 @@ final public class MovieJsonUtilities {
         JSONObject moviesDetailsJson = new JSONObject(movieDetailsJsonStr);
         // Create object to hold data
         MovieDetails movieDetails = new MovieDetails();
+        // Create info
+        MovieDetailInfo movieDetailInfo = new MovieDetailInfo();
         // test for null
         if (!moviesDetailsJson.has(RUNTIME)) {
             // Retrieve Error Message
-            movieDetails.setErrorMessage(moviesDetailsJson.getString(STATUS_MESSAGE));
+            movieDetailInfo.setErrorMessage(moviesDetailsJson.getString(STATUS_MESSAGE));
+            movieDetails.setMovieDetailInfo(movieDetailInfo);
             return movieDetails;
         }
+        // Retrieve Title
+        movieDetailInfo.setTitle(moviesDetailsJson.getString(TITLE));
+        // Retrieve Backdrop path
+        movieDetailInfo.setBackdropPath(moviesDetailsJson.getString(BACKDROP_PATH));
+        // add movie detail infor to movie details
+        movieDetails.setMovieDetailInfo(movieDetailInfo);
+        MovieDetailSummary movieDetailSummary = new MovieDetailSummary();
         // Retrieve runtime
-        movieDetails.setRuntime(moviesDetailsJson.getInt(RUNTIME));
+        movieDetailSummary.setRuntime(moviesDetailsJson.getInt(RUNTIME));
         // Get release date, format and store it
         String releaseDate = moviesDetailsJson.getString(RELEASE_DATE);
         SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN,
@@ -124,18 +140,16 @@ final public class MovieJsonUtilities {
             e.printStackTrace();
         }
         if (date != null) {
-            movieDetails.setReleaseDate(date);
+            movieDetailSummary.setReleaseDate(date);
         }
-        // Retrieve Title
-        movieDetails.setTitle(moviesDetailsJson.getString(TITLE));
-        // Retrieve Backdrop path
-        movieDetails.setBackdropPath(moviesDetailsJson.getString(BACKDROP_PATH));
         // Retrieve Vote Average
-        movieDetails.setVoteAverage(moviesDetailsJson.getDouble(VOTE_AVERAGE));
+        movieDetailSummary.setVoteAverage(moviesDetailsJson.getDouble(VOTE_AVERAGE));
         // Retrieve Overview
-        movieDetails.setOverview(moviesDetailsJson.getString(OVERVIEW));
+        movieDetailSummary.setOverview(moviesDetailsJson.getString(OVERVIEW));
+        // Add movie detail summary to movie details
+        movieDetails.setMovieDetailSummary(movieDetailSummary);
         // Create List for movie videos
-        List<MovieVideo> videos = new ArrayList<>();
+        List<MovieDetailVideo> videos = new ArrayList<>();
         // Create video Json object
         JSONObject movieVideosJson = moviesDetailsJson.getJSONObject(VIDEOS);
         // Create Json Array
@@ -146,7 +160,7 @@ final public class MovieJsonUtilities {
             JSONObject currentVideoJson = results.getJSONObject(i);
 
             // declare and initialize variable to hold the current video
-            MovieVideo currentVideo = new MovieVideo();
+            MovieDetailVideo currentVideo = new MovieDetailVideo();
             // extract fields from current json object
             currentVideo.setId(currentVideoJson.getString(VIDEO_ID));
             //currentVideo.setIso_639_1(currentVideoJson.getString("iso_639_1"));
@@ -160,22 +174,24 @@ final public class MovieJsonUtilities {
             videos.add(currentVideo);
         }
         // Add videos to movie details
-        movieDetails.setVideos(videos);
+        movieDetails.setVideoList(videos);
         // Create review json object
         JSONObject movieReviewsJson = moviesDetailsJson.getJSONObject("reviews");
         // Create Movie Review for data
-        MovieReview movieReview = new MovieReview();
+        MovieDetailReview movieDetailReview = new MovieDetailReview();
+        // create movie review info for data
+        MovieDetailReviewInfo movieDetailReviewInfo = new MovieDetailReviewInfo();
         // get page from movie reviews json object
-        movieReview.setPage(movieReviewsJson.getInt(PAGE));
+        movieDetailReviewInfo.setPage(movieReviewsJson.getInt(PAGE));
         // Create Json Array
         results = movieReviewsJson.getJSONArray(RESULTS);
 
         // Create list for movie reviews
-        List<ReviewResult> reviews = new ArrayList<>();
+        List<MovieDetailReviewResult> reviews = new ArrayList<>();
         // loop through jsn array
         for (int i = 0; i < results.length(); i++) {
             // Create a review result object
-            ReviewResult currentReview = new ReviewResult();
+            MovieDetailReviewResult currentReview = new MovieDetailReviewResult();
             // create a current json object
             JSONObject currentReviewJson = results.getJSONObject(i);
             // extract fields from current review json object
@@ -185,13 +201,14 @@ final public class MovieJsonUtilities {
             currentReview.setUrl(currentReviewJson.getString(URL));
             reviews.add(currentReview);
         }
-        movieReview.setReviews(reviews);
+        movieDetailReview.setReviewList(reviews);
         // get total pages from movie reviews json object
-        movieReview.setTotalPages(movieReviewsJson.getInt(TOTAL_PAGES));
-        // get total reviews from movie reviews json object
-        //int totalReviews = movieReviewsJson.getInt("total_results");
+        movieDetailReviewInfo.setTotalPages(movieReviewsJson.getInt(TOTAL_PAGES));
+
+        // add movie review info to movie review details
+        movieDetails.setMovieDetailInfo(movieDetailInfo);
         // add movie reviews to movie details
-        movieDetails.setReviews(movieReview);
+        movieDetails.setReviews(movieDetailReview);
         return movieDetails;
     }
 }

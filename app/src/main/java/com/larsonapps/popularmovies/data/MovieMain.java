@@ -1,47 +1,66 @@
 package com.larsonapps.popularmovies.data;
 
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class to structure movie main data
+ */
 public class MovieMain {
+    // Declare variables
     private List<MovieResult> mMovieList;
     private int mTotalPages;
     private String mErrorMessage;
-    private List<String> mPosterUrls;
 
-    public MovieMain () {
-        mErrorMessage = "";
-    }
+    /**
+     * Defailt constructor for movie main
+     */
+    public MovieMain () {}
 
+    /**
+     * Getter for movie list
+     * @return movie list
+     */
     public List<MovieResult> getMovieList() {
         return mMovieList;
     }
 
+    /**
+     * Setter for movie list
+     * @param mMovieList to set
+     */
     public void setMovieList(List<MovieResult> mMovieList) {
         this.mMovieList = mMovieList;
     }
 
+    /**
+     * Getter for movie main total pages
+     * @return movie main total pages
+     */
     public int getTotalPages() {
         return mTotalPages;
     }
 
+    /**
+     * Setter for movie main total pages
+     * @param mTotalPages to set
+     */
     public void setTotalPages(int mTotalPages) {
         this.mTotalPages = mTotalPages;
     }
 
+    /**
+     * Getter for movie main error message
+     * @return movie error message
+     */
     public String getErrorMessage() {
         return mErrorMessage;
     }
 
+    /**
+     * Setter for movie main error message
+     * @param mErrorMessage to set
+     */
     public void setErrorMessage(String mErrorMessage) {
         this.mErrorMessage = mErrorMessage;
-    }
-
-    public List<String> getPosterUrls () {
-        return mPosterUrls;
-    }
-
-    void setPosterUrls (List<String> posterUrls) {
-        mPosterUrls = posterUrls;
     }
 }

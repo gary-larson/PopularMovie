@@ -1,4 +1,4 @@
-package com.larsonapps.popularmovies.data;
+package com.larsonapps.popularmovies.database;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
  * Class of the room table named reviews
  */
 @Entity (tableName = "reviews")
-public class MovieFavoriteReviewEntity {
+public class MovieReviewEntity {
 
     // Generate columns
     @PrimaryKey (autoGenerate = true)
@@ -30,8 +30,8 @@ public class MovieFavoriteReviewEntity {
      * @param url
      */
     @Ignore
-    public MovieFavoriteReviewEntity (int reviewStatId, int pageNumber, String reviewId,
-                                      String author, String content, String url) {
+    public MovieReviewEntity(int reviewStatId, int pageNumber, String reviewId,
+                             String author, String content, String url) {
         this.reviewStatId = reviewStatId;
         this.pageNumber = pageNumber;
         this.reviewId = reviewId;
@@ -50,8 +50,8 @@ public class MovieFavoriteReviewEntity {
      * @param content
      * @param url
      */
-    public MovieFavoriteReviewEntity (int reviewKeyId, int reviewStatId, int pageNumber,
-                                      String reviewId, String author, String content, String url) {
+    public MovieReviewEntity(int reviewKeyId, int reviewStatId, int pageNumber,
+                             String reviewId, String author, String content, String url) {
         this.reviewKeyId = reviewKeyId;
         this.reviewStatId = reviewStatId;
         this.pageNumber = pageNumber;

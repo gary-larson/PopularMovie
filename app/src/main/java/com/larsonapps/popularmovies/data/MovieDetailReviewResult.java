@@ -1,6 +1,9 @@
 package com.larsonapps.popularmovies.data;
 
-public class ReviewResult {
+/**
+ * Class to structure movie detail review result data
+ */
+public class MovieDetailReviewResult {
     // Declare variables
     private String mId;
     private String mAuthor;
@@ -10,7 +13,7 @@ public class ReviewResult {
     /**
      * Default Constructor
      */
-    public ReviewResult () {
+    public MovieDetailReviewResult() {
 
     }
 

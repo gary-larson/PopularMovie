@@ -1,142 +1,84 @@
 package com.larsonapps.popularmovies.data;
 
-import java.util.Date;
 import java.util.List;
 
+/**
+ * Class to structure Movie Detail data
+ */
 public class MovieDetails {
     //Declare variables
-    private String mErrorMessage;
-    private int mRuntime;
-    private String mTitle;
-    private Date mReleaseDate;
-    private String mBackdropPath;
-    private double mVoteAverage;
-    private String mOverview;
-    private List<MovieVideo> mVideos;
-    private MovieReview mMovieReview;
+
+    private MovieDetailInfo mMovieDetailInfo;
+    private MovieDetailSummary mMovieDetailSummary;
+    private List<MovieDetailVideo> mVideoList;
+    private MovieDetailReview mMovieDetailReview;
 
     /**
-     * Default Constructor
+     * Default Constructor for movie details
      */
-    public MovieDetails () {
-
-    }
+    public MovieDetails () {}
 
     /**
-     * Constructor for all variables
-     * @param runtime to set
-     * @param videos to set
-     * @param review to set
+     * Getter for Mmovie detail info
+     * @return movie detail info
      */
-    public MovieDetails (String errorMessage, int runtime, List<MovieVideo> videos,
-                         MovieReview review) {
-        this.mErrorMessage = errorMessage;
-        this.mRuntime = runtime;
-        this.mVideos = videos;
-        this.mMovieReview = review;
+    public MovieDetailInfo getMovieDetailInfo() {
+        return mMovieDetailInfo;
     }
 
     /**
-     * Getter for movie runtime
-     * @return movie runtime
+     * Setter for movie detail info
+     * @param mMovieDetailInfo to set
      */
-    public int getRuntime() {
-        return mRuntime;
+    public void setMovieDetailInfo(MovieDetailInfo mMovieDetailInfo) {
+        this.mMovieDetailInfo = mMovieDetailInfo;
     }
 
     /**
-     * Setter for movie runtime
-     * @param mRuntime to set
+     * Getter for movie detail summary
+     * @return movie detail summary
      */
-    public void setRuntime(int mRuntime) {
-        this.mRuntime = mRuntime;
-    }
-
-    public Date getReleaseDate() {
-        return mReleaseDate;
-    }
-
-    public void setReleaseDate(Date mReleaseDate) {
-        this.mReleaseDate = mReleaseDate;
-    }
-
-    public String getTitle() {
-        return mTitle;
-    }
-
-    public void setTitle(String mTitle) {
-        this.mTitle = mTitle;
-    }
-
-    public String getBackdropPath() {
-        return mBackdropPath;
-    }
-
-    public void setBackdropPath(String mBackdropPath) {
-        this.mBackdropPath = mBackdropPath;
-    }
-
-    public double getVoteAverage() {
-        return mVoteAverage;
-    }
-
-    public void setVoteAverage(double voteAverage) {
-        mVoteAverage = voteAverage;
-    }
-
-    public String getOverview() {
-        return mOverview;
-    }
-
-    public void setOverview(String mOverview) {
-        this.mOverview = mOverview;
+    public MovieDetailSummary getMovieDetailSummary() {
+        return mMovieDetailSummary;
     }
 
     /**
-     * Getter for movie video list
+     * Setter for movie detail summary
+     * @param mMovieDetailSummary to set
+     */
+    public void setMovieDetailSummary(MovieDetailSummary mMovieDetailSummary) {
+        this.mMovieDetailSummary = mMovieDetailSummary;
+    }
+
+    /**
+     * Getter for movie detail video list
      * @return movie video list
      */
-    public List<MovieVideo> getVideos() {
-        return mVideos;
+    public List<MovieDetailVideo> getVideoList() {
+        return mVideoList;
     }
 
     /**
-     * Setter for movie video list
-     * @param mVideos to set
+     * Setter for movie detail video list
+     * @param videoList to set
      */
-    public void setVideos(List<MovieVideo> mVideos) {
-        this.mVideos = mVideos;
+    public void setVideoList(List<MovieDetailVideo> videoList) {
+        this.mVideoList = videoList;
     }
 
     /**
-     * Getter for movie review
-     * @return movie review
+     * Getter for movie detail review
+     * @return movie detail review
      */
-    public MovieReview getReviews() {
-        return mMovieReview;
+    public MovieDetailReview getReviews() {
+        return mMovieDetailReview;
     }
 
     /**
-     * Setter for movie review
-     * @param mMovieReview to set
+     * Setter for movie detail review
+     * @param mMovieDetailReview to set
      */
-    public void setReviews(MovieReview mMovieReview) {
-        this.mMovieReview = mMovieReview;
-    }
-
-    /**
-     * Getter for movie review
-     * @return movie error message
-     */
-    public String getErrorMessage() {
-        return mErrorMessage;
-    }
-
-    /**
-     * Setter for error message
-     * @param mErrorMessage to set
-     */
-    public void setErrorMessage(String mErrorMessage) {
-        this.mErrorMessage = mErrorMessage;
+    public void setReviews(MovieDetailReview mMovieDetailReview) {
+        this.mMovieDetailReview = mMovieDetailReview;
     }
 }

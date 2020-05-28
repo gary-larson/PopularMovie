@@ -1,11 +1,11 @@
-package com.larsonapps.popularmovies.data;
+package com.larsonapps.popularmovies.database;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity (tableName = "review_stats")
-public class MovieFavoriteReviewStatsEntity {
+public class MovieReviewStatsEntity {
 
     // Generate columns
     @PrimaryKey (autoGenerate = true)
@@ -21,7 +21,7 @@ public class MovieFavoriteReviewStatsEntity {
      * @param totalReviews to set
      */
     @Ignore
-    public MovieFavoriteReviewStatsEntity (int statFavoriteKeyID, int totalPages, int totalReviews) {
+    public MovieReviewStatsEntity(int statFavoriteKeyID, int totalPages, int totalReviews) {
         this.statFavoriteKeyID = statFavoriteKeyID;
         this.totalPages = totalPages;
         this.totalReviews = totalReviews;
@@ -34,8 +34,8 @@ public class MovieFavoriteReviewStatsEntity {
      * @param totalPages to set
      * @param totalReviews to set
      */
-    public MovieFavoriteReviewStatsEntity (int statKeyid, int statFavoriteKeyID, int totalPages,
-                                           int totalReviews) {
+    public MovieReviewStatsEntity(int statKeyid, int statFavoriteKeyID, int totalPages,
+                                  int totalReviews) {
         this.statKeyid = statKeyid;
         this.statFavoriteKeyID = statFavoriteKeyID;
         this.totalPages = totalPages;

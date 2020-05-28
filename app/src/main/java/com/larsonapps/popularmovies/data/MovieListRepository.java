@@ -2,18 +2,9 @@ package com.larsonapps.popularmovies.data;
 
 import android.app.Application;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.ArrayAdapter;
-
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
-import com.larsonapps.popularmovies.data.MovieDetails;
-import com.larsonapps.popularmovies.data.MovieMain;
-import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
 import com.larsonapps.popularmovies.utilities.NetworkUtilities;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,6 +12,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class to retrieve movie list data
+ */
 public class MovieListRepository {
     private static String mApiKey;
 
@@ -29,13 +23,20 @@ public class MovieListRepository {
     private Application mApplication;
     private static MutableLiveData<MovieMain> mMovieMain = new MutableLiveData<>();
 
+
+    // TODO add room logic
+
+    /**
+     * Constructor for movie list repository
+     * @param application
+     */
     public MovieListRepository (Application application) {
         mApplication = application;
         mApiKey = loadApiKey();
     }
 
     /**
-     * Method to start background task to get movies from The movie Database
+     * Method to start background task to get movies result list
      */
     public MutableLiveData<MovieMain> getMovieMain(String mType, int page) {
         String[] myString = {mApiKey, mType, Integer.toString(page)};
@@ -90,25 +91,27 @@ public class MovieListRepository {
          */
         @Override
         protected void onPostExecute(MovieMain movieData) {
-            // if results are good load data to adapter
-            if (movieData.getErrorMessage().equals("")) {
-                List<String> posterUrls = new ArrayList<>();
-                List<MovieResult> movieResults = movieData.getMovieList();
-                for (int i = 0; i < movieResults.size(); i++) {
-                    posterUrls.add(movieResults.get(i).getPosterPath());
+            // send data to fragment through live data
+            if (mMovieMain.getValue() == null) {
+                mMovieMain.postValue(movieData);
+            } else {
+                if (movieData.getErrorMessage() == null) {
+                    List<MovieResult> results = mMovieMain.getValue().getMovieList();
+                    results.addAll(movieData.getMovieList());
+                    movieData.setMovieList(results);
+                    mMovieMain.postValue(movieData);
                 }
-                movieData.setPosterUrls(posterUrls);
             }
-            mMovieMain.postValue(movieData); // TODO replace with put in room
         }
 
         // if background task is cancelled show error message
         @Override
         protected void onCancelled(MovieMain movieData) {
             super.onCancelled(movieData);
-            // turn off loading indicator
-
-            mMovieMain.postValue(null);
+            // send no data through live data
+            if (mMovieMain.getValue() == null) {
+                mMovieMain.postValue(null);
+            }
         }
     }
 
