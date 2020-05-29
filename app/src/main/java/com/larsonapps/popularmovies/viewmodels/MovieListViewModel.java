@@ -10,7 +10,7 @@ import com.larsonapps.popularmovies.R;
 import com.larsonapps.popularmovies.data.MovieListRepository;
 import com.larsonapps.popularmovies.data.MovieMain;
 import com.larsonapps.popularmovies.data.MovieResult;
-import com.larsonapps.popularmovies.utilities.NetworkUtilities;
+import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class MovieListViewModel extends AndroidViewModel {
         this.mApplication = application;
         mMovieListRepository = new MovieListRepository(mApplication);
         mPage = 1;
-        mType = NetworkUtilities.POPULAR_REQUEST_URL;
+        mType = MovieNetworkUtilities.POPULAR_REQUEST_URL;
     }
 
     /**

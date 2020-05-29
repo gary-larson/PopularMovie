@@ -1,7 +1,6 @@
 package com.larsonapps.popularmovies.utilities;
 
 import com.larsonapps.popularmovies.data.MovieDetailInfo;
-import com.larsonapps.popularmovies.data.MovieDetailReviewInfo;
 import com.larsonapps.popularmovies.data.MovieDetailSummary;
 import com.larsonapps.popularmovies.data.MovieDetails;
 import com.larsonapps.popularmovies.data.MovieMain;
@@ -179,10 +178,8 @@ final public class MovieJsonUtilities {
         JSONObject movieReviewsJson = moviesDetailsJson.getJSONObject("reviews");
         // Create Movie Review for data
         MovieDetailReview movieDetailReview = new MovieDetailReview();
-        // create movie review info for data
-        MovieDetailReviewInfo movieDetailReviewInfo = new MovieDetailReviewInfo();
         // get page from movie reviews json object
-        movieDetailReviewInfo.setPage(movieReviewsJson.getInt(PAGE));
+        movieDetailReview.setPage(movieReviewsJson.getInt(PAGE));
         // Create Json Array
         results = movieReviewsJson.getJSONArray(RESULTS);
 
@@ -203,12 +200,49 @@ final public class MovieJsonUtilities {
         }
         movieDetailReview.setReviewList(reviews);
         // get total pages from movie reviews json object
-        movieDetailReviewInfo.setTotalPages(movieReviewsJson.getInt(TOTAL_PAGES));
+        movieDetailReview.setTotalPages(movieReviewsJson.getInt(TOTAL_PAGES));
 
         // add movie review info to movie review details
         movieDetails.setMovieDetailInfo(movieDetailInfo);
         // add movie reviews to movie details
-        movieDetails.setReviews(movieDetailReview);
+        movieDetails.setMovieDetailReview(movieDetailReview);
         return movieDetails;
+    }
+
+    /**
+     * Method to parse Movie Details
+     * @param movieDetailsJsonStr to parse
+     * @return Movie Details
+     * @throws JSONException for errors
+     */
+    public static MovieDetailReview getMovieDetailReview (String movieDetailsJsonStr) throws JSONException {
+        // Create JSON object and Check if there are actual results
+        JSONObject movieReviewsJson = new JSONObject(movieDetailsJsonStr);
+        // Create Movie Review for data
+        MovieDetailReview movieDetailReview = new MovieDetailReview();
+        // get page from movie reviews json object
+        movieDetailReview.setPage(movieReviewsJson.getInt(PAGE));
+        // Create Json Array
+        JSONArray results = movieReviewsJson.getJSONArray(RESULTS);
+        // Create list for movie reviews
+        List<MovieDetailReviewResult> reviews = new ArrayList<>();
+        // loop through jsn array
+        for (int i = 0; i < results.length(); i++) {
+            // Create a review result object
+            MovieDetailReviewResult currentReview = new MovieDetailReviewResult();
+            // create a current json object
+            JSONObject currentReviewJson = results.getJSONObject(i);
+            // extract fields from current review json object
+            currentReview.setAuthor(currentReviewJson.getString(AUTHOR));
+            currentReview.setContent(currentReviewJson.getString(CONTENT));
+            currentReview.setId(currentReviewJson.getString(REVIEW_ID));
+            currentReview.setUrl(currentReviewJson.getString(URL));
+            reviews.add(currentReview);
+        }
+        movieDetailReview.setReviewList(reviews);
+        // get total pages from movie reviews json object
+        movieDetailReview.setTotalPages(movieReviewsJson.getInt(TOTAL_PAGES));
+
+        return movieDetailReview;
     }
 }

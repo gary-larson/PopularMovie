@@ -70,7 +70,7 @@ public class MovieDetails {
      * Getter for movie detail review
      * @return movie detail review
      */
-    public MovieDetailReview getReviews() {
+    public MovieDetailReview getMovieDetailReview() {
         return mMovieDetailReview;
     }
 
@@ -78,7 +78,7 @@ public class MovieDetails {
      * Setter for movie detail review
      * @param mMovieDetailReview to set
      */
-    public void setReviews(MovieDetailReview mMovieDetailReview) {
+    public void setMovieDetailReview(MovieDetailReview mMovieDetailReview) {
         this.mMovieDetailReview = mMovieDetailReview;
     }
 }

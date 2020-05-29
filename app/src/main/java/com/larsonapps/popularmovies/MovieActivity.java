@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 
 /**
@@ -67,13 +68,12 @@ public class MovieActivity extends AppCompatActivity implements
 
     /**
      * Listener for the adapter to react to movie clicked
-     * @param position of the movie clicked
-     * @param movieId of the movie clicked
+     * @param movieResult of the movie clicked
      */
     @Override
-    public void onListFragmentInteraction(int position, int movieId) {
+    public void onListFragmentInteraction(MovieResult movieResult) {
         Intent detailIntent = new Intent(this, MovieDetailsActivity.class);
-        detailIntent.putExtra(DETAIL_MOVIE_ID_KEY, movieId);
+        detailIntent.putExtra(DETAIL_MOVIE_ID_KEY, movieResult.getMovieID());
         startActivity(detailIntent);
     }
 
@@ -109,12 +109,12 @@ public class MovieActivity extends AppCompatActivity implements
                 return true;
             case R.id.action_settings:
                 // Show settings activity
-                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                Intent settingsIntent = new Intent(this, MovieSettingsActivity.class);
                 startActivity(settingsIntent);
                 return true;
             case R.id.action_about:
                 // Show about activity
-                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                Intent aboutIntent = new Intent(this, MovieAboutActivity.class);
                 startActivity(aboutIntent);
                 return true;
         }

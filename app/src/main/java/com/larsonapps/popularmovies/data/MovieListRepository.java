@@ -4,12 +4,11 @@ import android.app.Application;
 import android.os.AsyncTask;
 import androidx.lifecycle.MutableLiveData;
 import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
-import com.larsonapps.popularmovies.utilities.NetworkUtilities;
+import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,10 +24,11 @@ public class MovieListRepository {
 
 
     // TODO add room logic
+    // TODO add movie lists to end instead of replacing them
 
     /**
      * Constructor for movie list repository
-     * @param application
+     * @param application to use background operations
      */
     public MovieListRepository (Application application) {
         mApplication = application;
@@ -64,11 +64,11 @@ public class MovieListRepository {
             }
 
             // build url
-            URL movieRequestUrl = NetworkUtilities.buildResultsUrl(params[0], params[1], params[2]);
+            URL movieRequestUrl = MovieNetworkUtilities.buildResultsUrl(params[0], params[1], params[2]);
 
             try {
                 // attempt to get movie information
-                String jsonMovieResponse = NetworkUtilities
+                String jsonMovieResponse = MovieNetworkUtilities
                         .getResponseFromHttpUrl(movieRequestUrl);
                 // if null cancel task (Unknown error)
                 if (jsonMovieResponse == null) {
@@ -92,16 +92,7 @@ public class MovieListRepository {
         @Override
         protected void onPostExecute(MovieMain movieData) {
             // send data to fragment through live data
-            if (mMovieMain.getValue() == null) {
-                mMovieMain.postValue(movieData);
-            } else {
-                if (movieData.getErrorMessage() == null) {
-                    List<MovieResult> results = mMovieMain.getValue().getMovieList();
-                    results.addAll(movieData.getMovieList());
-                    movieData.setMovieList(results);
-                    mMovieMain.postValue(movieData);
-                }
-            }
+            mMovieMain.postValue(movieData);
         }
 
         // if background task is cancelled show error message
@@ -109,9 +100,7 @@ public class MovieListRepository {
         protected void onCancelled(MovieMain movieData) {
             super.onCancelled(movieData);
             // send no data through live data
-            if (mMovieMain.getValue() == null) {
-                mMovieMain.postValue(null);
-            }
+            mMovieMain.postValue(null);
         }
     }
 

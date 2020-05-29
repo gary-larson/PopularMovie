@@ -13,11 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.larsonapps.popularmovies.data.MovieDetailSummary;
-import com.larsonapps.popularmovies.data.MovieDetails;
-import com.larsonapps.popularmovies.utilities.NetworkUtilities;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
-import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,7 +23,7 @@ import java.util.Locale;
 /**
  * Class for the Detail summary fragment
  */
-public class DetailSummaryFragment extends Fragment {
+public class MovieDetailSummaryFragment extends Fragment {
     // Declare variables
     private MovieDetailViewModel mMovieDetailViewModel;
     private TextView mReleaseDateTextView;
@@ -38,7 +34,7 @@ public class DetailSummaryFragment extends Fragment {
     /**
      * Defaul constructor for detail summary fragment
      */
-    public DetailSummaryFragment() {}
+    public MovieDetailSummaryFragment() {}
 
     /**
      * Methot to create the view for detail summary fragment

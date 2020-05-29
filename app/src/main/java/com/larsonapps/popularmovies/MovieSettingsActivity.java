@@ -12,7 +12,7 @@ import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 /**
  * Class to deal with the settings activity
  */
-public class SettingsActivity extends AppCompatActivity {
+public class MovieSettingsActivity extends AppCompatActivity {
 
     /**
      * Method to deal with activity creation

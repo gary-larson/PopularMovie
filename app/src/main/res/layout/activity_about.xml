@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/layout_padding"
-    tools:context=".AboutActivity">
+    tools:context=".MovieAboutActivity">
 
     <TextView
         android:layout_width="wrap_content"

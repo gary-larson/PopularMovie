@@ -15,7 +15,7 @@ import com.larsonapps.popularmovies.MovieActivity;
 import com.larsonapps.popularmovies.MovieItemFragment.OnListFragmentInteractionListener;
 import com.larsonapps.popularmovies.R;
 import com.larsonapps.popularmovies.data.MovieResult;
-import com.larsonapps.popularmovies.utilities.NetworkUtilities;
+import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -76,14 +76,14 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
         // Declare a variable of the movie results
         final List<MovieResult> movieResults = mMovieData;
         // Test if Poster Path is populated
-        if(movieResults.get(position) !=null ){
-
+        if(movieResults.get(position) != null ) {
+            holder.mMovieResult = mMovieData.get(position);
             String urlString;
             // Set whether or not to use ssl based on API build
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
-                urlString = NetworkUtilities.POSTER_BASE_HTTPS_URL;
+                urlString = MovieNetworkUtilities.POSTER_BASE_HTTPS_URL;
             } else{
-                urlString = NetworkUtilities.POSTER_BASE_HTTP_URL;
+                urlString = MovieNetworkUtilities.POSTER_BASE_HTTP_URL;
             }
             // Utilize Picasso to load the poster into the image view
             // resize images based on height, width and orientation of phone
@@ -104,8 +104,7 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.getAdapterPosition(),
-                            movieResults.get(holder.getAdapterPosition()).getMovieID());
+                    mListener.onListFragmentInteraction(holder.mMovieResult);
                 }
             }
         });
@@ -130,6 +129,7 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
         // Declare variables
         final View mView;
         final ImageView mMovieImageView;
+        public MovieResult mMovieResult;
 
         /**
          * Constructor for the view holder class

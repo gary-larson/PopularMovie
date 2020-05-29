@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.larsonapps.popularmovies.adapter.MovieItemRecyclerViewAdapter;
 import com.larsonapps.popularmovies.data.MovieMain;
+import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 
 import java.util.List;
@@ -137,7 +138,7 @@ public class MovieItemFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // set arguments type and name
-        void onListFragmentInteraction(int position, int movieId);
+        void onListFragmentInteraction(MovieResult movieResult);
     }
 
     /**

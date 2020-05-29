@@ -1,8 +1,5 @@
 package com.larsonapps.popularmovies.data;
 
-/**
- * Class to structure movie detail information data
- */
 public class MovieDetailInfo {
     // Declare variables
     private String mErrorMessage;
@@ -10,7 +7,7 @@ public class MovieDetailInfo {
     private String mBackdropPath;
 
     /**
-     * Default constructor for movie detail info
+     * Default constructor
      */
     public MovieDetailInfo() {}
 

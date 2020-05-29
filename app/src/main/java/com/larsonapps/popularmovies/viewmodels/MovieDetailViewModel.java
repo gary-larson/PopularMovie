@@ -7,7 +7,11 @@ import androidx.lifecycle.LiveData;
 
 import com.larsonapps.popularmovies.data.MovieDetailInfo;
 import com.larsonapps.popularmovies.data.MovieDetailRepository;
+import com.larsonapps.popularmovies.data.MovieDetailReview;
 import com.larsonapps.popularmovies.data.MovieDetailSummary;
+import com.larsonapps.popularmovies.data.MovieDetailVideo;
+
+import java.util.List;
 
 /**
  * Class to handle the movie detail data
@@ -18,6 +22,8 @@ public class MovieDetailViewModel extends AndroidViewModel {
     private MovieDetailRepository mMovieDetailRepository;
     private LiveData<MovieDetailInfo> mMovieDetailInfo;
     private LiveData<MovieDetailSummary> mMovieDetailSummary;
+    private LiveData<List<MovieDetailVideo>> mMovieDetailVideo;
+    private LiveData<MovieDetailReview> mMovieDetailReview;
 
     /**
      * Constructor for movie detail view model
@@ -52,4 +58,25 @@ public class MovieDetailViewModel extends AndroidViewModel {
         return mMovieDetailSummary;
     }
 
+    /**
+     * Getter foe movie detail summary data through live data from movie detail repository
+     * @return movie detail summary data
+     */
+    public LiveData<List<MovieDetailVideo>> getMovieDetailVideo() {
+        if (mMovieDetailVideo == null) {
+            mMovieDetailVideo = mMovieDetailRepository.getMovieDetailVideoList();
+        }
+        return mMovieDetailVideo;
+    }
+
+    /**
+     * Getter foe movie detail summary data through live data from movie detail repository
+     * @return movie detail summary data
+     */
+    public LiveData<MovieDetailReview> getMovieDetailReview() {
+        if (mMovieDetailReview == null) {
+            mMovieDetailReview = mMovieDetailRepository.getMovieDetailReview();
+        }
+        return mMovieDetailReview;
+    }
 }

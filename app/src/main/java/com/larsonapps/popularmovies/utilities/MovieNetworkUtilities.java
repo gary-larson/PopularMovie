@@ -17,7 +17,7 @@ import java.util.Scanner;
 /**
  * Class to deal with url's and retrieveing data from the internet
  */
-final public class NetworkUtilities {
+final public class MovieNetworkUtilities {
     // Constants for requests (BASE + type + API_KEY_QUERY + apiKey + [PAGE_QUERY + page #])
     final private static String REQUEST_BASE_HTTPS_URL = "https://api.themoviedb.org/3/movie/";
     final private static String REQUEST_BASE_HTTP_URL = "http://api.themoviedb.org/3/movie/";
@@ -30,6 +30,8 @@ final public class NetworkUtilities {
     final private static String LANGUAGE_QUERY_URL = "&language=en-US";
     final private static String APPEND_VIDEOS_QUERY_URL =
             "&append_to_response=videos,images,reviews";
+    final public static String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
+    final public static String VIMEO_BASE_URL = "https://vimeo.com/";
 
     // Constants for API level requests (BASE + SIZE + movieId)
     final public static String POSTER_BASE_HTTPS_URL = "https://image.tmdb.org/t/p/";

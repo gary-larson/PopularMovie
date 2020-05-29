@@ -7,9 +7,10 @@ import java.util.List;
  */
 public class MovieDetailReview {
     // Declare variables
-    private MovieDetailReviewInfo mMovieDetailReviewInfo;
+    private String mErrorMessage;
+    private int mPage;
+    private int mTotalPages;
     private List<MovieDetailReviewResult> mReviewList;
-
 
     /**
      * Default constructor
@@ -17,19 +18,51 @@ public class MovieDetailReview {
     public MovieDetailReview() {}
 
     /**
-     * Getter for movie detail review info
-     * @return page number
+     * Getter for movie detail review error message
+     * @return movie error message
      */
-    public MovieDetailReviewInfo getMovieDetailReviewInfo() {
-        return mMovieDetailReviewInfo;
+    public String getErrorMessage() {
+        return mErrorMessage;
     }
 
     /**
-     * Setter for movie detail review info
-     * @param movieDetailReviewInfo to set
+     * Setter for movie detail review error message
+     * @param mErrorMessage to set
      */
-    public void setMovieDetailReviewInfo(MovieDetailReviewInfo movieDetailReviewInfo) {
-        this.mMovieDetailReviewInfo = movieDetailReviewInfo;
+    public void setErrorMessage(String mErrorMessage) {
+        this.mErrorMessage = mErrorMessage;
+    }
+
+    /**
+     * Getter for movie detail review page
+     * @return movie detail review page
+     */
+    public int getPage() {
+        return mPage;
+    }
+
+    /**
+     * Setter for movie detail review page
+     * @param mPage to set
+     */
+    public void setPage(int mPage) {
+        this.mPage = mPage;
+    }
+
+    /**
+     * Getter for movie detail review total pages
+     * @return movie detail review total pages
+     */
+    public int getTotalPages() {
+        return mTotalPages;
+    }
+
+    /**
+     * Setter for movie detail review total pages
+     * @param mTotalPages to set
+     */
+    public void setTotalPages(int mTotalPages) {
+        this.mTotalPages = mTotalPages;
     }
 
     /**

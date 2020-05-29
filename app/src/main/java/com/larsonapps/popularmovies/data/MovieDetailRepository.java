@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import androidx.lifecycle.MutableLiveData;
 
 import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
-import com.larsonapps.popularmovies.utilities.NetworkUtilities;
+import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,9 +24,7 @@ public class MovieDetailRepository {
     // Live data variables
     private static MutableLiveData<MovieDetailInfo> mMovieDetailInfo = new MutableLiveData<>();
     private static MutableLiveData<MovieDetailSummary> mMovieDetailSummary = new MutableLiveData<>();
-    private static MutableLiveData<MovieDetailReviewInfo> mMovieDetailReviewInfo = new MutableLiveData<>();
-    private static MutableLiveData<List<MovieDetailReviewResult>> mMovieDetailReviewResultList =
-            new MutableLiveData<>();
+    private static MutableLiveData<MovieDetailReview> mMovieDetailReview = new MutableLiveData<>();
     private static MutableLiveData<List<MovieDetailVideo>> mMovieDetailVideoList =
             new MutableLiveData<>();
 
@@ -62,11 +60,11 @@ public class MovieDetailRepository {
     }
 
     /**
-     * Method to get movie detail reviews for the movie detail review info live data
+     * Method to get movie detail reviews for the movie detail review live data
      */
-    public MutableLiveData<MovieDetailReviewInfo> getMovieDetailReviewInfo() {
+    public MutableLiveData<MovieDetailReview> getMovieDetailReview() {
         // return movie detail summary data
-        return mMovieDetailReviewInfo;
+        return mMovieDetailReview;
     }
 
     /**
@@ -102,7 +100,7 @@ public class MovieDetailRepository {
 
         /**
          * Method to run the background task
-         * @param params 0: api key, 1: type of query, 2: page number
+         * @param params 0: api key, 1: movieId
          * @return Movie Information responded from The Movie Database
          */
         @Override
@@ -115,10 +113,10 @@ public class MovieDetailRepository {
 
             // build url
             int movieId = Integer.parseInt(params[1]);
-            URL movieRequestUrl = NetworkUtilities.buildDetailsUrl(params[0],movieId);
+            URL movieRequestUrl = MovieNetworkUtilities.buildDetailsUrl(params[0],movieId);
             try {
                 // attempt to get movie information
-                String jsonMovieResponse = NetworkUtilities
+                String jsonMovieResponse = MovieNetworkUtilities
                         .getResponseFromHttpUrl(movieRequestUrl);
                 // if null cancel task (Unknown error)
                 if (jsonMovieResponse == null) {
@@ -147,14 +145,9 @@ public class MovieDetailRepository {
             // send results through live data movie detail summary
             MovieDetailSummary movieDetailSummary = details.getMovieDetailSummary();
             mMovieDetailSummary.postValue(movieDetailSummary);
-            // send results through live data movie detail reviews info
-            MovieDetailReviewInfo movieDetailReviewInfo =
-                    details.getReviews().getMovieDetailReviewInfo();
-            mMovieDetailReviewInfo.postValue(movieDetailReviewInfo);
-            // send results through live data for movie detail review result list
-            List<MovieDetailReviewResult> movieDetailReviewResults =
-                    details.getReviews().getReviewList();
-            mMovieDetailReviewResultList.postValue(movieDetailReviewResults);
+            // send results through live data movie detail reviews
+            MovieDetailReview movieDetailReview = details.getMovieDetailReview();
+            mMovieDetailReview.postValue(movieDetailReview);
             // send results through live data movie detail videos
             List<MovieDetailVideo> movieDetailVideos = details.getVideoList();
             mMovieDetailVideoList.postValue(movieDetailVideos);
@@ -167,6 +160,80 @@ public class MovieDetailRepository {
             // send empty data through live data
             mMovieDetailInfo.postValue(null);
             mMovieDetailSummary.postValue(null);
+            mMovieDetailReview.postValue(null);
+            mMovieDetailVideoList.postValue(null);
+        }
+    }
+
+    /**
+     * Class to run background task to get additional movie detail reviews
+     */
+    static class FetchMovieDetailReviewsTask extends AsyncTask<String, Void, MovieDetailReview> {
+
+        /**
+         * Method to run the background task
+         * @param params 0: api key, 1: movie id, 2: page number
+         * @return Movie Information responded from The Movie Database
+         */
+        @Override
+        protected MovieDetailReview doInBackground(String... params) {
+
+            /* Without information we cannot look up Movies. */
+            if (params.length == 0) {
+                return null;
+            }
+
+            // build url
+            int movieId = Integer.parseInt(params[1]);
+            int page = Integer.parseInt(params[2]);
+            URL movieRequestUrl = MovieNetworkUtilities.buildReviewsUrl(params[0],movieId, page);
+            try {
+                // attempt to get movie information
+                String jsonMovieResponse = MovieNetworkUtilities
+                        .getResponseFromHttpUrl(movieRequestUrl);
+                // if null cancel task (Unknown error)
+                if (jsonMovieResponse == null) {
+                    cancel(true);
+                }
+                // return Json decoded movie Information
+                return MovieJsonUtilities
+                        .getMovieDetailReview(jsonMovieResponse);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                // in case of an error return null
+                return null;
+            }
+        }
+
+        /**
+         * Method to clean up
+         * @param movieDetailReview to process
+         */
+        @Override
+        protected void onPostExecute(MovieDetailReview movieDetailReview) {
+            // send results through live data movie detail reviews
+            // as addition reviews so add to current list
+            if (mMovieDetailReview.getValue() == null) {
+                mMovieDetailReview.postValue(movieDetailReview);
+            } else {
+                if (movieDetailReview.getErrorMessage() == null) {
+                    List<MovieDetailReviewResult> results =
+                            mMovieDetailReview.getValue().getReviewList();
+                    results.addAll(movieDetailReview.getReviewList());
+                    mMovieDetailReview.postValue(movieDetailReview);
+                }
+            }
+        }
+
+        // if background task is cancelled show error message
+        @Override
+        protected void onCancelled(MovieDetailReview movieDetailReview) {
+            super.onCancelled(movieDetailReview);
+            // send empty data through live data
+            if (mMovieDetailReview.getValue() == null) {
+                mMovieDetailReview.postValue(null);
+            }
         }
     }
 }

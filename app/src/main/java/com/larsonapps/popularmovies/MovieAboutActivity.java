@@ -7,7 +7,7 @@ import android.os.Bundle;
 /**
  * Class for the about activity
  */
-public class AboutActivity extends AppCompatActivity {
+public class MovieAboutActivity extends AppCompatActivity {
 
     /**
      * Method to create the about activity

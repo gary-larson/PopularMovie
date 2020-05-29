@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -14,15 +15,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.larsonapps.popularmovies.data.MovieDetailInfo;
+import com.larsonapps.popularmovies.data.MovieDetailReview;
+import com.larsonapps.popularmovies.data.MovieDetailReviewResult;
+import com.larsonapps.popularmovies.data.MovieDetailVideo;
 import com.larsonapps.popularmovies.data.MovieDetails;
-import com.larsonapps.popularmovies.utilities.NetworkUtilities;
+import com.larsonapps.popularmovies.dummy.DummyContent;
+import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
 import com.squareup.picasso.Picasso;
 
 /**
  * Activity class for movie details
  */
-public class MovieDetailsActivity extends AppCompatActivity {
+public class MovieDetailsActivity extends AppCompatActivity implements
+        MovieDetailVideoFragment.OnListFragmentInteractionListener,
+        MovieDetailReviewFragment.OnListFragmentInteractionListener {
     // declare variables
     MovieDetails mMovieDetailInfo;
     private MovieDetailViewModel mMovieDetailViewModel;
@@ -90,9 +97,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
                         String urlString;
                         // Set whether or not to use ssl based on API build
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
-                            urlString = NetworkUtilities.POSTER_BASE_HTTPS_URL;
+                            urlString = MovieNetworkUtilities.POSTER_BASE_HTTPS_URL;
                         } else{
-                            urlString = NetworkUtilities.POSTER_BASE_HTTP_URL;
+                            urlString = MovieNetworkUtilities.POSTER_BASE_HTTP_URL;
                         }
                         // Utilize Picasso to load the poster into the image view
                         // using noPlaceHolder because picasso had blank spaces on some emulators
@@ -131,5 +138,28 @@ public class MovieDetailsActivity extends AppCompatActivity {
         mLoadingIndicatorProgressBar.setVisibility(View.INVISIBLE);
         mTitleTextView.setVisibility(View.VISIBLE);
         mMovieImageView.setVisibility(View.VISIBLE);
+    }
+
+
+    @Override
+    public void onListFragmentInteraction(MovieDetailReviewResult movieDetailReviewResult) {
+        String url = movieDetailReviewResult.getUrl();
+        Intent webIntent = new Intent(Intent.ACTION_VIEW);
+        webIntent.setData(Uri.parse(url));
+        startActivity(webIntent);
+    }
+
+    @Override
+    public void onListFragmentInteraction(MovieDetailVideo movieDetailVideo) {
+        String url;
+        if (movieDetailVideo.getSite().equals("YouTube")) {
+            url = MovieNetworkUtilities.YOUTUBE_BASE_URL;
+        } else {
+            url = MovieNetworkUtilities.VIMEO_BASE_URL;
+        }
+        url += movieDetailVideo.getKey();
+        Intent webIntent = new Intent(Intent.ACTION_VIEW);
+        webIntent.setData(Uri.parse(url));
+        startActivity(webIntent);
     }
 }
