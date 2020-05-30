@@ -22,64 +22,50 @@ import com.larsonapps.popularmovies.adapter.MovieDetailReviewRecyclerViewAdapter
 import com.larsonapps.popularmovies.adapter.MovieDetailVideoRecyclerViewAdapter;
 import com.larsonapps.popularmovies.data.MovieDetailReview;
 import com.larsonapps.popularmovies.data.MovieDetailVideo;
-import com.larsonapps.popularmovies.dummy.DummyContent;
-import com.larsonapps.popularmovies.dummy.DummyContent.DummyItem;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
 
 import java.util.List;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ * Class to hold the Trailer list
  */
 public class MovieDetailVideoFragment extends Fragment {
     // Declare variables
-    private MovieDetailViewModel mMovieDetailViewModel;
-    private Activity mMovieDetailActivity;
+    MovieDetailViewModel mMovieDetailViewModel;
     private RecyclerView mMovieDetailVideoRecyclerView;
     private TextView mMovieDetailVideoNoneTextView;
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
     /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
+     * Default constructor
      */
-    public MovieDetailVideoFragment() {
-    }
+    public MovieDetailVideoFragment() {}
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static MovieDetailVideoFragment newInstance(int columnCount) {
-        MovieDetailVideoFragment fragment = new MovieDetailVideoFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    /**
+     * Class that deals with activity creation
+     * @param savedInstanceState for state items
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
+    /**
+     * Method to create movie detail video fragment view
+     * @param inflater to use to convert xml
+     * @param container that holds this fragment
+     * @param savedInstanceState for state changes
+     * @return the view created
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_movie_detail_video_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_movie_detail_video_list, container,
+                false);
 
         // Initialize movie list view model from activity
-        mMovieDetailViewModel = new ViewModelProvider(requireActivity()).get(MovieDetailViewModel.class);
-        mMovieDetailActivity = getActivity();
+        mMovieDetailViewModel = new ViewModelProvider(requireActivity())
+                .get(MovieDetailViewModel.class);
         // TODO replace with binding
         mMovieDetailVideoRecyclerView = view.findViewById(R.id.rv_movie_detail_video_list);
         mMovieDetailVideoNoneTextView = view.findViewById(R.id.tv_movie_detail_video_none);
@@ -89,7 +75,8 @@ public class MovieDetailVideoFragment extends Fragment {
         final Context context = view.getContext();
 
         // Create the observer which updates the UI and sets the adapter
-        final Observer<List<MovieDetailVideo>> movieDetailVideoObserver = new Observer<List<MovieDetailVideo>>() {
+        final Observer<List<MovieDetailVideo>> movieDetailVideoObserver =
+                new Observer<List<MovieDetailVideo>>() {
             @Override
             public void onChanged(@Nullable final List<MovieDetailVideo> newMovieDetailVideoList) {
                 // test if recyclerview exists
@@ -99,20 +86,10 @@ public class MovieDetailVideoFragment extends Fragment {
                         // Update the UI, in this case, an adapter.
                         mMovieDetailVideoRecyclerView.setVisibility(View.VISIBLE);
                         mMovieDetailVideoNoneTextView.setVisibility(View.GONE);
-                        mMovieDetailVideoRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-                        // if menu exists set its state
-//                        if (mMovieActivity.getMoreMovieMenuItem() != null) {
-//                            if (mMovieListViewModel.getPage() == newMovieMain.getTotalPages()) {
-//                                mMovieActivity.getMoreMovieMenuItem().setEnabled(false);
-//                            } else {
-//                                mMovieActivity.getMoreMovieMenuItem().setEnabled(true);
-//                            }
-//                        }
-                        // indicate all movie detail videos are the same size
+                        mMovieDetailVideoRecyclerView.setLayoutManager(
+                                new LinearLayoutManager(context));
                         mMovieDetailVideoRecyclerView.setHasFixedSize(false);
                         // setup Movie adapter for RecyclerView
-                        // TODO if newMovieDetailList is empty hide trailer title and divider
-                        // TODO look at Me contro json
                         RecyclerView.Adapter<MovieDetailVideoRecyclerViewAdapter.ViewHolder>
                                 mAdapter = new MovieDetailVideoRecyclerViewAdapter(
                                 newMovieDetailVideoList, mListener);
@@ -130,7 +107,10 @@ public class MovieDetailVideoFragment extends Fragment {
         return view;
     }
 
-
+    /**
+     * Class that initializes the listener
+     * @param context to use
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -142,6 +122,9 @@ public class MovieDetailVideoFragment extends Fragment {
         }
     }
 
+    /**
+     * Class that removes the listener
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -149,17 +132,9 @@ public class MovieDetailVideoFragment extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Interface for the click listener in the activity containing the fragment
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(MovieDetailVideo movieDetailVideo);
     }
 }

@@ -19,7 +19,6 @@ import com.larsonapps.popularmovies.data.MovieDetailReview;
 import com.larsonapps.popularmovies.data.MovieDetailReviewResult;
 import com.larsonapps.popularmovies.data.MovieDetailVideo;
 import com.larsonapps.popularmovies.data.MovieDetails;
-import com.larsonapps.popularmovies.dummy.DummyContent;
 import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
 import com.squareup.picasso.Picasso;
@@ -42,7 +41,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements
 
     /**
      * Method to create movie detail activity
-     * @param savedInstanceState
+     * @param savedInstanceState to hold saved state
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +69,9 @@ public class MovieDetailsActivity extends AppCompatActivity implements
         //get the attached bundle from the intent
         Bundle extras = intent.getExtras();
         // Retrieve the Movie Id from bundle
-        mMovieId = extras.getInt(MovieActivity.DETAIL_MOVIE_ID_KEY);
-
+        if (extras != null) {
+            mMovieId = extras.getInt(MovieActivity.DETAIL_MOVIE_ID_KEY);
+        }
         // Setup observer for Live data
         final Observer<MovieDetailInfo> movieDetailInfoObserver = new Observer<MovieDetailInfo>() {
             @Override

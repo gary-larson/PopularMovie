@@ -39,7 +39,6 @@ public class MovieActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 
-        // TODO save and restore state in all activities and fragments
         // Get information from demension to apply changes is screen size and orientation
         mNumberVerticalImages = getResources().getInteger(R.integer.number_vertical_posters);
         mNumberHorizontalImages = getResources().getInteger(R.integer.number_horizontal_posters);
@@ -100,6 +99,7 @@ public class MovieActivity extends AppCompatActivity implements
         switch (menuItemThatWasSelected) {
             case R.id.action_more_movies:
                 // Get Next Page of Movies
+                // TODO fix add to list instead of replace list use page number
                 mMovieListViewModel.setPage(mMovieListViewModel.getPage() + 1);
                 if (mMovieListViewModel.getPage() == mMovieListViewModel.getTotalPages()) {
                     isNextEnabled = false;

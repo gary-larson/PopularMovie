@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MovieDetailsActivity">
+    android:background="@color/colorSelectorBackground"
+    tools:context=".MovieDetailsActivity" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -49,10 +50,12 @@
         <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/detail_normal_padding"
+            android:layout_marginTop="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
             android:layout_height="1dp"
             android:background="@color/colorPrimary"
-            app:layout_constraintTop_toBottomOf="@id/detail_summary_fragment"/>
+            app:layout_constraintTop_toBottomOf="@id/detail_summary_fragment" />
 
         <TextView
             style="@style/DetailTitle"
@@ -73,6 +76,8 @@
         <View
             android:id="@+id/review_divider"
             android:layout_width="match_parent"
+            android:layout_marginRight="@dimen/text_margin"
+            android:layout_marginLeft="@dimen/text_margin"
             android:layout_height="1dp"
             android:background="@color/colorPrimary"
             app:layout_constraintTop_toBottomOf="@id/detail_video_fragment"/>

@@ -24,31 +24,13 @@
     <string name="setting_movie_list_favorite_value" translatable="false">favorite</string>
     <string name="setting_movie_list_title">Settings</string>
     <string name="title_activity_settings">Settings</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="settings_movie_list_category_title">Movie List</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="more_movies">More Movies</string>
     <string name="trailers">Trailers:</string>
     <string name="reviews">Reviews:</string>
     <string name="no_trailers_available">No Trailers Available</string>
     <string name="no_reviews_available">No Reviews Available</string>
     <string name="movie_detail_review_author">By: %s</string>
-    <string name="click_for_more">(Click for more)</string>
+    <string name="tap_for_more">(Tap for more)</string>
     <string name="play_arrow_image">Play arrow image</string>
 </resources>

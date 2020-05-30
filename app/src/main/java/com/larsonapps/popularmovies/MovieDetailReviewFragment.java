@@ -23,16 +23,11 @@ import com.larsonapps.popularmovies.adapter.MovieItemRecyclerViewAdapter;
 import com.larsonapps.popularmovies.data.MovieDetailReview;
 import com.larsonapps.popularmovies.data.MovieDetailReviewResult;
 import com.larsonapps.popularmovies.data.MovieMain;
-import com.larsonapps.popularmovies.dummy.DummyContent;
-import com.larsonapps.popularmovies.dummy.DummyContent.DummyItem;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
 import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ * Class to hold the Review list
  */
 public class MovieDetailReviewFragment extends Fragment {
     // Declare variavles
@@ -41,38 +36,21 @@ public class MovieDetailReviewFragment extends Fragment {
     RecyclerView mMovieDetailReviewRecyclerView;
     TextView mMovieDetailReviewNoneTextView;
     RecyclerView.Adapter<MovieDetailReviewRecyclerViewAdapter.ViewHolder> mAdapter;
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
     /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
+     * Default constructor
      */
     public MovieDetailReviewFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static MovieDetailReviewFragment newInstance(int columnCount) {
-        MovieDetailReviewFragment fragment = new MovieDetailReviewFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
-    }
-
+    /**
+     * Method to create movie detail review fragment view
+     * @param inflater to use to convert xml
+     * @param container that holds this fragment
+     * @param savedInstanceState for state changes
+     * @return the view created
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -100,6 +78,7 @@ public class MovieDetailReviewFragment extends Fragment {
                     mMovieDetailReviewRecyclerView.setVisibility(View.VISIBLE);
                     mMovieDetailReviewNoneTextView.setVisibility(View.GONE);
                     mMovieDetailReviewRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+                    // TODO load more review pages
                     // if menu exists set its state
 //                        if (mMovieActivity.getMoreMovieMenuItem() != null) {
 //                            if (mMovieListViewModel.getPage() == newMovieMain.getTotalPages()) {
@@ -127,7 +106,10 @@ public class MovieDetailReviewFragment extends Fragment {
         return view;
     }
 
-
+    /**
+     * Method to initializes the listener
+     * @param context to use
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -139,6 +121,9 @@ public class MovieDetailReviewFragment extends Fragment {
         }
     }
 
+    /**
+     * Method to remove listener
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -146,14 +131,7 @@ public class MovieDetailReviewFragment extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Interface for the click listener in the activity containing the fragment
      */
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(MovieDetailReviewResult movieDetailReviewResult);

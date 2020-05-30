@@ -26,10 +26,9 @@ import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 import java.util.List;
 
 /**
- * Class to deal with a list fragment
+ * Class to hold the movie list
  */
 public class MovieItemFragment extends Fragment {
-
     // Declare variables
     private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
@@ -55,18 +54,20 @@ public class MovieItemFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_movie_item_list, container, false);
+        View mView = inflater.inflate(R.layout.fragment_movie_item_list, container,
+                false);
         // Initialize movie list view model from activity
-        mMovieListViewModel = new ViewModelProvider(requireActivity()).get(MovieListViewModel.class);
+        mMovieListViewModel = new ViewModelProvider(requireActivity())
+                .get(MovieListViewModel.class);
         mMovieActivity = (MovieActivity) getActivity();
         // TODO replace with binding
-        errorMessageTextView = view.findViewById(R.id.tv_error_message);
-        loadingIndicatorProgressBar = view.findViewById(R.id.pb_loading_indicator);
-        mMovieRecyclerView = view.findViewById(R.id.rv_list);
+        errorMessageTextView = mView.findViewById(R.id.tv_error_message);
+        loadingIndicatorProgressBar = mView.findViewById(R.id.pb_loading_indicator);
+        mMovieRecyclerView = mView.findViewById(R.id.rv_list);
         // set the column based on screen size and orientation
         mColumnCount = getResources().getInteger(R.integer.number_horizontal_posters);
         // get the context
-        final Context context = view.getContext();
+        final Context context = mView.getContext();
 
         // Create the observer which updates the UI and sets the adapter
         final Observer<MovieMain> movieMainObserver = new Observer<MovieMain>() {
@@ -110,9 +111,13 @@ public class MovieItemFragment extends Fragment {
             }
         };
         mMovieListViewModel.getMovieMain().observe(getViewLifecycleOwner(), movieMainObserver);
-        return view;
+        return mView;
     }
 
+    /**
+     * Method that initializes the listener
+     * @param context to use
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

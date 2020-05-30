@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/list_item_selector" >
 
     <TextView
         android:id="@+id/author"
@@ -32,7 +33,7 @@
         android:layout_marginLeft="@dimen/text_margin"
         android:layout_marginStart="@dimen/text_margin"
         android:layout_marginRight="@dimen/text_margin"
-        android:text="@string/click_for_more"
+        android:text="@string/tap_for_more"
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <View
