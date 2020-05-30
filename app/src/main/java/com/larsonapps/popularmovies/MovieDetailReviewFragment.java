@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.larsonapps.popularmovies.adapter.MovieDetailReviewRecyclerViewAdapter;
 import com.larsonapps.popularmovies.adapter.MovieItemRecyclerViewAdapter;
@@ -37,7 +39,8 @@ public class MovieDetailReviewFragment extends Fragment {
     private MovieDetailViewModel mMovieDetailViewModel;
     private Activity mMovieDetailActivity;
     RecyclerView mMovieDetailReviewRecyclerView;
-    RecyclerView.Adapter mAdapter;
+    TextView mMovieDetailReviewNoneTextView;
+    RecyclerView.Adapter<MovieDetailReviewRecyclerViewAdapter.ViewHolder> mAdapter;
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
@@ -77,11 +80,10 @@ public class MovieDetailReviewFragment extends Fragment {
 
         // Initialize movie list view model from activity
         mMovieDetailViewModel = new ViewModelProvider(requireActivity()).get(MovieDetailViewModel.class);
-        mMovieDetailActivity = (MovieDetailsActivity) getActivity();
+        mMovieDetailActivity = getActivity();
         // TODO replace with binding
-        //errorMessageTextView = view.findViewById(R.id.tv_error_message);
-        //loadingIndicatorProgressBar = view.findViewById(R.id.pb_loading_indicator);
         mMovieDetailReviewRecyclerView = view.findViewById(R.id.rv_movie_detail_review_list);
+        mMovieDetailReviewNoneTextView = view.findViewById(R.id.tv_movie_detail_review_none);
 
         // get the context
         final Context context = view.getContext();
@@ -93,8 +95,10 @@ public class MovieDetailReviewFragment extends Fragment {
             // test if recyclerview exists
             if (mMovieDetailReviewRecyclerView != null) {
                 // test if data is available
-                if (newMovieDetailReview != null) {
+                if (newMovieDetailReview != null && newMovieDetailReview.getReviewList().size() > 0) {
                     // Update the UI, in this case, an adapter.
+                    mMovieDetailReviewRecyclerView.setVisibility(View.VISIBLE);
+                    mMovieDetailReviewNoneTextView.setVisibility(View.GONE);
                     mMovieDetailReviewRecyclerView.setLayoutManager(new LinearLayoutManager(context));
                     // if menu exists set its state
 //                        if (mMovieActivity.getMoreMovieMenuItem() != null) {
@@ -105,12 +109,15 @@ public class MovieDetailReviewFragment extends Fragment {
 //                            }
 //                        }
                     // indicate all reviews are the same size
-                    //mMovieDetailReviewRecyclerView.setHasFixedSize(true);
+                    mMovieDetailReviewRecyclerView.setHasFixedSize(false);
                     // setup Movie adapter for RecyclerView
                     mAdapter = new MovieDetailReviewRecyclerViewAdapter(
                             newMovieDetailReview.getReviewList(), mListener);
                     mMovieDetailReviewRecyclerView.setAdapter(mAdapter);
                     //showRecyclerView();
+                } else {
+                    mMovieDetailReviewRecyclerView.setVisibility(View.GONE);
+                    mMovieDetailReviewNoneTextView.setVisibility(View.VISIBLE);
                 }
             }
             }
@@ -122,7 +129,7 @@ public class MovieDetailReviewFragment extends Fragment {
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;

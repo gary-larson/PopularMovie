@@ -1,13 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rv_movie_detail_video_list"
-    android:name="com.larsonapps.popularmovies.MovieDetailVideoFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context=".MovieDetailVideoFragment"
-    tools:listitem="@layout/fragment_movie_detail_video" />
+    android:orientation="vertical">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_movie_detail_video_list"
+        android:name="com.larsonapps.popularmovies.MovieDetailVideoFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".MovieDetailVideoFragment"
+        tools:listitem="@layout/fragment_movie_detail_video" />
+
+    <TextView
+        android:id="@+id/tv_movie_detail_video_none"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingLeft="@dimen/detail_normal_padding"
+        android:paddingRight="@dimen/detail_normal_padding"
+        android:text="@string/no_trailers_available"
+        android:textSize="@dimen/detail_text_size"
+        android:visibility="gone"
+        android:paddingStart="@dimen/detail_normal_padding" />
+</LinearLayout>

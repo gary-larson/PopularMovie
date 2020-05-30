@@ -1,5 +1,6 @@
 package com.larsonapps.popularmovies.adapter;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,9 +21,10 @@ import java.util.List;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
+ *
  */
-public class MovieDetailReviewRecyclerViewAdapter extends RecyclerView.Adapter<MovieDetailReviewRecyclerViewAdapter.ViewHolder> {
+public class MovieDetailReviewRecyclerViewAdapter extends
+        RecyclerView.Adapter<MovieDetailReviewRecyclerViewAdapter.ViewHolder> {
     // Declare variables
     private final MovieDetailReview mMovieDetailReview = new MovieDetailReview();
     private final List<MovieDetailReviewResult> mReviewResults;
@@ -36,6 +38,7 @@ public class MovieDetailReviewRecyclerViewAdapter extends RecyclerView.Adapter<M
         mListener = listener;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -44,13 +47,14 @@ public class MovieDetailReviewRecyclerViewAdapter extends RecyclerView.Adapter<M
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         // Declare a variable of the movie results
-        final List<MovieDetailReviewResult> detailReviewResults = mReviewResults;
+        //final List<MovieDetailReviewResult> detailReviewResults = mReviewResults;
         // Test if Poster Path is populated
-        if(detailReviewResults.get(position) != null ) {
+        if(mReviewResults.get(position) != null ) {
             holder.mReviewResult = mReviewResults.get(position);
-            holder.mIdView.setText(mReviewResults.get(position).getAuthor());
+            String temp = String.format("By: %s", mReviewResults.get(position).getAuthor());
+            holder.mAuthorView.setText(temp);
             holder.mContentView.setText(mReviewResults.get(position).getContent());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -73,18 +77,19 @@ public class MovieDetailReviewRecyclerViewAdapter extends RecyclerView.Adapter<M
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
+        public final TextView mAuthorView;
         public final TextView mContentView;
         public MovieDetailReviewResult mReviewResult;
-        //public DummyItem mItem;
+
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mAuthorView = view.findViewById(R.id.author);
+            mContentView = view.findViewById(R.id.content);
         }
 
+        @NonNull
         @Override
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";

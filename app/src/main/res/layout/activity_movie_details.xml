@@ -37,7 +37,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title_text_view" />
 
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/detail_summary_fragment"
             android:name="com.larsonapps.popularmovies.MovieDetailSummaryFragment"
             android:layout_width="wrap_content"
@@ -46,21 +46,50 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
-        <fragment
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/detail_normal_padding"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/detail_summary_fragment"/>
+
+        <TextView
+            style="@style/DetailTitle"
+            android:id="@+id/tv_trailer"
+            android:text="@string/trailers"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/detail_video_fragment"
             android:name="com.larsonapps.popularmovies.MovieDetailVideoFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/detail_summary_fragment"
+            app:layout_constraintTop_toBottomOf="@id/tv_trailer"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
-        <fragment
+        <View
+            android:id="@+id/review_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/detail_video_fragment"/>
+
+        <TextView
+            style="@style/DetailTitle"
+            android:id="@+id/tv_review"
+            android:text="@string/reviews"
+            app:layout_constraintTop_toBottomOf="@id/review_divider"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/detail_review_fragment"
             android:name="com.larsonapps.popularmovies.MovieDetailReviewFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/detail_video_fragment"
+            app:layout_constraintTop_toBottomOf="@id/tv_review"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 

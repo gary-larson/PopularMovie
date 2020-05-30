@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.larsonapps.popularmovies.adapter.MovieDetailReviewRecyclerViewAdapter;
 import com.larsonapps.popularmovies.adapter.MovieDetailVideoRecyclerViewAdapter;
@@ -37,7 +39,7 @@ public class MovieDetailVideoFragment extends Fragment {
     private MovieDetailViewModel mMovieDetailViewModel;
     private Activity mMovieDetailActivity;
     private RecyclerView mMovieDetailVideoRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private TextView mMovieDetailVideoNoneTextView;
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
@@ -77,11 +79,11 @@ public class MovieDetailVideoFragment extends Fragment {
 
         // Initialize movie list view model from activity
         mMovieDetailViewModel = new ViewModelProvider(requireActivity()).get(MovieDetailViewModel.class);
-        mMovieDetailActivity = (MovieDetailsActivity) getActivity();
+        mMovieDetailActivity = getActivity();
         // TODO replace with binding
-        //errorMessageTextView = view.findViewById(R.id.tv_error_message);
-        //loadingIndicatorProgressBar = view.findViewById(R.id.pb_loading_indicator);
         mMovieDetailVideoRecyclerView = view.findViewById(R.id.rv_movie_detail_video_list);
+        mMovieDetailVideoNoneTextView = view.findViewById(R.id.tv_movie_detail_video_none);
+
 
         // get the context
         final Context context = view.getContext();
@@ -93,8 +95,10 @@ public class MovieDetailVideoFragment extends Fragment {
                 // test if recyclerview exists
                 if (mMovieDetailVideoRecyclerView != null) {
                     // test if data is available
-                    if (newMovieDetailVideoList != null) {
+                    if (newMovieDetailVideoList != null && newMovieDetailVideoList.size() > 0) {
                         // Update the UI, in this case, an adapter.
+                        mMovieDetailVideoRecyclerView.setVisibility(View.VISIBLE);
+                        mMovieDetailVideoNoneTextView.setVisibility(View.GONE);
                         mMovieDetailVideoRecyclerView.setLayoutManager(new LinearLayoutManager(context));
                         // if menu exists set its state
 //                        if (mMovieActivity.getMoreMovieMenuItem() != null) {
@@ -105,23 +109,30 @@ public class MovieDetailVideoFragment extends Fragment {
 //                            }
 //                        }
                         // indicate all movie detail videos are the same size
-                        mMovieDetailVideoRecyclerView.setHasFixedSize(true);
+                        mMovieDetailVideoRecyclerView.setHasFixedSize(false);
                         // setup Movie adapter for RecyclerView
-                        mAdapter = new MovieDetailVideoRecyclerViewAdapter(
+                        // TODO if newMovieDetailList is empty hide trailer title and divider
+                        // TODO look at Me contro json
+                        RecyclerView.Adapter<MovieDetailVideoRecyclerViewAdapter.ViewHolder>
+                                mAdapter = new MovieDetailVideoRecyclerViewAdapter(
                                 newMovieDetailVideoList, mListener);
                         mMovieDetailVideoRecyclerView.setAdapter(mAdapter);
                         //showRecyclerView();
+                    } else {
+                        mMovieDetailVideoRecyclerView.setVisibility(View.GONE);
+                        mMovieDetailVideoNoneTextView.setVisibility(View.VISIBLE);
                     }
                 }
             }
         };
-        mMovieDetailViewModel.getMovieDetailVideo().observe(getViewLifecycleOwner(), movieDetailVideoObserver);
+        mMovieDetailViewModel.getMovieDetailVideo().observe(getViewLifecycleOwner(),
+                movieDetailVideoObserver);
         return view;
     }
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;

@@ -50,6 +50,7 @@ final public class MovieJsonUtilities {
     private final static String CONTENT = "content";
     private final static String REVIEW_ID = ID;
     private final static String URL = "url";
+    private final static String VIDEO_TYPE_TRAILER = "Trailer";
 
 
     /**
@@ -170,7 +171,9 @@ final public class MovieJsonUtilities {
             currentVideo.setSize(currentVideoJson.getInt(SIZE));
             currentVideo.setType(currentVideoJson.getString(TYPE));
             // add current video to list
-            videos.add(currentVideo);
+            if (currentVideo.getType().equals(VIDEO_TYPE_TRAILER)) {
+                videos.add(currentVideo);
+            }
         }
         // Add videos to movie details
         movieDetails.setVideoList(videos);

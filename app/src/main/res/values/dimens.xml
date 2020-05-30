@@ -11,4 +11,6 @@
     <dimen name="detail_text_size">24sp</dimen>
     <dimen name="detail_overview_text_size">18sp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="small_text_margin">8dp</dimen>
+    <dimen name="detail_subtitle_text_size">28sp</dimen>
 </resources>

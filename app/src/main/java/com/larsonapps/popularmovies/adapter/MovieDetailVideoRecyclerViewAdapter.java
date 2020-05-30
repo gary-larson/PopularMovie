@@ -1,5 +1,6 @@
 package com.larsonapps.popularmovies.adapter;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -17,18 +18,21 @@ import java.util.List;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
+ *
  */
-public class MovieDetailVideoRecyclerViewAdapter extends RecyclerView.Adapter<MovieDetailVideoRecyclerViewAdapter.ViewHolder> {
+public class MovieDetailVideoRecyclerViewAdapter extends
+        RecyclerView.Adapter<MovieDetailVideoRecyclerViewAdapter.ViewHolder> {
 
     private final List<MovieDetailVideo> mMovieDetailVideoList;
     private final OnListFragmentInteractionListener mListener;
 
-    public MovieDetailVideoRecyclerViewAdapter(List<MovieDetailVideo> items, OnListFragmentInteractionListener listener) {
+    public MovieDetailVideoRecyclerViewAdapter(List<MovieDetailVideo> items,
+                                               OnListFragmentInteractionListener listener) {
         mMovieDetailVideoList = items;
         mListener = listener;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -39,8 +43,7 @@ public class MovieDetailVideoRecyclerViewAdapter extends RecyclerView.Adapter<Mo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mMovieDetailVideo = mMovieDetailVideoList.get(position);
-        holder.mIdView.setText(mMovieDetailVideoList.get(position).getType());
-        holder.mContentView.setText(mMovieDetailVideoList.get(position).getName());
+        holder.mNameView.setText(mMovieDetailVideoList.get(position).getName());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,20 +64,20 @@ public class MovieDetailVideoRecyclerViewAdapter extends RecyclerView.Adapter<Mo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView mNameView;
         public MovieDetailVideo mMovieDetailVideo;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            // TODO binding
+            mNameView = view.findViewById(R.id.name);
         }
 
+        @NonNull
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mNameView.getText() + "'";
         }
     }
 }
