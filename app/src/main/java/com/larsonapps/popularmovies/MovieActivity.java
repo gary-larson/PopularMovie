@@ -99,7 +99,7 @@ public class MovieActivity extends AppCompatActivity implements
         switch (menuItemThatWasSelected) {
             case R.id.action_more_movies:
                 // Get Next Page of Movies
-                // TODO fix add to list instead of replace list use page number
+                // TODO fix add to list instead of replace list use room
                 mMovieListViewModel.setPage(mMovieListViewModel.getPage() + 1);
                 if (mMovieListViewModel.getPage() == mMovieListViewModel.getTotalPages()) {
                     isNextEnabled = false;

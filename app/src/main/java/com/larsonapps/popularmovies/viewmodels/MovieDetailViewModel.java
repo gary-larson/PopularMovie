@@ -20,6 +20,8 @@ public class MovieDetailViewModel extends AndroidViewModel {
     // Declare variables
     private Application mApplication;
     private MovieDetailRepository mMovieDetailRepository;
+    private int mMovieID;
+    private int mReviewPage;
     private LiveData<MovieDetailInfo> mMovieDetailInfo;
     private LiveData<MovieDetailSummary> mMovieDetailSummary;
     private LiveData<List<MovieDetailVideo>> mMovieDetailVideo;
@@ -33,6 +35,7 @@ public class MovieDetailViewModel extends AndroidViewModel {
         super(application);
         this.mApplication = application;
         mMovieDetailRepository = new MovieDetailRepository(mApplication);
+        mReviewPage = 1;
     }
 
     /**
@@ -41,6 +44,8 @@ public class MovieDetailViewModel extends AndroidViewModel {
      * @return movie detail information data
      */
     public LiveData<MovieDetailInfo> getMovieDetailInfo(int movieId) {
+        // set movie id
+        mMovieID = movieId;
         if (mMovieDetailInfo == null) {
             mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(movieId);
         }
@@ -78,5 +83,43 @@ public class MovieDetailViewModel extends AndroidViewModel {
             mMovieDetailReview = mMovieDetailRepository.getMovieDetailReview();
         }
         return mMovieDetailReview;
+    }
+
+    public void getMovieDetailReviewNextPage(int page) {
+        mMovieDetailRepository.getMovieDetailReviewNextPage(page);
+    }
+
+    /**
+     * Getter for movie id
+     * @return movie id
+     */
+    public int getMovieId () {return mMovieID;}
+
+    /**
+     * Getter for movie detail review page
+     * @return movie detail review page
+     */
+    public int getReviewPage() {
+        return mReviewPage;
+    }
+
+    /**
+     * Setter for movie detail review page
+     * @param mReviewPage to set
+     */
+    public void setReviewPage(int mReviewPage) {
+        this.mReviewPage = mReviewPage;
+    }
+
+    /**
+     * Getter for movie main total pages
+     * @return movie type
+     */
+    public int getTotalPages () {
+        if (mMovieDetailReview != null && mMovieDetailReview.getValue() != null) {
+            return mMovieDetailReview.getValue().getTotalPages();
+        } else {
+            return 0;
+        }
     }
 }

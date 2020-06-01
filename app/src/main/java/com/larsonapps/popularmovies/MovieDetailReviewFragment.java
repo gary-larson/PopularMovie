@@ -32,7 +32,7 @@ import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 public class MovieDetailReviewFragment extends Fragment {
     // Declare variavles
     private MovieDetailViewModel mMovieDetailViewModel;
-    private Activity mMovieDetailActivity;
+    private MovieDetailsActivity mMovieDetailActivity;
     RecyclerView mMovieDetailReviewRecyclerView;
     TextView mMovieDetailReviewNoneTextView;
     RecyclerView.Adapter<MovieDetailReviewRecyclerViewAdapter.ViewHolder> mAdapter;
@@ -58,10 +58,11 @@ public class MovieDetailReviewFragment extends Fragment {
 
         // Initialize movie list view model from activity
         mMovieDetailViewModel = new ViewModelProvider(requireActivity()).get(MovieDetailViewModel.class);
-        mMovieDetailActivity = getActivity();
+        mMovieDetailActivity = (MovieDetailsActivity) getActivity();
         // TODO replace with binding
         mMovieDetailReviewRecyclerView = view.findViewById(R.id.rv_movie_detail_review_list);
         mMovieDetailReviewNoneTextView = view.findViewById(R.id.tv_movie_detail_review_none);
+        hideReview();
 
         // get the context
         final Context context = view.getContext();
@@ -75,18 +76,17 @@ public class MovieDetailReviewFragment extends Fragment {
                 // test if data is available
                 if (newMovieDetailReview != null && newMovieDetailReview.getReviewList().size() > 0) {
                     // Update the UI, in this case, an adapter.
-                    mMovieDetailReviewRecyclerView.setVisibility(View.VISIBLE);
-                    mMovieDetailReviewNoneTextView.setVisibility(View.GONE);
+                    showRecyclerView();
                     mMovieDetailReviewRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-                    // TODO load more review pages
                     // if menu exists set its state
-//                        if (mMovieActivity.getMoreMovieMenuItem() != null) {
-//                            if (mMovieListViewModel.getPage() == newMovieMain.getTotalPages()) {
-//                                mMovieActivity.getMoreMovieMenuItem().setEnabled(false);
-//                            } else {
-//                                mMovieActivity.getMoreMovieMenuItem().setEnabled(true);
-//                            }
-//                        }
+                    if (mMovieDetailActivity.getMoreReviewsMenuItem() != null) {
+                        if (newMovieDetailReview.getPage() ==
+                                newMovieDetailReview.getTotalPages()) {
+                            mMovieDetailActivity.getMoreReviewsMenuItem().setEnabled(false);
+                        } else {
+                            mMovieDetailActivity.getMoreReviewsMenuItem().setEnabled(true);
+                        }
+                    }
                     // indicate all reviews are the same size
                     mMovieDetailReviewRecyclerView.setHasFixedSize(false);
                     // setup Movie adapter for RecyclerView
@@ -95,8 +95,7 @@ public class MovieDetailReviewFragment extends Fragment {
                     mMovieDetailReviewRecyclerView.setAdapter(mAdapter);
                     //showRecyclerView();
                 } else {
-                    mMovieDetailReviewRecyclerView.setVisibility(View.GONE);
-                    mMovieDetailReviewNoneTextView.setVisibility(View.VISIBLE);
+                    showNoneMessage();
                 }
             }
             }
@@ -135,5 +134,41 @@ public class MovieDetailReviewFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(MovieDetailReviewResult movieDetailReviewResult);
+    }
+
+    /**
+     * Method to hide all views
+     */
+    private void hideReview() {
+        mMovieDetailReviewRecyclerView.setVisibility(View.INVISIBLE);
+        mMovieDetailReviewNoneTextView.setVisibility(View.INVISIBLE);
+        if (mMovieDetailActivity.getReviewDividerView() != null) {
+            mMovieDetailActivity.getReviewDividerView().setVisibility(View.INVISIBLE);
+        }
+        mMovieDetailActivity.getReviewTitleTextView().setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Method to show all views except none message
+     */
+    private void showRecyclerView() {
+        mMovieDetailReviewRecyclerView.setVisibility(View.VISIBLE);
+        mMovieDetailReviewNoneTextView.setVisibility(View.GONE);
+        if (mMovieDetailActivity.getReviewDividerView() != null) {
+            mMovieDetailActivity.getReviewDividerView().setVisibility(View.VISIBLE);
+        }
+        mMovieDetailActivity.getReviewTitleTextView().setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Method to show all views except recyclerview
+     */
+    private void showNoneMessage() {
+        mMovieDetailReviewRecyclerView.setVisibility(View.GONE);
+        mMovieDetailReviewNoneTextView.setVisibility(View.VISIBLE);
+        if (mMovieDetailActivity.getReviewDividerView() != null) {
+            mMovieDetailActivity.getReviewDividerView().setVisibility(View.VISIBLE);
+        }
+        mMovieDetailActivity.getReviewTitleTextView().setVisibility(View.VISIBLE);
     }
 }

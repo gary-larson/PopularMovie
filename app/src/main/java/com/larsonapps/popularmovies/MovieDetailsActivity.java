@@ -2,6 +2,8 @@ package com.larsonapps.popularmovies;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -9,6 +11,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -31,13 +35,23 @@ public class MovieDetailsActivity extends AppCompatActivity implements
         MovieDetailReviewFragment.OnListFragmentInteractionListener {
     // declare variables
     MovieDetails mMovieDetailInfo;
-    private MovieDetailViewModel mMovieDetailViewModel;
+    MovieDetailViewModel mMovieDetailViewModel;
     int mWidth;
     int mMovieId;
+    Fragment mReviewFragment;
+    Fragment mSummaryFragment;
+    Fragment mVideoFragment;
     TextView mErrorMessageTextView;
     ProgressBar mLoadingIndicatorProgressBar;
     TextView mTitleTextView;
     ImageView mMovieImageView;
+    TextView mOverviewTextView;
+    View mReviewDividerView;
+    View mTrailerDividerView;
+    TextView mTrailerTitleTextView;
+    TextView mReviewTitleTextView;
+    MenuItem mMoreReviewMenuItem;
+    boolean isNextEnabled;
 
     /**
      * Method to create movie detail activity
@@ -59,11 +73,19 @@ public class MovieDetailsActivity extends AppCompatActivity implements
         // initialize variables
         // Get View model
         mMovieDetailViewModel = new ViewModelProvider(this).get(MovieDetailViewModel.class);
+        mReviewFragment = getSupportFragmentManager().findFragmentById(R.id.detail_review_fragment);
+        mSummaryFragment = getSupportFragmentManager().findFragmentById(R.id.detail_summary_fragment);
+        mVideoFragment = getSupportFragmentManager().findFragmentById(R.id.detail_video_fragment);
         // TODO Relace with binding
         mLoadingIndicatorProgressBar = findViewById(R.id.pb_loading_indicator);
         mErrorMessageTextView = findViewById(R.id.tv_error_message);
         mTitleTextView = findViewById(R.id.title_text_view);
         mMovieImageView = findViewById(R.id.poster_image_view);
+        mOverviewTextView = findViewById(R.id.overview_text_view);
+        mTrailerDividerView = findViewById(R.id.divider);
+        mTrailerTitleTextView = findViewById(R.id.tv_trailer);
+        mReviewDividerView = findViewById(R.id.review_divider);
+        mReviewTitleTextView = findViewById(R.id.tv_review);
         //get the intent in the target activity
         Intent intent = getIntent();
         //get the attached bundle from the intent
@@ -72,6 +94,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements
         if (extras != null) {
             mMovieId = extras.getInt(MovieActivity.DETAIL_MOVIE_ID_KEY);
         }
+        // display loading indicator until there is data in fields
+        showLoadingIndicator();
         // Setup observer for Live data
         final Observer<MovieDetailInfo> movieDetailInfoObserver = new Observer<MovieDetailInfo>() {
             @Override
@@ -87,7 +111,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements
                     mErrorMessageTextView.setText(newMovieDetailInfo.getErrorMessage());
                     // set visability to see error message
                     showErrorMessage();
-                } else {
+                } else if (newMovieDetailInfo.getmMovieId() == mMovieDetailViewModel.getMovieId()) {
                     // Update the UI.
                     // Retrieve Title and display
                     mTitleTextView.setText(newMovieDetailInfo.getTitle());
@@ -111,6 +135,10 @@ public class MovieDetailsActivity extends AppCompatActivity implements
                                 .resize(mWidth, (mWidth * 9) / 16)
                                 .into(mMovieImageView);
                     }
+                    mOverviewTextView.setText(newMovieDetailInfo.getOverview());
+                    showDetails();
+                } else {
+                    showLoadingIndicator();
                 }
             }
         };
@@ -119,28 +147,105 @@ public class MovieDetailsActivity extends AppCompatActivity implements
     }
 
     /**
+     * Inflate the main menu
+     * @param menu to inflate
+     * @return true to indicate menu inflated
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.details, menu);
+        mMoreReviewMenuItem =  menu.getItem(0);
+        mMoreReviewMenuItem.setEnabled(true);
+        return true;
+    }
+
+    /**
+     * Method to process items clicked on menu
+     * @param item to process
+     * @return whether item is handled by this method or super
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int menuItemThatWasSelected = item.getItemId();
+        switch (menuItemThatWasSelected) {
+            case R.id.action_more_reviews:
+                // Get Next Page of Reviews
+                // TODO fix add to reviews instead of replace reviews use room
+                mMovieDetailViewModel.setReviewPage(mMovieDetailViewModel.getReviewPage() + 1);
+                if (mMovieDetailViewModel.getReviewPage() == mMovieDetailViewModel.getTotalPages()) {
+                    isNextEnabled = false;
+                    item.setEnabled(isNextEnabled);
+                }
+                mMovieDetailViewModel.getMovieDetailReviewNextPage(
+                        mMovieDetailViewModel.getReviewPage());
+                return true;
+            case R.id.action_settings:
+                // Show settings activity
+                Intent settingsIntent = new Intent(this, MovieSettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;
+            case R.id.action_about:
+                // Show about activity
+                Intent aboutIntent = new Intent(this, MovieAboutActivity.class);
+                startActivity(aboutIntent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Getter for movie details more reviews menu item
+     * @return movie details more reviews menu item
+     */
+    public MenuItem getMoreReviewsMenuItem () {
+        return mMoreReviewMenuItem;
+    }
+
+    /**
      * Method to show error message and hide other information
      */
     private void showErrorMessage() {
-        // TODO adjust for fragments
         mErrorMessageTextView.setVisibility(View.VISIBLE);
         mLoadingIndicatorProgressBar.setVisibility(View.INVISIBLE);
         mTitleTextView.setVisibility(View.INVISIBLE);
         mMovieImageView.setVisibility(View.INVISIBLE);
+        mOverviewTextView.setVisibility(View.INVISIBLE);
+        mTrailerDividerView.setVisibility(View.INVISIBLE);
+        mTrailerTitleTextView.setVisibility(View.INVISIBLE);
+        mReviewDividerView.setVisibility(View.INVISIBLE);
+        mReviewTitleTextView.setVisibility((View.INVISIBLE));
     }
 
     /**
      * Method to hide error message and show other information
      */
     private void showDetails() {
-        // TODO adjust for fragments
         mErrorMessageTextView.setVisibility(View.GONE);
         mLoadingIndicatorProgressBar.setVisibility(View.INVISIBLE);
         mTitleTextView.setVisibility(View.VISIBLE);
         mMovieImageView.setVisibility(View.VISIBLE);
+        mOverviewTextView.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Method to show loading indicator and hide other information
+     */
+    private void showLoadingIndicator() {
+        mLoadingIndicatorProgressBar.setVisibility(View.VISIBLE);
+        mErrorMessageTextView.setVisibility(View.INVISIBLE);
+        mTitleTextView.setVisibility(View.INVISIBLE);
+        mMovieImageView.setVisibility(View.INVISIBLE);
+        mOverviewTextView.setVisibility(View.INVISIBLE);
+        mTrailerDividerView.setVisibility(View.INVISIBLE);
+        mTrailerTitleTextView.setVisibility(View.INVISIBLE);
+        mReviewDividerView.setVisibility(View.INVISIBLE);
+        mReviewTitleTextView.setVisibility((View.INVISIBLE));
+    }
 
+    /**
+     * Method to process clicks in the review list
+     * @param movieDetailReviewResult is the review to process
+     */
     @Override
     public void onListFragmentInteraction(MovieDetailReviewResult movieDetailReviewResult) {
         String url = movieDetailReviewResult.getUrl();
@@ -149,6 +254,10 @@ public class MovieDetailsActivity extends AppCompatActivity implements
         startActivity(webIntent);
     }
 
+    /**
+     * Method to process clicks on the trailer list
+     * @param movieDetailVideo is the trailer to process
+     */
     @Override
     public void onListFragmentInteraction(MovieDetailVideo movieDetailVideo) {
         String url;
@@ -161,5 +270,45 @@ public class MovieDetailsActivity extends AppCompatActivity implements
         Intent webIntent = new Intent(Intent.ACTION_VIEW);
         webIntent.setData(Uri.parse(url));
         startActivity(webIntent);
+    }
+
+    /**
+     * Getter for movie detail review divider
+     * @return movie detail review divider
+     */
+    public View getReviewDividerView() {
+        return mReviewDividerView;
+    }
+
+    /**
+     * Getter for movie detail trailer divider
+     * @return movie detail trailer divider
+     */
+    public View getTrailerDividerView() {
+        return mTrailerDividerView;
+    }
+
+    /**
+     * Getter for movie detail trailer title
+     * @return movie detail trailer title
+     */
+    public TextView getTrailerTitleTextView() {
+        return mTrailerTitleTextView;
+    }
+
+    /**
+     * Getter for movie detail review title
+     * @return movie detail review title
+     */
+    public TextView getReviewTitleTextView() {
+        return mReviewTitleTextView;
+    }
+
+    /**
+     * Getter for movie detail overview
+     * @return movie detail overview
+     */
+    public TextView getOverviewTextView() {
+        return mOverviewTextView;
     }
 }

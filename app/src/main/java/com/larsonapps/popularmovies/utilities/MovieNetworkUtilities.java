@@ -131,14 +131,14 @@ final public class MovieNetworkUtilities {
                     REVIEW_REQUEST_URL +
                     API_KEY_QUERY_URL + apiKey +
                     LANGUAGE_QUERY_URL +
-                    PAGE_QUERY_URL;
+                    PAGE_QUERY_URL + page;
         } else{
             urlString = REQUEST_BASE_HTTP_URL +
                     movieId +
                     REVIEW_REQUEST_URL +
                     API_KEY_QUERY_URL + apiKey +
                     LANGUAGE_QUERY_URL +
-                    PAGE_QUERY_URL;
+                    PAGE_QUERY_URL + page;
         }
         // Build Uri
         Uri builtUri = Uri.parse(urlString).buildUpon().build();

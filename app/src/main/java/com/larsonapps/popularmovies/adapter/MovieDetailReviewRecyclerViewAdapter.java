@@ -14,13 +14,12 @@ import com.larsonapps.popularmovies.R;
 import com.larsonapps.popularmovies.data.MovieDetailReview;
 import com.larsonapps.popularmovies.data.MovieDetailReviewResult;
 import com.larsonapps.popularmovies.data.MovieResult;
-import com.larsonapps.popularmovies.dummy.DummyContent.DummyItem;
+
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * Class to hold the movie detail review list
  *
  */
 public class MovieDetailReviewRecyclerViewAdapter extends

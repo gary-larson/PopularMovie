@@ -32,6 +32,7 @@ import java.util.List;
 public class MovieDetailVideoFragment extends Fragment {
     // Declare variables
     MovieDetailViewModel mMovieDetailViewModel;
+    MovieDetailsActivity mMovieDetailsActivity;
     private RecyclerView mMovieDetailVideoRecyclerView;
     private TextView mMovieDetailVideoNoneTextView;
     private OnListFragmentInteractionListener mListener;
@@ -66,10 +67,11 @@ public class MovieDetailVideoFragment extends Fragment {
         // Initialize movie list view model from activity
         mMovieDetailViewModel = new ViewModelProvider(requireActivity())
                 .get(MovieDetailViewModel.class);
+        mMovieDetailsActivity = (MovieDetailsActivity) getActivity();
         // TODO replace with binding
         mMovieDetailVideoRecyclerView = view.findViewById(R.id.rv_movie_detail_video_list);
         mMovieDetailVideoNoneTextView = view.findViewById(R.id.tv_movie_detail_video_none);
-
+        hideVideo();
 
         // get the context
         final Context context = view.getContext();
@@ -84,8 +86,7 @@ public class MovieDetailVideoFragment extends Fragment {
                     // test if data is available
                     if (newMovieDetailVideoList != null && newMovieDetailVideoList.size() > 0) {
                         // Update the UI, in this case, an adapter.
-                        mMovieDetailVideoRecyclerView.setVisibility(View.VISIBLE);
-                        mMovieDetailVideoNoneTextView.setVisibility(View.GONE);
+                        showRecyclerView();
                         mMovieDetailVideoRecyclerView.setLayoutManager(
                                 new LinearLayoutManager(context));
                         mMovieDetailVideoRecyclerView.setHasFixedSize(false);
@@ -96,8 +97,7 @@ public class MovieDetailVideoFragment extends Fragment {
                         mMovieDetailVideoRecyclerView.setAdapter(mAdapter);
                         //showRecyclerView();
                     } else {
-                        mMovieDetailVideoRecyclerView.setVisibility(View.GONE);
-                        mMovieDetailVideoNoneTextView.setVisibility(View.VISIBLE);
+                        showNoneMessage();
                     }
                 }
             }
@@ -136,5 +136,35 @@ public class MovieDetailVideoFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(MovieDetailVideo movieDetailVideo);
+    }
+
+    /**
+     * Method to hide all views
+     */
+    private void hideVideo() {
+        mMovieDetailVideoRecyclerView.setVisibility(View.INVISIBLE);
+        mMovieDetailVideoNoneTextView.setVisibility(View.INVISIBLE);
+        mMovieDetailsActivity.getTrailerDividerView().setVisibility(View.INVISIBLE);
+        mMovieDetailsActivity.getTrailerTitleTextView().setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Method to show all views except none message
+     */
+    private void showRecyclerView() {
+        mMovieDetailVideoRecyclerView.setVisibility(View.VISIBLE);
+        mMovieDetailVideoNoneTextView.setVisibility(View.GONE);
+        mMovieDetailsActivity.getTrailerDividerView().setVisibility(View.VISIBLE);
+        mMovieDetailsActivity.getTrailerTitleTextView().setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Method to show all views except recyclerview
+     */
+    private void showNoneMessage() {
+        mMovieDetailVideoRecyclerView.setVisibility(View.GONE);
+        mMovieDetailVideoNoneTextView.setVisibility(View.VISIBLE);
+        mMovieDetailsActivity.getTrailerDividerView().setVisibility(View.VISIBLE);
+        mMovieDetailsActivity.getTrailerTitleTextView().setVisibility(View.VISIBLE);
     }
 }

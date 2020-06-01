@@ -11,13 +11,12 @@ import android.widget.TextView;
 import com.larsonapps.popularmovies.MovieDetailVideoFragment.OnListFragmentInteractionListener;
 import com.larsonapps.popularmovies.R;
 import com.larsonapps.popularmovies.data.MovieDetailVideo;
-import com.larsonapps.popularmovies.dummy.DummyContent.DummyItem;
+
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * Class to hold the movie detail video list
  *
  */
 public class MovieDetailVideoRecyclerViewAdapter extends

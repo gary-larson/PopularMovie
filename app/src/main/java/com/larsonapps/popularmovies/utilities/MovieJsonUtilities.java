@@ -124,7 +124,9 @@ final public class MovieJsonUtilities {
         movieDetailInfo.setTitle(moviesDetailsJson.getString(TITLE));
         // Retrieve Backdrop path
         movieDetailInfo.setBackdropPath(moviesDetailsJson.getString(BACKDROP_PATH));
-        // add movie detail infor to movie details
+        // Retrieve Overview
+        movieDetailInfo.setOverview(moviesDetailsJson.getString(OVERVIEW));
+        // add movie detail info to movie details
         movieDetails.setMovieDetailInfo(movieDetailInfo);
         MovieDetailSummary movieDetailSummary = new MovieDetailSummary();
         // Retrieve runtime
@@ -144,8 +146,6 @@ final public class MovieJsonUtilities {
         }
         // Retrieve Vote Average
         movieDetailSummary.setVoteAverage(moviesDetailsJson.getDouble(VOTE_AVERAGE));
-        // Retrieve Overview
-        movieDetailSummary.setOverview(moviesDetailsJson.getString(OVERVIEW));
         // Add movie detail summary to movie details
         movieDetails.setMovieDetailSummary(movieDetailSummary);
         // Create List for movie videos

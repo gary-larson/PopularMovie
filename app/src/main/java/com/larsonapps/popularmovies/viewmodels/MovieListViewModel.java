@@ -63,9 +63,6 @@ public class MovieListViewModel extends AndroidViewModel {
      * Method to initialize a change in the type of movies from movie list repository
      */
     public void retrieveMovieMain() {
-        if (mType.equals(mApplication.getString(R.string.setting_movie_list_favorite_value))) {
-            // TODO process favorite
-        }
         mMovieListRepository.getMovieMain(mType, mPage);
     }
 
@@ -84,6 +81,12 @@ public class MovieListViewModel extends AndroidViewModel {
     }
 
     /**
+     * Getter for movie type
+     * @return movie type
+     */
+    public String getType () {return mType;}
+
+    /**
      * Setter for movie main type
      * @param mType to set
      */
@@ -93,7 +96,7 @@ public class MovieListViewModel extends AndroidViewModel {
 
     /**
      * Getter for movie main total pages
-     * @return
+     * @return movie type
      */
     public int getTotalPages () {
         if (mMovieMain != null && mMovieMain.getValue() != null) {
@@ -104,6 +107,9 @@ public class MovieListViewModel extends AndroidViewModel {
     }
 
     public int getMovieId (int position) {
-        return mMovieResultList.getValue().get(position).getMovieID();
+        if (mMovieResultList.getValue() != null) {
+            return mMovieResultList.getValue().get(position).getMovieID();
+        }
+        return 0;
     }
 }

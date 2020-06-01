@@ -21,6 +21,7 @@ public class MovieDetailRepository {
     // Declre variables
     private static String mApiKey;
     private Application mApplication;
+    private static int mMovieId;
     // Live data variables
     private static MutableLiveData<MovieDetailInfo> mMovieDetailInfo = new MutableLiveData<>();
     private static MutableLiveData<MovieDetailSummary> mMovieDetailSummary = new MutableLiveData<>();
@@ -43,6 +44,8 @@ public class MovieDetailRepository {
      * Method to get movie detail info for the movie detail info live data
      */
     public MutableLiveData<MovieDetailInfo> getMovieDetailInfo(int movieId) {
+        // save movieID
+        mMovieId = movieId;
         // setup for background task
         String[] myString = {mApiKey, Integer.toString(movieId)};
         // start background task
@@ -73,6 +76,12 @@ public class MovieDetailRepository {
     public MutableLiveData<List<MovieDetailVideo>> getMovieDetailVideoList() {
         // return movie detail summary data
         return mMovieDetailVideoList;
+    }
+
+    public void getMovieDetailReviewNextPage(int page) {
+        String[] myString = {mApiKey, Integer.toString(mMovieId), Integer.toString(page)};
+        // start background task
+        new FetchMovieDetailReviewsTask().execute(myString);
     }
 
     /**
@@ -139,6 +148,8 @@ public class MovieDetailRepository {
          */
         @Override
         protected void onPostExecute(MovieDetails details) {
+            // Add movie id to details
+            details.getMovieDetailInfo().setmMovieId(mMovieId);
             // send results through live data movie detail info
             MovieDetailInfo movieDetailInfo = details.getMovieDetailInfo();
             mMovieDetailInfo.postValue(movieDetailInfo);
@@ -213,17 +224,9 @@ public class MovieDetailRepository {
         @Override
         protected void onPostExecute(MovieDetailReview movieDetailReview) {
             // send results through live data movie detail reviews
-            // as addition reviews so add to current list
-            if (mMovieDetailReview.getValue() == null) {
+            // as additional reviews so add to current list
+            // TODO implement extending list with room
                 mMovieDetailReview.postValue(movieDetailReview);
-            } else {
-                if (movieDetailReview.getErrorMessage() == null) {
-                    List<MovieDetailReviewResult> results =
-                            mMovieDetailReview.getValue().getReviewList();
-                    results.addAll(movieDetailReview.getReviewList());
-                    mMovieDetailReview.postValue(movieDetailReview);
-                }
-            }
         }
 
         // if background task is cancelled show error message
@@ -231,9 +234,9 @@ public class MovieDetailRepository {
         protected void onCancelled(MovieDetailReview movieDetailReview) {
             super.onCancelled(movieDetailReview);
             // send empty data through live data
-            if (mMovieDetailReview.getValue() == null) {
+            //if (mMovieDetailReview.getValue() == null) {
                 mMovieDetailReview.postValue(null);
-            }
+            //}
         }
     }
 }

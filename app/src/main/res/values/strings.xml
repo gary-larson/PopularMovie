@@ -33,4 +33,6 @@
     <string name="movie_detail_review_author">By: %s</string>
     <string name="tap_for_more">(Tap for more)</string>
     <string name="play_arrow_image">Play arrow image</string>
+    <string name="type_favorite_none_message">No Favorites have been Chosen</string>
+    <string name="more_reviews">More Reviews</string>
 </resources>

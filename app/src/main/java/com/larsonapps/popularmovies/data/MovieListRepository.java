@@ -3,6 +3,8 @@ package com.larsonapps.popularmovies.data;
 import android.app.Application;
 import android.os.AsyncTask;
 import androidx.lifecycle.MutableLiveData;
+
+import com.larsonapps.popularmovies.R;
 import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
 import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
 import java.io.BufferedReader;
@@ -24,7 +26,7 @@ public class MovieListRepository {
 
 
     // TODO add room logic
-    // TODO add movie lists to end instead of replacing them
+    // TODO add movie lists to end instead of replacing them with room
 
     /**
      * Constructor for movie list repository
@@ -39,9 +41,19 @@ public class MovieListRepository {
      * Method to start background task to get movies result list
      */
     public MutableLiveData<MovieMain> getMovieMain(String mType, int page) {
-        String[] myString = {mApiKey, mType, Integer.toString(page)};
-        // start background task
-        new FetchMovieListTask().execute(myString);
+        if (mType.equals(mApplication.getString(R.string.setting_movie_list_favorite_value))) {
+            // TODO process favorite with room
+            MovieMain movieMain = new MovieMain();
+            movieMain.setErrorMessage(mApplication.getString(R.string.type_favorite_none_message));
+            mMovieMain.setValue(movieMain);
+        } else {
+            if (mMovieMain.getValue() != null) {
+                mMovieMain.getValue().setErrorMessage(null);
+            }
+            String[] myString = {mApiKey, mType, Integer.toString(page)};
+            // start background task
+            new FetchMovieListTask().execute(myString);
+        }
         return mMovieMain;
     }
 

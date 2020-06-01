@@ -29,7 +29,6 @@ public class MovieDetailSummaryFragment extends Fragment {
     private TextView mReleaseDateTextView;
     private TextView mRuntimeTextView;
     private TextView mVoteAverageTextView;
-    private TextView mOverviewTextView;
 
     /**
      * Defaul constructor for detail summary fragment
@@ -54,11 +53,9 @@ public class MovieDetailSummaryFragment extends Fragment {
         mReleaseDateTextView = view.findViewById(R.id.release_date_text_view);
         mRuntimeTextView = view.findViewById(R.id.runtime_text_view);
         mVoteAverageTextView = view.findViewById(R.id.voter_rating_text_view);
-        mOverviewTextView = view.findViewById(R.id.overview_text_view);
+        hideSummary();
 
-        /**
-         * Create observer for fragment data
-         */
+        // Create observer for fragment data
         final Observer<MovieDetailSummary> movieDetailSummaryObserver = new Observer<MovieDetailSummary>() {
             @Override
             public void onChanged(@Nullable final MovieDetailSummary newMovieDetailSummary) {
@@ -78,8 +75,7 @@ public class MovieDetailSummaryFragment extends Fragment {
                     tempString = String.format(Locale.getDefault(), "%.1f/10",
                             newMovieDetailSummary.getVoteAverage());
                     mVoteAverageTextView.setText(tempString);
-                    // Retrieve overview and display it
-                    mOverviewTextView.setText(newMovieDetailSummary.getOverview());
+                    showSummary();
                 }
             }
         };
@@ -88,5 +84,23 @@ public class MovieDetailSummaryFragment extends Fragment {
                 movieDetailSummaryObserver);
 
         return view;
+    }
+
+    /**
+     * Method to make all views invisible
+     */
+    private void hideSummary() {
+        mReleaseDateTextView.setVisibility(View.INVISIBLE);
+        mRuntimeTextView.setVisibility(View.INVISIBLE);
+        mVoteAverageTextView.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Method to make all views visible
+     */
+    private void showSummary () {
+        mReleaseDateTextView.setVisibility(View.VISIBLE);
+        mRuntimeTextView.setVisibility(View.VISIBLE);
+        mVoteAverageTextView.setVisibility(View.VISIBLE);
     }
 }

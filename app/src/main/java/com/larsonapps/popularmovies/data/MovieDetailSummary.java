@@ -10,7 +10,6 @@ public class MovieDetailSummary {
     private Date mReleaseDate;
     private int mRuntime;
     private double mVoteAverage;
-    private String mOverview;
 
     /**
      * Default constructor for movie detail summary
@@ -63,21 +62,5 @@ public class MovieDetailSummary {
      */
     public void setVoteAverage(double voteAverage) {
         mVoteAverage = voteAverage;
-    }
-
-    /**
-     * Getter for movie detail summary overview
-     * @return movie detail summary overview
-     */
-    public String getOverview() {
-        return mOverview;
-    }
-
-    /**
-     * Setter for movie detail summary overview
-     * @param mOverview to set
-     */
-    public void setOverview(String mOverview) {
-        this.mOverview = mOverview;
     }
 }
