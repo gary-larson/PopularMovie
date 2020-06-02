@@ -3,6 +3,8 @@ package com.larsonapps.popularmovies;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -26,16 +28,37 @@ import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
  * Class to hold the Review list
  */
 public class MovieDetailReviewFragment extends Fragment {
+    // Declare constants
+    private final String MORE_REVIEWS_IS_ENABLED_KEY = "more_movies_is_enabled_key";
+    private final int MORE_REVIEWS_MENU_ITEM_ID = 222;
     // Declare variavles
     MovieDetailViewModel mMovieDetailViewModel;
     FragmentMovieDetailReviewListBinding binding;
     RecyclerView.Adapter<MovieDetailReviewRecyclerViewAdapter.ViewHolder> mAdapter;
     private OnListFragmentInteractionListener mListener;
+    private boolean isMoreReviewsEnabled;
+    private MenuItem mMoreReviewsMenuItem;
 
     /**
      * Default constructor
      */
     public MovieDetailReviewFragment() {
+    }
+
+    /**
+     * Method to enable onPrepareOptionsMenu
+     * @param savedInstanceState to save state
+     */
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState == null) {
+            isMoreReviewsEnabled = false;
+        } else {
+            isMoreReviewsEnabled = savedInstanceState.getBoolean(MORE_REVIEWS_IS_ENABLED_KEY,
+                    false);
+        }
+        setHasOptionsMenu(true);
     }
 
     /**
@@ -73,15 +96,11 @@ public class MovieDetailReviewFragment extends Fragment {
                     binding.rvMovieDetailReviewList.setLayoutManager(
                             new LinearLayoutManager(context));
                     // TODO fix more reviews menu
-//                    // if menu exists set its state
-//                    if (mMovieDetailActivity.getMoreReviewsMenuItem() != null) {
-//                        if (newMovieDetailReview.getPage() ==
-//                                newMovieDetailReview.getTotalPages()) {
-//                            mMovieDetailActivity.getMoreReviewsMenuItem().setEnabled(false);
-//                        } else {
-//                            mMovieDetailActivity.getMoreReviewsMenuItem().setEnabled(true);
-//                        }
-//                    }
+                    // if menu exists set its state
+                    if (mMoreReviewsMenuItem != null) {
+                        isMoreReviewsEnabled = newMovieDetailReview.getPage() != newMovieDetailReview.getTotalPages();
+                        mMoreReviewsMenuItem.setEnabled(isMoreReviewsEnabled);
+                    }
                     // indicate all reviews are the same size
                     binding.rvMovieDetailReviewList.setHasFixedSize(false);
                     // setup Movie adapter for RecyclerView
@@ -97,6 +116,56 @@ public class MovieDetailReviewFragment extends Fragment {
         mMovieDetailViewModel.getMovieDetailReview().observe(getViewLifecycleOwner(), movieDetailReviewObserver);
 
         return view;
+    }
+
+    /**
+     * Method to add more movies menu item
+     * @param menu to modify
+     */
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        if (menu.findItem(MORE_REVIEWS_MENU_ITEM_ID) == null) {
+            mMoreReviewsMenuItem = menu.add(Menu.NONE, MORE_REVIEWS_MENU_ITEM_ID, 1,
+                    getString(R.string.more_reviews));
+            mMoreReviewsMenuItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+        mMoreReviewsMenuItem.setEnabled(isMoreReviewsEnabled);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * Method to respond to options menu clicks
+     * @param item to be processed
+     * @return true if handled
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == MORE_REVIEWS_MENU_ITEM_ID) {
+            // Get Next Page of Movies
+            // TODO fix add to list instead of replace list use room
+            // Set page number in movie list view model
+            mMovieDetailViewModel.setReviewPage(mMovieDetailViewModel.getReviewPage() + 1);
+            // If on last page disable more movies menu item
+            if (mMovieDetailViewModel.getReviewPage() == mMovieDetailViewModel.getTotalPages()) {
+                isMoreReviewsEnabled = false;
+                item.setEnabled(isMoreReviewsEnabled);
+            }
+            // retrieve more movies from view model
+            mMovieDetailViewModel.getMovieDetailReviewNextPage();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Method to save instance state
+     * @param outState bundle to save
+     */
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putBoolean(MORE_REVIEWS_IS_ENABLED_KEY, isMoreReviewsEnabled);
+        super.onSaveInstanceState(outState);
     }
 
     /**

@@ -150,47 +150,6 @@ public class MovieDetailFragment extends Fragment {
     }
 
     /**
-     * Method to modify activities menu
-     * @param menu to modify
-     */
-    @Override
-    public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-    }
-
-    /**
-     * Method to process items clicked on menu
-     * @param item to process
-     * @return whether item is handled by this method or super
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // get menu item selected
-        int menuItemThatWasSelected = item.getItemId();
-        if (menuItemThatWasSelected == R.id.action_more_reviews) {
-            // Get Next Page of Reviews
-            // TODO fix add to reviews instead of replace reviews use room
-            mMovieDetailViewModel.setReviewPage(mMovieDetailViewModel.getReviewPage() + 1);
-            if (mMovieDetailViewModel.getReviewPage() == mMovieDetailViewModel.getTotalPages()) {
-                isNextEnabled = false;
-                item.setEnabled(isNextEnabled);
-            }
-            mMovieDetailViewModel.getMovieDetailReviewNextPage(
-                    mMovieDetailViewModel.getReviewPage());
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Getter for movie details more reviews menu item
-     * @return movie details more reviews menu item
-     */
-    public MenuItem getMoreReviewsMenuItem () {
-        return mMoreReviewMenuItem;
-    }
-
-    /**
      * Method to show error message and hide other information
      */
     private void showErrorMessage() {

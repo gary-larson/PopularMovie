@@ -40,7 +40,6 @@ public class MovieActivity extends AppCompatActivity implements
     private ActionBar mActionBar;
     MovieListViewModel mMovieListViewModel;
     MovieDetailViewModel mMovieDetailViewModel;
-    boolean isNextEnabled;
     private MenuItem mMoreMovieMenuItem;
     SharedPreferences mSharedPreferences;
     FragmentManager mFragmentManager;
@@ -106,12 +105,6 @@ public class MovieActivity extends AppCompatActivity implements
                 .replace(R.id.movie_fragment_container_view, new MovieDetailFragment())
                 .addToBackStack(DETAILS_FRAGMENT)
                 .commit();
-//        // create detail intent
-//        Intent detailIntent = new Intent(this, MovieDetailsActivity.class);
-//        // add movie id to detail intent
-//        detailIntent.putExtra(DETAIL_MOVIE_ID_KEY, movieResult.getMovieID());
-//        // start activity
-//        startActivity(detailIntent);
     }
 
     /**
@@ -169,19 +162,6 @@ public class MovieActivity extends AppCompatActivity implements
         int menuItemThatWasSelected = item.getItemId();
         // take action depending on item selected
         switch (menuItemThatWasSelected) {
-            case R.id.action_more_movies:
-                // Get Next Page of Movies
-                // TODO fix add to list instead of replace list use room
-                // Set page number in movie list view model
-                mMovieListViewModel.setPage(mMovieListViewModel.getPage() + 1);
-                // If on last page disable more movies menu item
-                if (mMovieListViewModel.getPage() == mMovieListViewModel.getTotalPages()) {
-                    isNextEnabled = false;
-                    item.setEnabled(isNextEnabled);
-                }
-                // retrieve more movies from view model
-                mMovieListViewModel.retrieveMovieMain();
-                return true;
             case R.id.action_settings:
                 // Get fragment manager and open settings fragment
                 mFragmentManager
@@ -208,14 +188,6 @@ public class MovieActivity extends AppCompatActivity implements
             }
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Getter for more movie menu item
-     * @return more movie menu item
-     */
-    public MenuItem getMoreMovieMenuItem () {
-        return mMoreMovieMenuItem;
     }
 
     /**

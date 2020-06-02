@@ -10,9 +10,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -23,12 +24,13 @@ import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.databinding.FragmentMovieItemListBinding;
 import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 
-import java.util.List;
-
 /**
  * Class to hold the movie list
  */
 public class MovieItemFragment extends Fragment {
+    // Declare constants
+    private final int MORE_MOVIES_MENU_ITEM_ID = 111;
+    private final String MORE_MOVIES_IS_ENABLED_KEY = "more_movies_is_enabled";
     // Declare variables
     private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
@@ -36,11 +38,29 @@ public class MovieItemFragment extends Fragment {
     private FragmentMovieItemListBinding binding;
     private MovieItemRecyclerViewAdapter mAdapter;
     private MovieActivity mMovieActivity;
+    private MenuItem mMoreMoviesMenuItem;
+    private boolean isMoreMoviesEnabled;
 
     /**
      * Default constructor for movie item fragment
      */
     public MovieItemFragment() {}
+
+    /**
+     * Method to enable onPrepareOptionsMenu
+     * @param savedInstanceState to save state
+     */
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState == null) {
+            isMoreMoviesEnabled = false;
+        } else {
+            isMoreMoviesEnabled = savedInstanceState.getBoolean(MORE_MOVIES_IS_ENABLED_KEY,
+                    false);
+        }
+        setHasOptionsMenu(true);
+    }
 
     /**
      * Method to create movie item fragment view
@@ -87,12 +107,9 @@ public class MovieItemFragment extends Fragment {
                                 mColumnCount));
                     }
                     // if menu exists set its state
-                    if (mMovieActivity.getMoreMovieMenuItem() != null) {
-                        if (mMovieListViewModel.getPage() == newMovieMain.getTotalPages()) {
-                            mMovieActivity.getMoreMovieMenuItem().setEnabled(false);
-                        } else {
-                            mMovieActivity.getMoreMovieMenuItem().setEnabled(true);
-                        }
+                    if (mMoreMoviesMenuItem != null) {
+                        isMoreMoviesEnabled = mMovieListViewModel.getPage() != newMovieMain.getTotalPages();
+                        mMoreMoviesMenuItem.setEnabled(isMoreMoviesEnabled);
                     }
                     // indicate all poster are the same size
                     binding.rvList.setHasFixedSize(true);
@@ -106,6 +123,56 @@ public class MovieItemFragment extends Fragment {
         };
         mMovieListViewModel.getMovieMain().observe(getViewLifecycleOwner(), movieMainObserver);
         return mView;
+    }
+
+    /**
+     * Method to add more movies menu item
+     * @param menu to modify
+     */
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        if (menu.findItem(MORE_MOVIES_MENU_ITEM_ID) == null) {
+            mMoreMoviesMenuItem = menu.add(Menu.NONE, MORE_MOVIES_MENU_ITEM_ID, 1,
+                    getString(R.string.more_movies));
+            mMoreMoviesMenuItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+        mMoreMoviesMenuItem.setEnabled(isMoreMoviesEnabled);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * Method to respond to options menu clicks
+     * @param item to be processed
+     * @return true if handled
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == MORE_MOVIES_MENU_ITEM_ID) {
+            // Get Next Page of Movies
+            // TODO fix add to list instead of replace list use room
+            // Set page number in movie list view model
+            mMovieListViewModel.setPage(mMovieListViewModel.getPage() + 1);
+            // If on last page disable more movies menu item
+            if (mMovieListViewModel.getPage() == mMovieListViewModel.getTotalPages()) {
+                isMoreMoviesEnabled = false;
+                item.setEnabled(isMoreMoviesEnabled);
+            }
+            // retrieve more movies from view model
+            mMovieListViewModel.retrieveMovieMain();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Method to save instance state
+     * @param outState bundle to save
+     */
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putBoolean(MORE_MOVIES_IS_ENABLED_KEY, isMoreMoviesEnabled);
+        super.onSaveInstanceState(outState);
     }
 
     /**

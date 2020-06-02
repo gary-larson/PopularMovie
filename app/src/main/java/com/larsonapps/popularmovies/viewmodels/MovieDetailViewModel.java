@@ -84,8 +84,8 @@ public class MovieDetailViewModel extends AndroidViewModel {
         return mMovieDetailReview;
     }
 
-    public void getMovieDetailReviewNextPage(int page) {
-        mMovieDetailRepository.getMovieDetailReviewNextPage(page);
+    public void getMovieDetailReviewNextPage() {
+        mMovieDetailRepository.getMovieDetailReviewNextPage(mReviewPage);
     }
 
     /**
