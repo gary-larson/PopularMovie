@@ -2,6 +2,7 @@ package com.larsonapps.popularmovies;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.larsonapps.popularmovies.data.MovieDetailSummary;
+import com.larsonapps.popularmovies.databinding.FragmentDetailSummaryBinding;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
 
 import java.text.SimpleDateFormat;
@@ -25,13 +27,11 @@ import java.util.Locale;
  */
 public class MovieDetailSummaryFragment extends Fragment {
     // Declare variables
-    private MovieDetailViewModel mMovieDetailViewModel;
-    private TextView mReleaseDateTextView;
-    private TextView mRuntimeTextView;
-    private TextView mVoteAverageTextView;
+    MovieDetailViewModel mMovieDetailViewModel;
+    FragmentDetailSummaryBinding binding;
 
     /**
-     * Defaul constructor for detail summary fragment
+     * Default constructor for detail summary fragment
      */
     public MovieDetailSummaryFragment() {}
 
@@ -43,16 +43,14 @@ public class MovieDetailSummaryFragment extends Fragment {
      * @return the view
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_detail_summary, container, false);
+        binding = FragmentDetailSummaryBinding.inflate(inflater, container, false);
+        View view =  binding.getRoot();
         // Declare variables
-        // TODO convert to binding
-        mMovieDetailViewModel = new ViewModelProvider(requireActivity()).get(MovieDetailViewModel.class);
-        mReleaseDateTextView = view.findViewById(R.id.release_date_text_view);
-        mRuntimeTextView = view.findViewById(R.id.runtime_text_view);
-        mVoteAverageTextView = view.findViewById(R.id.voter_rating_text_view);
+        mMovieDetailViewModel = new ViewModelProvider(requireActivity()).
+                get(MovieDetailViewModel.class);
         hideSummary();
 
         // Create observer for fragment data
@@ -66,15 +64,15 @@ public class MovieDetailSummaryFragment extends Fragment {
                     Date releaseDate = newMovieDetailSummary.getReleaseDate();
                     SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy",
                             Locale.getDefault());
-                    mReleaseDateTextView.setText(dateFormat.format(releaseDate));
+                    binding.releaseDateTextView.setText(dateFormat.format(releaseDate));
                     // Retrieve runtime and display it
                     String tempString = String.format(Locale.getDefault(), "%d Minutes",
                             newMovieDetailSummary.getRuntime());
-                    mRuntimeTextView.setText(tempString);
+                    binding.runtimeTextView.setText(tempString);
                     // Retrieve Voter average and display it
                     tempString = String.format(Locale.getDefault(), "%.1f/10",
                             newMovieDetailSummary.getVoteAverage());
-                    mVoteAverageTextView.setText(tempString);
+                    binding.voterRatingTextView.setText(tempString);
                     showSummary();
                 }
             }
@@ -90,17 +88,17 @@ public class MovieDetailSummaryFragment extends Fragment {
      * Method to make all views invisible
      */
     private void hideSummary() {
-        mReleaseDateTextView.setVisibility(View.INVISIBLE);
-        mRuntimeTextView.setVisibility(View.INVISIBLE);
-        mVoteAverageTextView.setVisibility(View.INVISIBLE);
+        binding.releaseDateTextView.setVisibility(View.INVISIBLE);
+        binding.runtimeTextView.setVisibility(View.INVISIBLE);
+        binding.voterRatingTextView.setVisibility(View.INVISIBLE);
     }
 
     /**
      * Method to make all views visible
      */
     private void showSummary () {
-        mReleaseDateTextView.setVisibility(View.VISIBLE);
-        mRuntimeTextView.setVisibility(View.VISIBLE);
-        mVoteAverageTextView.setVisibility(View.VISIBLE);
+        binding.releaseDateTextView.setVisibility(View.VISIBLE);
+        binding.runtimeTextView.setVisibility(View.VISIBLE);
+        binding.voterRatingTextView.setVisibility(View.VISIBLE);
     }
 }

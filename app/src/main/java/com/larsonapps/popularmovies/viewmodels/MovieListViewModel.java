@@ -1,15 +1,12 @@
 package com.larsonapps.popularmovies.viewmodels;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.larsonapps.popularmovies.R;
 import com.larsonapps.popularmovies.data.MovieListRepository;
 import com.larsonapps.popularmovies.data.MovieMain;
-import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
 
 import java.util.List;
@@ -23,16 +20,15 @@ public class MovieListViewModel extends AndroidViewModel {
     private MovieListRepository mMovieListRepository;
     private int mPage;
     private String mType;
-    private SharedPreferences mSharedPreferences;
     // Declare LiveData variables
     private LiveData<MovieMain> mMovieMain;
-    private LiveData<List<MovieResult>> mMovieResultList;
 
     /**
      * Constructor for movie list view model
      * @param application to set
      */
-    public MovieListViewModel(Application application) {
+    public MovieListViewModel(Application application)
+    {
         super(application);
         this.mApplication = application;
         mMovieListRepository = new MovieListRepository(mApplication);
@@ -104,12 +100,5 @@ public class MovieListViewModel extends AndroidViewModel {
         } else {
             return 0;
         }
-    }
-
-    public int getMovieId (int position) {
-        if (mMovieResultList.getValue() != null) {
-            return mMovieResultList.getValue().get(position).getMovieID();
-        }
-        return 0;
     }
 }

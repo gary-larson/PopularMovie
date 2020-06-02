@@ -1,6 +1,6 @@
 package com.larsonapps.popularmovies;
 
-import android.app.Activity;
+
 import android.content.Context;
 import android.os.Bundle;
 
@@ -9,19 +9,17 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.larsonapps.popularmovies.adapter.MovieDetailReviewRecyclerViewAdapter;
 import com.larsonapps.popularmovies.adapter.MovieDetailVideoRecyclerViewAdapter;
-import com.larsonapps.popularmovies.data.MovieDetailReview;
 import com.larsonapps.popularmovies.data.MovieDetailVideo;
+
+import com.larsonapps.popularmovies.databinding.FragmentMovieDetailVideoListBinding;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
 
 import java.util.List;
@@ -32,9 +30,7 @@ import java.util.List;
 public class MovieDetailVideoFragment extends Fragment {
     // Declare variables
     MovieDetailViewModel mMovieDetailViewModel;
-    MovieDetailsActivity mMovieDetailsActivity;
-    private RecyclerView mMovieDetailVideoRecyclerView;
-    private TextView mMovieDetailVideoNoneTextView;
+    FragmentMovieDetailVideoListBinding binding;
     private OnListFragmentInteractionListener mListener;
 
     /**
@@ -59,18 +55,14 @@ public class MovieDetailVideoFragment extends Fragment {
      * @return the view created
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_movie_detail_video_list, container,
-                false);
+        binding = FragmentMovieDetailVideoListBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
         // Initialize movie list view model from activity
         mMovieDetailViewModel = new ViewModelProvider(requireActivity())
                 .get(MovieDetailViewModel.class);
-        mMovieDetailsActivity = (MovieDetailsActivity) getActivity();
-        // TODO replace with binding
-        mMovieDetailVideoRecyclerView = view.findViewById(R.id.rv_movie_detail_video_list);
-        mMovieDetailVideoNoneTextView = view.findViewById(R.id.tv_movie_detail_video_none);
         hideVideo();
 
         // get the context
@@ -81,24 +73,21 @@ public class MovieDetailVideoFragment extends Fragment {
                 new Observer<List<MovieDetailVideo>>() {
             @Override
             public void onChanged(@Nullable final List<MovieDetailVideo> newMovieDetailVideoList) {
-                // test if recyclerview exists
-                if (mMovieDetailVideoRecyclerView != null) {
-                    // test if data is available
-                    if (newMovieDetailVideoList != null && newMovieDetailVideoList.size() > 0) {
-                        // Update the UI, in this case, an adapter.
-                        showRecyclerView();
-                        mMovieDetailVideoRecyclerView.setLayoutManager(
-                                new LinearLayoutManager(context));
-                        mMovieDetailVideoRecyclerView.setHasFixedSize(false);
-                        // setup Movie adapter for RecyclerView
-                        RecyclerView.Adapter<MovieDetailVideoRecyclerViewAdapter.ViewHolder>
-                                mAdapter = new MovieDetailVideoRecyclerViewAdapter(
-                                newMovieDetailVideoList, mListener);
-                        mMovieDetailVideoRecyclerView.setAdapter(mAdapter);
-                        //showRecyclerView();
-                    } else {
-                        showNoneMessage();
-                    }
+                // test if data is available
+                if (newMovieDetailVideoList != null && newMovieDetailVideoList.size() > 0) {
+                    // Update the UI, in this case, an adapter.
+                    showRecyclerView();
+                    binding.rvMovieDetailVideoList.setLayoutManager(
+                            new LinearLayoutManager(context));
+                    binding.rvMovieDetailVideoList.setHasFixedSize(false);
+                    // setup Movie adapter for RecyclerView
+                    RecyclerView.Adapter<MovieDetailVideoRecyclerViewAdapter.ViewHolder>
+                            mAdapter = new MovieDetailVideoRecyclerViewAdapter(
+                            newMovieDetailVideoList, mListener);
+                    binding.rvMovieDetailVideoList.setAdapter(mAdapter);
+                    //showRecyclerView();
+                } else {
+                    showNoneMessage();
                 }
             }
         };
@@ -117,8 +106,7 @@ public class MovieDetailVideoFragment extends Fragment {
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+            throw new RuntimeException(context.toString());
         }
     }
 
@@ -142,29 +130,29 @@ public class MovieDetailVideoFragment extends Fragment {
      * Method to hide all views
      */
     private void hideVideo() {
-        mMovieDetailVideoRecyclerView.setVisibility(View.INVISIBLE);
-        mMovieDetailVideoNoneTextView.setVisibility(View.INVISIBLE);
-        mMovieDetailsActivity.getTrailerDividerView().setVisibility(View.INVISIBLE);
-        mMovieDetailsActivity.getTrailerTitleTextView().setVisibility(View.INVISIBLE);
+        binding.rvMovieDetailVideoList.setVisibility(View.INVISIBLE);
+        binding.tvMovieDetailVideoNone.setVisibility(View.INVISIBLE);
+        binding.divider.setVisibility(View.INVISIBLE);
+        binding.tvTrailer.setVisibility(View.INVISIBLE);
     }
 
     /**
      * Method to show all views except none message
      */
     private void showRecyclerView() {
-        mMovieDetailVideoRecyclerView.setVisibility(View.VISIBLE);
-        mMovieDetailVideoNoneTextView.setVisibility(View.GONE);
-        mMovieDetailsActivity.getTrailerDividerView().setVisibility(View.VISIBLE);
-        mMovieDetailsActivity.getTrailerTitleTextView().setVisibility(View.VISIBLE);
+        binding.rvMovieDetailVideoList.setVisibility(View.VISIBLE);
+        binding.tvMovieDetailVideoNone.setVisibility(View.GONE);
+        binding.divider.setVisibility(View.VISIBLE);
+        binding.tvTrailer.setVisibility(View.VISIBLE);
     }
 
     /**
      * Method to show all views except recyclerview
      */
     private void showNoneMessage() {
-        mMovieDetailVideoRecyclerView.setVisibility(View.GONE);
-        mMovieDetailVideoNoneTextView.setVisibility(View.VISIBLE);
-        mMovieDetailsActivity.getTrailerDividerView().setVisibility(View.VISIBLE);
-        mMovieDetailsActivity.getTrailerTitleTextView().setVisibility(View.VISIBLE);
+        binding.rvMovieDetailVideoList.setVisibility(View.GONE);
+        binding.tvMovieDetailVideoNone.setVisibility(View.VISIBLE);
+        binding.divider.setVisibility(View.VISIBLE);
+        binding.tvTrailer.setVisibility(View.VISIBLE);
     }
 }

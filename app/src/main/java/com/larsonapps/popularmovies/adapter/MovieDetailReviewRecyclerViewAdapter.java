@@ -7,13 +7,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.larsonapps.popularmovies.MovieDetailReviewFragment.OnListFragmentInteractionListener;
-import com.larsonapps.popularmovies.R;
 import com.larsonapps.popularmovies.data.MovieDetailReview;
 import com.larsonapps.popularmovies.data.MovieDetailReviewResult;
-import com.larsonapps.popularmovies.data.MovieResult;
+import com.larsonapps.popularmovies.databinding.FragmentMovieDetailReviewBinding;
 
 
 import java.util.List;
@@ -30,7 +28,7 @@ public class MovieDetailReviewRecyclerViewAdapter extends
     private final OnListFragmentInteractionListener mListener;
     private MovieDetailReviewResult mResult;
     private ViewModel mViewModel;
-    //private List<MovieDetailReviewResult> mReviewData;
+    private FragmentMovieDetailReviewBinding binding;
 
     public MovieDetailReviewRecyclerViewAdapter(List<MovieDetailReviewResult> items, OnListFragmentInteractionListener listener) {
         mReviewResults = items;
@@ -39,22 +37,21 @@ public class MovieDetailReviewRecyclerViewAdapter extends
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_movie_detail_review, parent, false);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        binding = FragmentMovieDetailReviewBinding.inflate(LayoutInflater.from(parent.getContext()),
+                parent, false);
+        View view = binding.getRoot();
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        // Declare a variable of the movie results
-        //final List<MovieDetailReviewResult> detailReviewResults = mReviewResults;
         // Test if Poster Path is populated
         if(mReviewResults.get(position) != null ) {
             holder.mReviewResult = mReviewResults.get(position);
             String temp = String.format("By: %s", mReviewResults.get(position).getAuthor());
-            holder.mAuthorView.setText(temp);
-            holder.mContentView.setText(mReviewResults.get(position).getContent());
+            binding.author.setText(temp);
+            binding.content.setText(mReviewResults.get(position).getContent());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -76,22 +73,18 @@ public class MovieDetailReviewRecyclerViewAdapter extends
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mAuthorView;
-        public final TextView mContentView;
         public MovieDetailReviewResult mReviewResult;
 
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mAuthorView = view.findViewById(R.id.author);
-            mContentView = view.findViewById(R.id.content);
         }
 
         @NonNull
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + binding.content.getText() + "'";
         }
     }
 }

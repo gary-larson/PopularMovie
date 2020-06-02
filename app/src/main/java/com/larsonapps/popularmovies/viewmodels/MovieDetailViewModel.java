@@ -44,10 +44,9 @@ public class MovieDetailViewModel extends AndroidViewModel {
      * @return movie detail information data
      */
     public LiveData<MovieDetailInfo> getMovieDetailInfo(int movieId) {
-        // set movie id
-        mMovieID = movieId;
-        if (mMovieDetailInfo == null) {
+        if (mMovieDetailInfo == null || mMovieID != movieId) {
             mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(movieId);
+            mMovieID = movieId;
         }
         return mMovieDetailInfo;
     }
@@ -94,6 +93,12 @@ public class MovieDetailViewModel extends AndroidViewModel {
      * @return movie id
      */
     public int getMovieId () {return mMovieID;}
+
+    /**
+     * Setter for movie id
+     * @param movieId to set
+     */
+    public void setMovieId(int movieId) {mMovieID = movieId;}
 
     /**
      * Getter for movie detail review page

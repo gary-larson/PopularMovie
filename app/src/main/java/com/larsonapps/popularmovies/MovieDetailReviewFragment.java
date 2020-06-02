@@ -1,40 +1,34 @@
 package com.larsonapps.popularmovies;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
 import com.larsonapps.popularmovies.adapter.MovieDetailReviewRecyclerViewAdapter;
-import com.larsonapps.popularmovies.adapter.MovieItemRecyclerViewAdapter;
 import com.larsonapps.popularmovies.data.MovieDetailReview;
 import com.larsonapps.popularmovies.data.MovieDetailReviewResult;
-import com.larsonapps.popularmovies.data.MovieMain;
+import com.larsonapps.popularmovies.databinding.FragmentMovieDetailReviewListBinding;
+import com.larsonapps.popularmovies.databinding.FragmentMovieItemListBinding;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
-import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
+
 
 /**
  * Class to hold the Review list
  */
 public class MovieDetailReviewFragment extends Fragment {
     // Declare variavles
-    private MovieDetailViewModel mMovieDetailViewModel;
-    private MovieDetailsActivity mMovieDetailActivity;
-    RecyclerView mMovieDetailReviewRecyclerView;
-    TextView mMovieDetailReviewNoneTextView;
+    MovieDetailViewModel mMovieDetailViewModel;
+    FragmentMovieDetailReviewListBinding binding;
     RecyclerView.Adapter<MovieDetailReviewRecyclerViewAdapter.ViewHolder> mAdapter;
     private OnListFragmentInteractionListener mListener;
 
@@ -52,52 +46,52 @@ public class MovieDetailReviewFragment extends Fragment {
      * @return the view created
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_movie_detail_review_list, container, false);
+        binding = FragmentMovieDetailReviewListBinding.inflate(inflater, container,
+                false);
+        View view = binding.getRoot();
 
         // Initialize movie list view model from activity
-        mMovieDetailViewModel = new ViewModelProvider(requireActivity()).get(MovieDetailViewModel.class);
-        mMovieDetailActivity = (MovieDetailsActivity) getActivity();
-        // TODO replace with binding
-        mMovieDetailReviewRecyclerView = view.findViewById(R.id.rv_movie_detail_review_list);
-        mMovieDetailReviewNoneTextView = view.findViewById(R.id.tv_movie_detail_review_none);
+        mMovieDetailViewModel = new ViewModelProvider(requireActivity())
+                .get(MovieDetailViewModel.class);
         hideReview();
 
         // get the context
         final Context context = view.getContext();
 
         // Create the observer which updates the UI and sets the adapter
-        final Observer<MovieDetailReview> movieDetailReviewObserver = new Observer<MovieDetailReview>() {
+        final Observer<MovieDetailReview> movieDetailReviewObserver =
+                new Observer<MovieDetailReview>() {
             @Override
             public void onChanged(@Nullable final MovieDetailReview newMovieDetailReview) {
-            // test if recyclerview exists
-            if (mMovieDetailReviewRecyclerView != null) {
                 // test if data is available
-                if (newMovieDetailReview != null && newMovieDetailReview.getReviewList().size() > 0) {
+                if (newMovieDetailReview != null &&
+                        newMovieDetailReview.getReviewList().size() > 0) {
                     // Update the UI, in this case, an adapter.
                     showRecyclerView();
-                    mMovieDetailReviewRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-                    // if menu exists set its state
-                    if (mMovieDetailActivity.getMoreReviewsMenuItem() != null) {
-                        if (newMovieDetailReview.getPage() ==
-                                newMovieDetailReview.getTotalPages()) {
-                            mMovieDetailActivity.getMoreReviewsMenuItem().setEnabled(false);
-                        } else {
-                            mMovieDetailActivity.getMoreReviewsMenuItem().setEnabled(true);
-                        }
-                    }
+                    binding.rvMovieDetailReviewList.setLayoutManager(
+                            new LinearLayoutManager(context));
+                    // TODO fix more reviews menu
+//                    // if menu exists set its state
+//                    if (mMovieDetailActivity.getMoreReviewsMenuItem() != null) {
+//                        if (newMovieDetailReview.getPage() ==
+//                                newMovieDetailReview.getTotalPages()) {
+//                            mMovieDetailActivity.getMoreReviewsMenuItem().setEnabled(false);
+//                        } else {
+//                            mMovieDetailActivity.getMoreReviewsMenuItem().setEnabled(true);
+//                        }
+//                    }
                     // indicate all reviews are the same size
-                    mMovieDetailReviewRecyclerView.setHasFixedSize(false);
+                    binding.rvMovieDetailReviewList.setHasFixedSize(false);
                     // setup Movie adapter for RecyclerView
                     mAdapter = new MovieDetailReviewRecyclerViewAdapter(
                             newMovieDetailReview.getReviewList(), mListener);
-                    mMovieDetailReviewRecyclerView.setAdapter(mAdapter);
+                    binding.rvMovieDetailReviewList.setAdapter(mAdapter);
                     //showRecyclerView();
                 } else {
                     showNoneMessage();
                 }
-            }
             }
         };
         mMovieDetailViewModel.getMovieDetailReview().observe(getViewLifecycleOwner(), movieDetailReviewObserver);
@@ -115,8 +109,7 @@ public class MovieDetailReviewFragment extends Fragment {
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+            throw new RuntimeException(context.toString());
         }
     }
 
@@ -140,35 +133,30 @@ public class MovieDetailReviewFragment extends Fragment {
      * Method to hide all views
      */
     private void hideReview() {
-        mMovieDetailReviewRecyclerView.setVisibility(View.INVISIBLE);
-        mMovieDetailReviewNoneTextView.setVisibility(View.INVISIBLE);
-        if (mMovieDetailActivity.getReviewDividerView() != null) {
-            mMovieDetailActivity.getReviewDividerView().setVisibility(View.INVISIBLE);
-        }
-        mMovieDetailActivity.getReviewTitleTextView().setVisibility(View.INVISIBLE);
+        binding.rvMovieDetailReviewList.setVisibility(View.INVISIBLE);
+        binding.tvMovieDetailReviewNone.setVisibility(View.INVISIBLE);
+        binding.reviewDivider.setVisibility(View.INVISIBLE);
+        binding.tvReview.setVisibility(View.INVISIBLE);
     }
 
     /**
      * Method to show all views except none message
      */
     private void showRecyclerView() {
-        mMovieDetailReviewRecyclerView.setVisibility(View.VISIBLE);
-        mMovieDetailReviewNoneTextView.setVisibility(View.GONE);
-        if (mMovieDetailActivity.getReviewDividerView() != null) {
-            mMovieDetailActivity.getReviewDividerView().setVisibility(View.VISIBLE);
-        }
-        mMovieDetailActivity.getReviewTitleTextView().setVisibility(View.VISIBLE);
+        binding.rvMovieDetailReviewList.setVisibility(View.VISIBLE);
+        binding.tvMovieDetailReviewNone.setVisibility(View.GONE);
+        binding.reviewDivider.setVisibility(View.VISIBLE);
+        binding.tvReview.setVisibility(View.VISIBLE);
     }
 
     /**
      * Method to show all views except recyclerview
      */
     private void showNoneMessage() {
-        mMovieDetailReviewRecyclerView.setVisibility(View.GONE);
-        mMovieDetailReviewNoneTextView.setVisibility(View.VISIBLE);
-        if (mMovieDetailActivity.getReviewDividerView() != null) {
-            mMovieDetailActivity.getReviewDividerView().setVisibility(View.VISIBLE);
-        }
-        mMovieDetailActivity.getReviewTitleTextView().setVisibility(View.VISIBLE);
+        binding.rvMovieDetailReviewList.setVisibility(View.GONE);
+        binding.tvMovieDetailReviewNone.setVisibility(View.VISIBLE);
+        //binding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
+        binding.reviewDivider.setVisibility(View.VISIBLE);
+        binding.tvReview.setVisibility(View.VISIBLE);
     }
 }

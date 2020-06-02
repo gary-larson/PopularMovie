@@ -1,34 +1,49 @@
 package com.larsonapps.popularmovies;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.larsonapps.popularmovies.data.MovieDetailReviewResult;
+import com.larsonapps.popularmovies.data.MovieDetailVideo;
 import com.larsonapps.popularmovies.data.MovieResult;
+import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
+import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
 import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 
 /**
  * Class for Movie activity
  */
 public class MovieActivity extends AppCompatActivity implements
-        MovieItemFragment.OnListFragmentInteractionListener {
+        MovieItemFragment.OnListFragmentInteractionListener,
+        MovieDetailVideoFragment.OnListFragmentInteractionListener,
+        MovieDetailReviewFragment.OnListFragmentInteractionListener {
     // Declare CONSTANTS
     public final static String DETAIL_MOVIE_ID_KEY = "movie_id";
+    final String SETINGS_FRAGMENT = "SettingsFragment";
+    final String ABOUT_FRAGMENT = "AboutFragment";
+    final String DETAILS_FRAGMENT = "DetailsFragment";
     // Declare variables
     public static int mNumberHorizontalImages;
     public static int mNumberVerticalImages;
+    private int mMovieId;
     public static String mPosterSize;
+    private ActionBar mActionBar;
     MovieListViewModel mMovieListViewModel;
-    String mTitle;
+    MovieDetailViewModel mMovieDetailViewModel;
     boolean isNextEnabled;
     private MenuItem mMoreMovieMenuItem;
     SharedPreferences mSharedPreferences;
+    FragmentManager mFragmentManager;
 
     /**
      * Method to create the movie activity
@@ -45,6 +60,8 @@ public class MovieActivity extends AppCompatActivity implements
         mPosterSize = getResources().getString(R.string.poster_size);
         // initialize the movie list view model
         mMovieListViewModel = new ViewModelProvider(this).get(MovieListViewModel.class);
+        // initialize movie detail view model
+        mMovieDetailViewModel = new ViewModelProvider(this).get(MovieDetailViewModel.class);
         // initialize information for menus
         // Get shared preferences
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -52,17 +69,29 @@ public class MovieActivity extends AppCompatActivity implements
                 getString(R.string.setting_movie_list_key),
                 getString(R.string.setting_movie_list_popular_value));
         // Set title based on movie list type preference
-        if (type.equals(getString(R.string.setting_movie_list_popular_value))) {
-            mTitle = getString(R.string.setting_movie_list_popular_label);
-        } else if (type.equals(getString(R.string.setting_movie_list_favorite_value))) {
-            mTitle = getString(R.string.setting_movie_list_favorite_label);
-        } else {
-            mTitle = getString(R.string.setting_movie_list_top_rated_label);
-        }
+        convertTypeToTitleAndSet(type);
         // set movie list preference in view model
         mMovieListViewModel.setType(type);
+        mActionBar = getSupportActionBar();
+        if (mActionBar != null) {
+            mActionBar.setDisplayHomeAsUpEnabled(false);
+        }
+        mFragmentManager = getSupportFragmentManager();
+    }
+
+    public void convertTypeToTitleAndSet (String type) {
+        String title;
+
+        // Determine title from type
+        if (type.equals(getString(R.string.setting_movie_list_popular_value))) {
+            title = getString(R.string.setting_movie_list_popular_label);
+        } else if (type.equals(getString(R.string.setting_movie_list_favorite_value))) {
+            title = getString(R.string.setting_movie_list_favorite_label);
+        } else {
+            title = getString(R.string.setting_movie_list_top_rated_label);
+        }
         // set title of activity
-        setTitle(mTitle);
+        setTitle(title);
     }
 
     /**
@@ -71,9 +100,48 @@ public class MovieActivity extends AppCompatActivity implements
      */
     @Override
     public void onListFragmentInteraction(MovieResult movieResult) {
-        Intent detailIntent = new Intent(this, MovieDetailsActivity.class);
-        detailIntent.putExtra(DETAIL_MOVIE_ID_KEY, movieResult.getMovieID());
-        startActivity(detailIntent);
+        mMovieId = movieResult.getMovieID();
+        mFragmentManager
+                .beginTransaction()
+                .replace(R.id.movie_fragment_container_view, new MovieDetailFragment())
+                .addToBackStack(DETAILS_FRAGMENT)
+                .commit();
+//        // create detail intent
+//        Intent detailIntent = new Intent(this, MovieDetailsActivity.class);
+//        // add movie id to detail intent
+//        detailIntent.putExtra(DETAIL_MOVIE_ID_KEY, movieResult.getMovieID());
+//        // start activity
+//        startActivity(detailIntent);
+    }
+
+    /**
+     * Method to process clicks in the review list
+     * @param movieDetailReviewResult is the review to process
+     */
+    @Override
+    public void onListFragmentInteraction(MovieDetailReviewResult movieDetailReviewResult) {
+        String url = movieDetailReviewResult.getUrl();
+        Intent webIntent = new Intent(Intent.ACTION_VIEW);
+        webIntent.setData(Uri.parse(url));
+        startActivity(webIntent);
+    }
+
+    /**
+     * Method to process clicks on the trailer list
+     * @param movieDetailVideo is the trailer to process
+     */
+    @Override
+    public void onListFragmentInteraction(MovieDetailVideo movieDetailVideo) {
+        String url;
+        if (movieDetailVideo.getSite().equals("YouTube")) {
+            url = MovieNetworkUtilities.YOUTUBE_BASE_URL;
+        } else {
+            url = MovieNetworkUtilities.VIMEO_BASE_URL;
+        }
+        url += movieDetailVideo.getKey();
+        Intent webIntent = new Intent(Intent.ACTION_VIEW);
+        webIntent.setData(Uri.parse(url));
+        startActivity(webIntent);
     }
 
     /**
@@ -83,8 +151,10 @@ public class MovieActivity extends AppCompatActivity implements
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate main movie menu
         getMenuInflater().inflate(R.menu.main, menu);
-        mMoreMovieMenuItem =  menu.getItem(0);
+        // set more movie menu item
+        mMoreMovieMenuItem = menu.getItem(0);
         return true;
     }
 
@@ -95,33 +165,68 @@ public class MovieActivity extends AppCompatActivity implements
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // get menu item id
         int menuItemThatWasSelected = item.getItemId();
+        // take action depending on item selected
         switch (menuItemThatWasSelected) {
             case R.id.action_more_movies:
                 // Get Next Page of Movies
                 // TODO fix add to list instead of replace list use room
+                // Set page number in movie list view model
                 mMovieListViewModel.setPage(mMovieListViewModel.getPage() + 1);
+                // If on last page disable more movies menu item
                 if (mMovieListViewModel.getPage() == mMovieListViewModel.getTotalPages()) {
                     isNextEnabled = false;
                     item.setEnabled(isNextEnabled);
                 }
+                // retrieve more movies from view model
                 mMovieListViewModel.retrieveMovieMain();
                 return true;
             case R.id.action_settings:
-                // Show settings activity
-                Intent settingsIntent = new Intent(this, MovieSettingsActivity.class);
-                startActivity(settingsIntent);
+                // Get fragment manager and open settings fragment
+                mFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.movie_fragment_container_view, new MovieSettingsFragment())
+                        .addToBackStack(SETINGS_FRAGMENT)
+                        .commit();
                 return true;
             case R.id.action_about:
-                // Show about activity
-                Intent aboutIntent = new Intent(this, MovieAboutActivity.class);
-                startActivity(aboutIntent);
+                // Get fragment manager and open about fragment
+                mFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.movie_fragment_container_view, new MovieAboutFragment())
+                        .addToBackStack(ABOUT_FRAGMENT)
+                        .commit();
+               // Intent aboutIntent = new Intent(this, MovieAboutActivity.class);
+                //startActivity(aboutIntent);
                 return true;
+            case android.R.id.home: {
+                if (mFragmentManager.getBackStackEntryCount() > 0) {
+                    mFragmentManager.popBackStack();
+                    return true;
+                }
+            }
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Getter for more movie menu item
+     * @return more movie menu item
+     */
     public MenuItem getMoreMovieMenuItem () {
         return mMoreMovieMenuItem;
     }
+
+    /**
+     * Getter for movie activity action bar
+     * @return movie activity action bar
+     */
+    public ActionBar getmActionBar() {return mActionBar;}
+
+    /**
+     * Getter for movie id
+     * @return movie id
+     */
+    public int getMovieId() {return mMovieId;}
 }

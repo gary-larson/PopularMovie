@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorSelectorBackground"
-    tools:context=".MovieDetailsActivity" >
+    tools:context=".MovieDetailFragment" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -42,7 +42,6 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/detail_summary_fragment"
-            android:name="com.larsonapps.popularmovies.MovieDetailSummaryFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/poster_image_view"
@@ -64,58 +63,19 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:visibility="invisible"/>
 
-        <View
-            android:id="@+id/divider"
-            android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/text_margin"
-            android:layout_marginRight="@dimen/text_margin"
-            android:layout_marginLeft="@dimen/text_margin"
-            android:layout_height="1dp"
-            android:background="@color/colorPrimary"
-            android:visibility="invisible"
-            app:layout_constraintTop_toBottomOf="@id/overview_text_view" />
-
-        <TextView
-            style="@style/DetailTitle"
-            android:id="@+id/tv_trailer"
-            android:text="@string/trailers"
-            android:visibility="invisible"
-            app:layout_constraintTop_toBottomOf="@id/divider"
-            app:layout_constraintLeft_toLeftOf="parent" />
-
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/detail_video_fragment"
-            android:name="com.larsonapps.popularmovies.MovieDetailVideoFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/tv_trailer"
+            app:layout_constraintTop_toBottomOf="@id/overview_text_view"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
-        <View
-            android:id="@+id/review_divider"
-            android:layout_width="match_parent"
-            android:layout_marginRight="@dimen/text_margin"
-            android:layout_marginLeft="@dimen/text_margin"
-            android:layout_height="1dp"
-            android:background="@color/colorPrimary"
-            android:visibility="invisible"
-            app:layout_constraintTop_toBottomOf="@id/detail_video_fragment"/>
-
-        <TextView
-            style="@style/DetailTitle"
-            android:id="@+id/tv_review"
-            android:text="@string/reviews"
-            android:visibility="invisible"
-            app:layout_constraintTop_toBottomOf="@id/review_divider"
-            app:layout_constraintLeft_toLeftOf="parent" />
-
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/detail_review_fragment"
-            android:name="com.larsonapps.popularmovies.MovieDetailReviewFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/tv_review"
+            app:layout_constraintTop_toBottomOf="@id/detail_video_fragment"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 

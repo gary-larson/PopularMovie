@@ -7,6 +7,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <View
+        android:id="@+id/review_divider"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/text_margin"
+        android:layout_marginRight="@dimen/text_margin"
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary"
+        android:visibility="invisible" />
+
+    <TextView
+        style="@style/DetailTitle"
+        android:id="@+id/tv_review"
+        android:text="@string/reviews"
+        android:visibility="invisible" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_movie_detail_review_list"
         android:name="com.larsonapps.popularmovies.MovieDetailReviewFragment"

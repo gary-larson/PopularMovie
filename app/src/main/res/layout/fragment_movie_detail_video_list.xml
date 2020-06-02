@@ -7,11 +7,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/text_margin"
+        android:layout_marginRight="@dimen/text_margin"
+        android:layout_marginLeft="@dimen/text_margin"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary"
+        android:visibility="invisible" />
+
+    <TextView
+        style="@style/DetailTitle"
+        android:id="@+id/tv_trailer"
+        android:text="@string/trailers"
+        android:visibility="invisible" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_movie_detail_video_list"
         android:name="com.larsonapps.popularmovies.MovieDetailVideoFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"

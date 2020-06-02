@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.larsonapps.popularmovies.MovieDetailVideoFragment.OnListFragmentInteractionListener;
 import com.larsonapps.popularmovies.R;
 import com.larsonapps.popularmovies.data.MovieDetailVideo;
+import com.larsonapps.popularmovies.databinding.FragmentMovieDetailVideoBinding;
 
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class MovieDetailVideoRecyclerViewAdapter extends
 
     private final List<MovieDetailVideo> mMovieDetailVideoList;
     private final OnListFragmentInteractionListener mListener;
+    private FragmentMovieDetailVideoBinding binding;
 
     public MovieDetailVideoRecyclerViewAdapter(List<MovieDetailVideo> items,
                                                OnListFragmentInteractionListener listener) {
@@ -33,16 +35,17 @@ public class MovieDetailVideoRecyclerViewAdapter extends
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_movie_detail_video, parent, false);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        binding = FragmentMovieDetailVideoBinding.inflate(LayoutInflater.from(parent.getContext()),
+                parent, false);
+        View view = binding.getRoot();
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mMovieDetailVideo = mMovieDetailVideoList.get(position);
-        holder.mNameView.setText(mMovieDetailVideoList.get(position).getName());
+        binding.name.setText(mMovieDetailVideoList.get(position).getName());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,20 +66,18 @@ public class MovieDetailVideoRecyclerViewAdapter extends
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mNameView;
         public MovieDetailVideo mMovieDetailVideo;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            // TODO binding
-            mNameView = view.findViewById(R.id.name);
+
         }
 
         @NonNull
         @Override
         public String toString() {
-            return super.toString() + " '" + mNameView.getText() + "'";
+            return super.toString() + " '" + binding.name.getText() + "'";
         }
     }
 }
