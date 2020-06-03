@@ -40,15 +40,12 @@ final public class MovieJsonUtilities {
     private final static String VOTE_AVERAGE = "vote_average";
     private final static String OVERVIEW = "overview";
     private final static String VIDEOS = "videos";
-    private final static String VIDEO_ID = ID;
     private final static String KEY = "key";
     private final static String NAME = "name";
     private final static String SITE = "site";
-    private final static String SIZE = "size";
     private final static String TYPE = "type";
     private final static String AUTHOR = "author";
     private final static String CONTENT = "content";
-    private final static String REVIEW_ID = ID;
     private final static String URL = "url";
     private final static String VIDEO_TYPE_TRAILER = "Trailer";
 
@@ -162,16 +159,12 @@ final public class MovieJsonUtilities {
             // declare and initialize variable to hold the current video
             MovieDetailVideo currentVideo = new MovieDetailVideo();
             // extract fields from current json object
-            currentVideo.setId(currentVideoJson.getString(VIDEO_ID));
-            //currentVideo.setIso_639_1(currentVideoJson.getString("iso_639_1"));
-            //currentVideo.setIso_3166_1(currentVideoJson.getString("iso_3166_1"));
             currentVideo.setKey(currentVideoJson.getString(KEY));
             currentVideo.setName(currentVideoJson.getString(NAME));
             currentVideo.setSite(currentVideoJson.getString(SITE));
-            currentVideo.setSize(currentVideoJson.getInt(SIZE));
-            currentVideo.setType(currentVideoJson.getString(TYPE));
             // add current video to list
-            if (currentVideo.getType().equals(VIDEO_TYPE_TRAILER)) {
+            String type = currentVideoJson.getString(TYPE);
+            if (type.equals(VIDEO_TYPE_TRAILER)) {
                 videos.add(currentVideo);
             }
         }
@@ -197,7 +190,6 @@ final public class MovieJsonUtilities {
             // extract fields from current review json object
             currentReview.setAuthor(currentReviewJson.getString(AUTHOR));
             currentReview.setContent(currentReviewJson.getString(CONTENT));
-            currentReview.setId(currentReviewJson.getString(REVIEW_ID));
             currentReview.setUrl(currentReviewJson.getString(URL));
             reviews.add(currentReview);
         }
@@ -238,7 +230,6 @@ final public class MovieJsonUtilities {
             // extract fields from current review json object
             currentReview.setAuthor(currentReviewJson.getString(AUTHOR));
             currentReview.setContent(currentReviewJson.getString(CONTENT));
-            currentReview.setId(currentReviewJson.getString(REVIEW_ID));
             currentReview.setUrl(currentReviewJson.getString(URL));
             reviews.add(currentReview);
         }

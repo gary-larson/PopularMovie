@@ -5,7 +5,6 @@ package com.larsonapps.popularmovies.data;
  */
 public class MovieDetailReviewResult {
     // Declare variables
-    private String mId;
     private String mAuthor;
     private String mContent;
     private String mUrl;
@@ -15,22 +14,6 @@ public class MovieDetailReviewResult {
      */
     public MovieDetailReviewResult() {
 
-    }
-
-    /**
-     * Getter for id
-     * @return id
-     */
-    public String getId() {
-        return mId;
-    }
-
-    /**
-     * Setter for id
-     * @param mId to set
-     */
-    public void setId(String mId) {
-        this.mId = mId;
     }
 
     /**
