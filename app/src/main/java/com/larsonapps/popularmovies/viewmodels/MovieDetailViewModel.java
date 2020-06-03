@@ -43,7 +43,8 @@ public class MovieDetailViewModel extends AndroidViewModel {
      * @return movie detail information data
      */
     public LiveData<MovieDetailInfo> getMovieDetailInfo() {
-        if (mMovieDetailInfo == null) {
+        if (mMovieDetailInfo == null || mMovieDetailInfo.getValue() == null ||
+                mMovieID != mMovieDetailInfo.getValue().getmMovieId()) {
             mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID);
         }
         return mMovieDetailInfo;
