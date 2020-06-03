@@ -35,12 +35,11 @@ public class MovieActivity extends AppCompatActivity implements
     // Declare variables
     public static int mNumberHorizontalImages;
     public static int mNumberVerticalImages;
-    private int mMovieId;
     public static String mPosterSize;
     private ActionBar mActionBar;
     MovieListViewModel mMovieListViewModel;
     MovieDetailViewModel mMovieDetailViewModel;
-    private MenuItem mMoreMovieMenuItem;
+    MenuItem mMoreMovieMenuItem;
     SharedPreferences mSharedPreferences;
     FragmentManager mFragmentManager;
 
@@ -99,7 +98,7 @@ public class MovieActivity extends AppCompatActivity implements
      */
     @Override
     public void onListFragmentInteraction(MovieResult movieResult) {
-        mMovieId = movieResult.getMovieID();
+        mMovieDetailViewModel.setMovieId(movieResult.getMovieID());
         mFragmentManager
                 .beginTransaction()
                 .replace(R.id.movie_fragment_container_view, new MovieDetailFragment())
@@ -195,10 +194,4 @@ public class MovieActivity extends AppCompatActivity implements
      * @return movie activity action bar
      */
     public ActionBar getmActionBar() {return mActionBar;}
-
-    /**
-     * Getter for movie id
-     * @return movie id
-     */
-    public int getMovieId() {return mMovieId;}
 }

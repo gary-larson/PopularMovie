@@ -24,18 +24,16 @@ import com.squareup.picasso.Picasso;
  * Class to deal with movie details
  */
 public class MovieDetailFragment extends Fragment {
+    // Declare constants
+    private final String MOVIE_DETAIL_MOVIE_ID_KEY = "movie_detail_movie_id_key";
     //Declare variables
     FragmentMovieDetailBinding binding;
     MovieActivity mMovieActivity;
     MovieDetailViewModel mMovieDetailViewModel;
     int mWidth;
-    int mMovieId;
     MovieDetailSummaryFragment mSummaryFragment;
     MovieDetailReviewFragment mReviewFragment;
     MovieDetailVideoFragment mVideoFragment;
-    MenuItem mMoreReviewMenuItem;
-    boolean isNextEnabled;
-    // TODO fix menus
 
     /**
      * Default constructor
@@ -62,7 +60,6 @@ public class MovieDetailFragment extends Fragment {
         // Get View model
         mMovieDetailViewModel = new ViewModelProvider(requireActivity())
                 .get(MovieDetailViewModel.class);
-        mMovieId = mMovieActivity.getMovieId();
         mSummaryFragment = new MovieDetailSummaryFragment();
         mVideoFragment = new MovieDetailVideoFragment();
         mReviewFragment = new MovieDetailReviewFragment();
@@ -90,38 +87,45 @@ public class MovieDetailFragment extends Fragment {
                     showErrorMessage();
                 } else if (newMovieDetailInfo.getmMovieId() == mMovieDetailViewModel.getMovieId()) {
                     // Update the UI.
-                    // Retrieve Title and display
-                    binding.titleTextView.setText(newMovieDetailInfo.getTitle());
-                    // Retrieve Backdrop path and display
-                    String backDropPath = newMovieDetailInfo.getBackdropPath();
-                    if(backDropPath != null){
-                        String urlString;
-                        // Set whether or not to use ssl based on API build
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
-                            urlString = MovieNetworkUtilities.POSTER_BASE_HTTPS_URL;
-                        } else{
-                            urlString = MovieNetworkUtilities.POSTER_BASE_HTTP_URL;
-                        }
-                        // Utilize Picasso to load the poster into the image view
-                        // using noPlaceHolder because picasso had blank spaces on some emulators
-                        // and this fixed the issue
-                        Picasso.get().load(urlString +
-                                getResources().getString(R.string.backdrop_size) + backDropPath)
-                                .noPlaceholder()
-                                .error(R.mipmap.error)
-                                .resize(mWidth, (mWidth * 9) / 16)
-                                .into(binding.posterImageView);
-                    }
-                    binding.overviewTextView.setText(newMovieDetailInfo.getOverview());
-                    showDetails();
+                    movieDetailInfoUpdateUI(newMovieDetailInfo);
                 } else {
                     showLoadingIndicator();
                 }
             }
         };
         // Initialize observing of live data
-        mMovieDetailViewModel.getMovieDetailInfo(mMovieId).observe(getViewLifecycleOwner(), movieDetailInfoObserver);
+        mMovieDetailViewModel.getMovieDetailInfo().observe(getViewLifecycleOwner(), movieDetailInfoObserver);
         return view;
+    }
+
+    private void movieDetailInfoUpdateUI(@Nullable MovieDetailInfo newMovieDetailInfo) {
+        if (newMovieDetailInfo == null) {
+            return;
+        }
+        // Retrieve Title and display
+        binding.titleTextView.setText(newMovieDetailInfo.getTitle());
+        // Retrieve Backdrop path and display
+        String backDropPath = newMovieDetailInfo.getBackdropPath();
+        if(backDropPath != null){
+            String urlString;
+            // Set whether or not to use ssl based on API build
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+                urlString = MovieNetworkUtilities.POSTER_BASE_HTTPS_URL;
+            } else{
+                urlString = MovieNetworkUtilities.POSTER_BASE_HTTP_URL;
+            }
+            // Utilize Picasso to load the poster into the image view
+            // using noPlaceHolder because picasso had blank spaces on some emulators
+            // and this fixed the issue
+            Picasso.get().load(urlString +
+                    getResources().getString(R.string.backdrop_size) + backDropPath)
+                    .noPlaceholder()
+                    .error(R.mipmap.error)
+                    .resize(mWidth, (mWidth * 9) / 16)
+                    .into(binding.posterImageView);
+        }
+        binding.overviewTextView.setText(newMovieDetailInfo.getOverview());
+        showDetails();
     }
 
     @Override

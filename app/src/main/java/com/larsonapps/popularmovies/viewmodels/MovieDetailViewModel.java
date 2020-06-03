@@ -40,13 +40,11 @@ public class MovieDetailViewModel extends AndroidViewModel {
 
     /**
      * Getter foe movie detail information data through live data from movie detail repository
-     * @param movieId of the movie to get data for
      * @return movie detail information data
      */
-    public LiveData<MovieDetailInfo> getMovieDetailInfo(int movieId) {
-        if (mMovieDetailInfo == null || mMovieID != movieId) {
-            mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(movieId);
-            mMovieID = movieId;
+    public LiveData<MovieDetailInfo> getMovieDetailInfo() {
+        if (mMovieDetailInfo == null) {
+            mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID);
         }
         return mMovieDetailInfo;
     }
