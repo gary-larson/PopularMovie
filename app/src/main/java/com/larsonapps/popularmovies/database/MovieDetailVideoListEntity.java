@@ -1,5 +1,7 @@
 package com.larsonapps.popularmovies.database;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -11,11 +13,20 @@ import androidx.room.PrimaryKey;
 public class MovieDetailVideoListEntity {
 
     @PrimaryKey(autoGenerate = true)
-    private int videoListKey;
-    private int movieId;
-    private String key;
-    private String name;
-    private String site;
+    @ColumnInfo(name = "video_list_key")
+    private int mVideoListKey;
+
+    @ColumnInfo(name = "movie_id")
+    private int mMovieId;
+
+    @ColumnInfo(name = "site_key")
+    private String mKey;
+
+    @ColumnInfo(name = "name")
+    private String mName;
+
+    @ColumnInfo(name = "site")
+    private String mSite;
 
     /**
      * Constructor for room INSERT
@@ -26,10 +37,10 @@ public class MovieDetailVideoListEntity {
      */
     @Ignore
     public MovieDetailVideoListEntity(int movieId, String key, String name, String site) {
-        this.movieId = movieId;
-        this.key = key;
-        this.name = name;
-        this.site = site;
+        this.mMovieId = movieId;
+        this.mKey = key;
+        this.mName = name;
+        this.mSite = site;
     }
 
     /**
@@ -42,11 +53,11 @@ public class MovieDetailVideoListEntity {
      */
     public MovieDetailVideoListEntity(int videoListKey, int movieId, String key, String name,
                                       String site) {
-        this.videoListKey = videoListKey;
-        this.movieId = movieId;
-        this.key = key;
-        this.name = name;
-        this.site = site;
+        this.mVideoListKey = videoListKey;
+        this.mMovieId = movieId;
+        this.mKey = key;
+        this.mName = name;
+        this.mSite = site;
     }
 
     /**
@@ -54,23 +65,23 @@ public class MovieDetailVideoListEntity {
      * @return video list key
      */
     public int getVideoListKey() {
-        return videoListKey;
+        return mVideoListKey;
     }
 
     /**
      * Getter for movie id (foreign key)
      * @return movie id
      */
-    public int getmovieId() {
-        return movieId;
+    public int getMovieId() {
+        return mMovieId;
     }
 
     /**
      * Setter for movie id (foreign key)
      * @param movieId to set
      */
-    public void setmovieId(int movieId) {
-        this.movieId = movieId;
+    public void setMovieId(int movieId) {
+        this.mMovieId = movieId;
     }
 
     /**
@@ -78,7 +89,7 @@ public class MovieDetailVideoListEntity {
      * @return site's key
      */
     public String getKey() {
-        return key;
+        return mKey;
     }
 
     /**
@@ -86,7 +97,7 @@ public class MovieDetailVideoListEntity {
      * @param key to set
      */
     public void setKey(String key) {
-        this.key = key;
+        this.mKey = key;
     }
 
     /**
@@ -94,7 +105,7 @@ public class MovieDetailVideoListEntity {
      * @return reviewer's name
      */
     public String getName() {
-        return name;
+        return mName;
     }
 
     /**
@@ -102,7 +113,7 @@ public class MovieDetailVideoListEntity {
      * @param name to set
      */
     public void setName(String name) {
-        this.name = name;
+        this.mName = name;
     }
 
     /**
@@ -110,7 +121,7 @@ public class MovieDetailVideoListEntity {
      * @return site
      */
     public String getSite() {
-        return site;
+        return mSite;
     }
 
     /**
@@ -118,6 +129,6 @@ public class MovieDetailVideoListEntity {
      * @param site to set
      */
     public void setSite(String site) {
-        this.site = site;
+        this.mSite = site;
     }
 }

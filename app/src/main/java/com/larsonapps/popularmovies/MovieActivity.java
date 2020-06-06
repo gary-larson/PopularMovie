@@ -27,8 +27,7 @@ public class MovieActivity extends AppCompatActivity implements
         MovieItemFragment.OnListFragmentInteractionListener,
         MovieDetailVideoFragment.OnListFragmentInteractionListener,
         MovieDetailReviewFragment.OnListFragmentInteractionListener {
-    // Declare CONSTANTS
-    public final static String DETAIL_MOVIE_ID_KEY = "movie_id";
+    // Declare constants
     final String SETINGS_FRAGMENT = "SettingsFragment";
     final String ABOUT_FRAGMENT = "AboutFragment";
     final String DETAILS_FRAGMENT = "DetailsFragment";
@@ -70,6 +69,7 @@ public class MovieActivity extends AppCompatActivity implements
         convertTypeToTitleAndSet(type);
         // set movie list preference in view model
         mMovieListViewModel.setType(type);
+        mMovieDetailViewModel.setType(type);
         mActionBar = getSupportActionBar();
         if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled(false);
@@ -77,6 +77,10 @@ public class MovieActivity extends AppCompatActivity implements
         mFragmentManager = getSupportFragmentManager();
     }
 
+    /**
+     * Method to determine title based on type and set title
+     * @param type of movie list
+     */
     public void convertTypeToTitleAndSet (String type) {
         String title;
 

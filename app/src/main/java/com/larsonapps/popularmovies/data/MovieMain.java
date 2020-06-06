@@ -9,7 +9,6 @@ public class MovieMain {
     // Declare variables
     private List<MovieResult> mMovieList;
     private int mTotalPages;
-    private String mErrorMessage;
 
     /**
      * Defailt constructor for movie main
@@ -46,21 +45,5 @@ public class MovieMain {
      */
     public void setTotalPages(int mTotalPages) {
         this.mTotalPages = mTotalPages;
-    }
-
-    /**
-     * Getter for movie main error message
-     * @return movie error message
-     */
-    public String getErrorMessage() {
-        return mErrorMessage;
-    }
-
-    /**
-     * Setter for movie main error message
-     * @param mErrorMessage to set
-     */
-    public void setErrorMessage(String mErrorMessage) {
-        this.mErrorMessage = mErrorMessage;
     }
 }

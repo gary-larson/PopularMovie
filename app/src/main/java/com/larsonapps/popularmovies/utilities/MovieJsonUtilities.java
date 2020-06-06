@@ -56,7 +56,7 @@ final public class MovieJsonUtilities {
      * @return the list of movie results
      * @throws JSONException in case of error
      */
-    public static MovieMain getMovieResults (String movieJsonStr) throws JSONException {
+    public static Result<MovieMain> getMovieResults (String movieJsonStr) throws JSONException {
         // Declare and initialize variables to return results
         MovieMain movieMain = new MovieMain();
         List<MovieResult> movieResults = new ArrayList<>();
@@ -64,8 +64,7 @@ final public class MovieJsonUtilities {
         // Check if there are actual results
         JSONObject moviesJson = new JSONObject(movieJsonStr);
         if (!moviesJson.has(PAGE)) {
-            movieMain.setErrorMessage(moviesJson.getString(STATUS_MESSAGE));
-            return movieMain;
+            return new Result.Error<>(moviesJson.getString(STATUS_MESSAGE));
         }
 
         movieMain.setTotalPages(moviesJson.getInt(TOTAL_PAGES));
@@ -94,7 +93,7 @@ final public class MovieJsonUtilities {
         }
         movieMain.setMovieList(movieResults);
         // return the movie results
-        return movieMain;
+        return new Result.Success<>(movieMain);
     }
 
     /**
@@ -103,7 +102,7 @@ final public class MovieJsonUtilities {
      * @return Movie Details
      * @throws JSONException for errors
      */
-    public static MovieDetails getMovieDetails (String movieDetailsJsonStr) throws JSONException {
+    public static Result<MovieDetails> getMovieDetails (String movieDetailsJsonStr) throws JSONException {
         // Create JSON object and Check if there are actual results
         JSONObject moviesDetailsJson = new JSONObject(movieDetailsJsonStr);
         // Create object to hold data
@@ -113,9 +112,7 @@ final public class MovieJsonUtilities {
         // test for null
         if (!moviesDetailsJson.has(RUNTIME)) {
             // Retrieve Error Message
-            movieDetailInfo.setErrorMessage(moviesDetailsJson.getString(STATUS_MESSAGE));
-            movieDetails.setMovieDetailInfo(movieDetailInfo);
-            return movieDetails;
+            return new Result.Error<>(moviesDetailsJson.getString(STATUS_MESSAGE));
         }
         // Retrieve Title
         movieDetailInfo.setTitle(moviesDetailsJson.getString(TITLE));
@@ -201,7 +198,7 @@ final public class MovieJsonUtilities {
         movieDetails.setMovieDetailInfo(movieDetailInfo);
         // add movie reviews to movie details
         movieDetails.setMovieDetailReview(movieDetailReview);
-        return movieDetails;
+        return new Result.Success<>(movieDetails);
     }
 
     /**
@@ -210,9 +207,13 @@ final public class MovieJsonUtilities {
      * @return Movie Details
      * @throws JSONException for errors
      */
-    public static MovieDetailReview getMovieDetailReview (String movieDetailsJsonStr) throws JSONException {
+    public static Result<MovieDetailReview> getMovieDetailReview (String movieDetailsJsonStr) throws JSONException {
         // Create JSON object and Check if there are actual results
         JSONObject movieReviewsJson = new JSONObject(movieDetailsJsonStr);
+        if (!movieReviewsJson.has(PAGE)) {
+            // Retrieve error message
+            return new Result.Error<>(movieReviewsJson.getString(STATUS_MESSAGE));
+        }
         // Create Movie Review for data
         MovieDetailReview movieDetailReview = new MovieDetailReview();
         // get page from movie reviews json object
@@ -236,7 +237,6 @@ final public class MovieJsonUtilities {
         movieDetailReview.setReviewList(reviews);
         // get total pages from movie reviews json object
         movieDetailReview.setTotalPages(movieReviewsJson.getInt(TOTAL_PAGES));
-
-        return movieDetailReview;
+        return new Result.Success<>(movieDetailReview);
     }
 }

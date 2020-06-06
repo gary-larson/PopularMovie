@@ -1,5 +1,7 @@
 package com.larsonapps.popularmovies.database;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -12,11 +14,20 @@ public class MovieDetailReviewListEntity {
 
     // Generate columns
     @PrimaryKey (autoGenerate = true)
-    private int reviewListKey;
-    private int movieId;
-    private String author;
-    private String content;
-    private String url;
+    @ColumnInfo(name = "review_list_key")
+    private int mReviewListKey;
+
+    @ColumnInfo(name = "movie_id", defaultValue = "0")
+    private int mMovieId;
+
+    @ColumnInfo(name = "author")
+    private String mAuthor;
+
+    @ColumnInfo(name = "content")
+    private String mContent;
+
+    @ColumnInfo(name = "url")
+    private String mUrl;
 
     /**
      * Constructor used for room INSERT
@@ -27,10 +38,10 @@ public class MovieDetailReviewListEntity {
      */
     @Ignore
     public MovieDetailReviewListEntity(int movieId, String author, String content, String url) {
-        this.movieId = movieId;
-        this.author = author;
-        this.content = content;
-        this.url = url;
+        this.mMovieId = movieId;
+        this.mAuthor = author;
+        this.mContent = content;
+        this.mUrl = url;
     }
 
     /**
@@ -43,11 +54,11 @@ public class MovieDetailReviewListEntity {
      */
     public MovieDetailReviewListEntity(int reviewListKey, int movieId, String author, String content,
                                        String url) {
-        this.reviewListKey = reviewListKey;
-        this.movieId = movieId;
-        this.author = author;
-        this.content = content;
-        this.url = url;
+        this.mReviewListKey = reviewListKey;
+        this.mMovieId = movieId;
+        this.mAuthor = author;
+        this.mContent = content;
+        this.mUrl = url;
     }
 
     /**
@@ -55,7 +66,7 @@ public class MovieDetailReviewListEntity {
      * @return review list key
      */
     public int getReviewListKey() {
-        return reviewListKey;
+        return mReviewListKey;
     }
 
     /**
@@ -63,7 +74,7 @@ public class MovieDetailReviewListEntity {
      * @return movie id
      */
     public int getMovieId() {
-        return movieId;
+        return mMovieId;
     }
 
     /**
@@ -71,7 +82,7 @@ public class MovieDetailReviewListEntity {
      * @param movieId to set
      */
     public void setMovieId(int movieId) {
-        this.movieId = movieId;
+        this.mMovieId = movieId;
     }
 
     /**
@@ -79,7 +90,7 @@ public class MovieDetailReviewListEntity {
      * @return author
      */
     public String getAuthor() {
-        return author;
+        return mAuthor;
     }
 
     /**
@@ -87,7 +98,7 @@ public class MovieDetailReviewListEntity {
      * @param author to set
      */
     public void setAuthor(String author) {
-        this.author = author;
+        this.mAuthor = author;
     }
 
     /**
@@ -95,7 +106,7 @@ public class MovieDetailReviewListEntity {
      * @return content
      */
     public String getContent() {
-        return content;
+        return mContent;
     }
 
     /**
@@ -103,7 +114,7 @@ public class MovieDetailReviewListEntity {
      * @param content to set
      */
     public void setContent(String content) {
-        this.content = content;
+        this.mContent = content;
     }
 
     /**
@@ -111,7 +122,7 @@ public class MovieDetailReviewListEntity {
      * @return URL
      */
     public String getUrl() {
-        return url;
+        return mUrl;
     }
 
     /**
@@ -119,6 +130,6 @@ public class MovieDetailReviewListEntity {
      * @param url to set
      */
     public void setUrl(String url) {
-        this.url = url;
+        this.mUrl = url;
     }
 }

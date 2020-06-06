@@ -8,20 +8,19 @@ import androidx.lifecycle.LiveData;
 import com.larsonapps.popularmovies.data.MovieListRepository;
 import com.larsonapps.popularmovies.data.MovieMain;
 import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
-
-import java.util.List;
+import com.larsonapps.popularmovies.utilities.Result;
 
 /**
  * Class for movie list view model
  */
 public class MovieListViewModel extends AndroidViewModel {
     // Declare Variables
-    private Application mApplication;
+    Application mApplication;
     private MovieListRepository mMovieListRepository;
     private int mPage;
     private String mType;
     // Declare LiveData variables
-    private LiveData<MovieMain> mMovieMain;
+    private LiveData<Result<MovieMain>> mMovieMain;
 
     /**
      * Constructor for movie list view model
@@ -48,7 +47,7 @@ public class MovieListViewModel extends AndroidViewModel {
      * Getter for movie main info through live data from movie list repository
      * @return movie main info
      */
-    public LiveData<MovieMain> getMovieMain() {
+    public LiveData<Result<MovieMain>> getMovieMain() {
         if (mMovieMain == null) {
             mMovieMain = mMovieListRepository.getMovieMain(mType, mPage);
         }
@@ -96,9 +95,12 @@ public class MovieListViewModel extends AndroidViewModel {
      */
     public int getTotalPages () {
         if (mMovieMain != null && mMovieMain.getValue() != null) {
-            return mMovieMain.getValue().getTotalPages();
-        } else {
-            return 0;
+            if (mMovieMain.getValue() instanceof Result.Success) {
+                Result.Success<MovieMain> result = (Result.Success<MovieMain>) mMovieMain.getValue();
+                MovieMain movieMain = result.data;
+                return movieMain.getTotalPages();
+            }
         }
+        return 0;
     }
 }

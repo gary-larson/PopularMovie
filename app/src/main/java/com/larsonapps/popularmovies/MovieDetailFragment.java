@@ -3,8 +3,6 @@ package com.larsonapps.popularmovies;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -17,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.larsonapps.popularmovies.data.MovieDetailInfo;
 import com.larsonapps.popularmovies.databinding.FragmentMovieDetailBinding;
 import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
+import com.larsonapps.popularmovies.utilities.Result;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
 import com.squareup.picasso.Picasso;
 
@@ -24,8 +23,6 @@ import com.squareup.picasso.Picasso;
  * Class to deal with movie details
  */
 public class MovieDetailFragment extends Fragment {
-    // Declare constants
-    private final String MOVIE_DETAIL_MOVIE_ID_KEY = "movie_detail_movie_id_key";
     //Declare variables
     FragmentMovieDetailBinding binding;
     MovieActivity mMovieActivity;
@@ -40,6 +37,13 @@ public class MovieDetailFragment extends Fragment {
      */
     public MovieDetailFragment() {}
 
+    /**
+     * Method to create fragment
+     * @param inflater to create views
+     * @param container of the fragment
+     * @param savedInstanceState for maintaining state
+     * @return view constructed
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,25 +75,28 @@ public class MovieDetailFragment extends Fragment {
         // display loading indicator until there is data in fields
         showLoadingIndicator();
         // Setup observer for Live data
-        final Observer<MovieDetailInfo> movieDetailInfoObserver = new Observer<MovieDetailInfo>() {
+        final Observer<Result<MovieDetailInfo>> movieDetailInfoObserver = new Observer<Result<MovieDetailInfo>>() {
             @Override
-            public void onChanged(@Nullable final MovieDetailInfo newMovieDetailInfo) {
+            public void onChanged(@Nullable final Result<MovieDetailInfo> newMovieDetailInfo) {
                 // Test for data
-                if (newMovieDetailInfo == null) {
-                    // if no error message use default message
-                    showErrorMessage();
-                    // test for actual error message
-                } else if (newMovieDetailInfo.getErrorMessage() != null &&
-                        !newMovieDetailInfo.getErrorMessage().equals("")) {
+                if (newMovieDetailInfo instanceof Result.Error) {
+                    Result.Error<MovieDetailInfo> resultError =
+                            (Result.Error<MovieDetailInfo>) newMovieDetailInfo;
                     // Display error message
-                    binding.tvErrorMessage.setText(newMovieDetailInfo.getErrorMessage());
+                    binding.tvErrorMessage.setText(resultError.mErrorMessage);
                     // set visability to see error message
                     showErrorMessage();
-                } else if (newMovieDetailInfo.getmMovieId() == mMovieDetailViewModel.getMovieId()) {
-                    // Update the UI.
-                    movieDetailInfoUpdateUI(newMovieDetailInfo);
                 } else {
-                    showLoadingIndicator();
+                    Result.Success<MovieDetailInfo> resultSuccess =
+                            (Result.Success<MovieDetailInfo>) newMovieDetailInfo;
+                    if (resultSuccess != null && resultSuccess.data != null) {
+                        if (resultSuccess.data.getmMovieId() == mMovieDetailViewModel.getMovieId()) {
+                            // Update the UI.
+                            movieDetailInfoUpdateUI(resultSuccess.data);
+                        } else {
+                            showLoadingIndicator();
+                        }
+                    }
                 }
             }
         };
@@ -98,6 +105,10 @@ public class MovieDetailFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Method to update the user interface
+     * @param newMovieDetailInfo data to populate the user inteface
+     */
     private void movieDetailInfoUpdateUI(@Nullable MovieDetailInfo newMovieDetailInfo) {
         if (newMovieDetailInfo == null) {
             return;
@@ -128,6 +139,9 @@ public class MovieDetailFragment extends Fragment {
         showDetails();
     }
 
+    /**
+     * Method to set up fragment
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -141,6 +155,9 @@ public class MovieDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * Method to reset fragment
+     */
     @Override
     public void onResume() {
         super.onResume();

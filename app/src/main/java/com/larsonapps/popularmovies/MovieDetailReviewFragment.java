@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,13 +15,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.larsonapps.popularmovies.adapter.MovieDetailReviewRecyclerViewAdapter;
 import com.larsonapps.popularmovies.data.MovieDetailReview;
 import com.larsonapps.popularmovies.data.MovieDetailReviewResult;
 import com.larsonapps.popularmovies.databinding.FragmentMovieDetailReviewListBinding;
-import com.larsonapps.popularmovies.databinding.FragmentMovieItemListBinding;
+import com.larsonapps.popularmovies.utilities.Result;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
 
 
@@ -34,7 +34,7 @@ public class MovieDetailReviewFragment extends Fragment {
     // Declare variavles
     MovieDetailViewModel mMovieDetailViewModel;
     FragmentMovieDetailReviewListBinding binding;
-    RecyclerView.Adapter<MovieDetailReviewRecyclerViewAdapter.ViewHolder> mAdapter;
+    MovieDetailReviewRecyclerViewAdapter mAdapter;
     private OnListFragmentInteractionListener mListener;
     private boolean isMoreReviewsEnabled;
     private MenuItem mMoreReviewsMenuItem;
@@ -82,34 +82,43 @@ public class MovieDetailReviewFragment extends Fragment {
 
         // get the context
         final Context context = view.getContext();
+        binding.rvMovieDetailReviewList.setLayoutManager(
+                new LinearLayoutManager(context));
+        // indicate all reviews are the same size
+        binding.rvMovieDetailReviewList.setHasFixedSize(false);
+        // setup Movie adapter for RecyclerView
+        mAdapter = new MovieDetailReviewRecyclerViewAdapter(mListener);
+        binding.rvMovieDetailReviewList.setAdapter(mAdapter);
 
         // Create the observer which updates the UI and sets the adapter
-        final Observer<MovieDetailReview> movieDetailReviewObserver =
-                new Observer<MovieDetailReview>() {
+        final Observer<Result<MovieDetailReview>> movieDetailReviewObserver =
+                new Observer<Result<MovieDetailReview>>() {
             @Override
-            public void onChanged(@Nullable final MovieDetailReview newMovieDetailReview) {
+            public void onChanged(@Nullable final Result<MovieDetailReview> newMovieDetailReview) {
                 // test if data is available
-                if (newMovieDetailReview != null &&
-                        newMovieDetailReview.getReviewList().size() > 0) {
-                    // Update the UI, in this case, an adapter.
-                    showRecyclerView();
-                    binding.rvMovieDetailReviewList.setLayoutManager(
-                            new LinearLayoutManager(context));
-                    // TODO fix more reviews menu
-                    // if menu exists set its state
-                    if (mMoreReviewsMenuItem != null) {
-                        isMoreReviewsEnabled = newMovieDetailReview.getPage() != newMovieDetailReview.getTotalPages();
-                        mMoreReviewsMenuItem.setEnabled(isMoreReviewsEnabled);
-                    }
-                    // indicate all reviews are the same size
-                    binding.rvMovieDetailReviewList.setHasFixedSize(false);
-                    // setup Movie adapter for RecyclerView
-                    mAdapter = new MovieDetailReviewRecyclerViewAdapter(
-                            newMovieDetailReview.getReviewList(), mListener);
-                    binding.rvMovieDetailReviewList.setAdapter(mAdapter);
-                    //showRecyclerView();
+                if (newMovieDetailReview instanceof Result.Error) {
+                    Result.Error<MovieDetailReview> resultError =
+                            (Result.Error<MovieDetailReview>) newMovieDetailReview;
+                    String error = String.format("Error: %s", resultError.mErrorMessage);
+                    Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
                 } else {
-                    showNoneMessage();
+                    Result.Success<MovieDetailReview> resultSuccess =
+                            (Result.Success<MovieDetailReview>) newMovieDetailReview;
+
+                    if (resultSuccess != null && resultSuccess.data != null &&
+                            resultSuccess.data.getReviewList().size() > 0) {
+                        // if menu exists set its state
+                        if (mMoreReviewsMenuItem != null) {
+                            isMoreReviewsEnabled = resultSuccess.data.getPage() !=
+                                    resultSuccess.data.getTotalPages();
+                            mMoreReviewsMenuItem.setEnabled(isMoreReviewsEnabled);
+                        }
+                        // Update the UI, in this case, an adapter.
+                        mAdapter.setList(resultSuccess.data.getReviewList());
+                        showRecyclerView();
+                    } else {
+                        showNoneMessage();
+                    }
                 }
             }
         };

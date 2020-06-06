@@ -7,6 +7,7 @@ package com.larsonapps.popularmovies.data;
 public class MovieResult {
     // Declare member variables
     private String mPosterPath;
+    private String mImagePath;
     private int movieID;
 
 
@@ -29,6 +30,22 @@ public class MovieResult {
      */
     public void setPosterPath(String mPosterPath) {
         this.mPosterPath = mPosterPath;
+    }
+
+    /**
+     * Getter for image path
+     * @return image path
+     */
+    public String getImagePath() {
+        return mImagePath;
+    }
+
+    /**
+     * Setter for image path
+     * @param mImagePath to set
+     */
+    public void setImagePath(String mImagePath) {
+        this.mImagePath = mImagePath;
     }
 
     /**

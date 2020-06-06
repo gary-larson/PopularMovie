@@ -30,6 +30,9 @@ public class MovieSettingsFragment extends PreferenceFragmentCompat {
         }
     }
 
+    /**
+     * Method to reset fragment and distribute type and get new list
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -45,6 +48,7 @@ public class MovieSettingsFragment extends PreferenceFragmentCompat {
             // when new type selected get data from view model
             if (!type.equals(activity.mMovieListViewModel.getType())) {
                 activity.mMovieListViewModel.setType(type);
+                activity.mMovieDetailViewModel.setType(type);
                 activity.mMovieListViewModel.setPage(1);
                 activity.mMovieListViewModel.retrieveMovieMain();
             }
@@ -55,6 +59,9 @@ public class MovieSettingsFragment extends PreferenceFragmentCompat {
         }
     }
 
+    /**
+     * Method to set up fragment
+     */
     @Override
     public void onResume() {
         super.onResume();

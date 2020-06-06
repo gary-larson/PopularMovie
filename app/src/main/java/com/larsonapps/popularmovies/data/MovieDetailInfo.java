@@ -3,11 +3,11 @@ package com.larsonapps.popularmovies.data;
 public class MovieDetailInfo {
     // Declare variables
     private int mMovieId;
-    private String mErrorMessage;
     private String mTitle;
     private String mBackdropPath;
+    private String mImagePath;
     private String mOverview;
-
+    // TODO finish adding image path for favorite type in movie detail fragment
     /**
      * Default constructor
      */
@@ -27,22 +27,6 @@ public class MovieDetailInfo {
      */
     public void setmMovieId(int mMovieId) {
         this.mMovieId = mMovieId;
-    }
-
-    /**
-     * Getter for movie detail error message
-     * @return movie error message
-     */
-    public String getErrorMessage() {
-        return mErrorMessage;
-    }
-
-    /**
-     * Setter for error message
-     * @param mErrorMessage to set
-     */
-    public void setErrorMessage(String mErrorMessage) {
-        this.mErrorMessage = mErrorMessage;
     }
 
     /**
@@ -75,6 +59,22 @@ public class MovieDetailInfo {
      */
     public void setBackdropPath(String mBackdropPath) {
         this.mBackdropPath = mBackdropPath;
+    }
+
+    /**
+     * Getter for image path
+     * @return image path
+     */
+    public String getImagePath() {
+        return mImagePath;
+    }
+
+    /**
+     * Setter for image path
+     * @param mImagePath to set
+     */
+    public void setImagePath(String mImagePath) {
+        this.mImagePath = mImagePath;
     }
 
     /**

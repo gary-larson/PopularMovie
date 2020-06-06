@@ -10,6 +10,7 @@ import com.larsonapps.popularmovies.data.MovieDetailRepository;
 import com.larsonapps.popularmovies.data.MovieDetailReview;
 import com.larsonapps.popularmovies.data.MovieDetailSummary;
 import com.larsonapps.popularmovies.data.MovieDetailVideo;
+import com.larsonapps.popularmovies.utilities.Result;
 
 import java.util.List;
 
@@ -18,14 +19,15 @@ import java.util.List;
  */
 public class MovieDetailViewModel extends AndroidViewModel {
     // Declare variables
-    private Application mApplication;
+    Application mApplication;
     private MovieDetailRepository mMovieDetailRepository;
     private int mMovieID;
     private int mReviewPage;
-    private LiveData<MovieDetailInfo> mMovieDetailInfo;
+    private String mType;
+    private LiveData<Result<MovieDetailInfo>> mMovieDetailInfo;
     private LiveData<MovieDetailSummary> mMovieDetailSummary;
     private LiveData<List<MovieDetailVideo>> mMovieDetailVideo;
-    private LiveData<MovieDetailReview> mMovieDetailReview;
+    private LiveData<Result<MovieDetailReview>> mMovieDetailReview;
 
     /**
      * Constructor for movie detail view model
@@ -42,10 +44,21 @@ public class MovieDetailViewModel extends AndroidViewModel {
      * Getter foe movie detail information data through live data from movie detail repository
      * @return movie detail information data
      */
-    public LiveData<MovieDetailInfo> getMovieDetailInfo() {
-        if (mMovieDetailInfo == null || mMovieDetailInfo.getValue() == null ||
-                mMovieID != mMovieDetailInfo.getValue().getmMovieId()) {
-            mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID);
+    public LiveData<Result<MovieDetailInfo>> getMovieDetailInfo() {
+        if (mMovieDetailInfo != null) {
+            Result.Success<MovieDetailInfo> resultSuccess =
+                    (Result.Success<MovieDetailInfo>) mMovieDetailInfo.getValue();
+            if (resultSuccess != null) {
+                MovieDetailInfo movieDetailinfo = resultSuccess.data;
+                if (movieDetailinfo.getmMovieId() != mMovieID) {
+                    mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID, mType);
+                }
+            }
+            else {
+                mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID, mType);
+            }
+        } else {
+            mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID, mType);
         }
         return mMovieDetailInfo;
     }
@@ -76,13 +89,16 @@ public class MovieDetailViewModel extends AndroidViewModel {
      * Getter foe movie detail summary data through live data from movie detail repository
      * @return movie detail summary data
      */
-    public LiveData<MovieDetailReview> getMovieDetailReview() {
+    public LiveData<Result<MovieDetailReview>> getMovieDetailReview() {
         if (mMovieDetailReview == null) {
             mMovieDetailReview = mMovieDetailRepository.getMovieDetailReview();
         }
         return mMovieDetailReview;
     }
 
+    /**
+     * Method to retrieve the next page of reviews
+     */
     public void getMovieDetailReviewNextPage() {
         mMovieDetailRepository.getMovieDetailReviewNextPage(mReviewPage);
     }
@@ -121,9 +137,27 @@ public class MovieDetailViewModel extends AndroidViewModel {
      */
     public int getTotalPages () {
         if (mMovieDetailReview != null && mMovieDetailReview.getValue() != null) {
-            return mMovieDetailReview.getValue().getTotalPages();
+            Result.Success<MovieDetailReview> resultSuccess =
+                    (Result.Success<MovieDetailReview>) mMovieDetailReview.getValue();
+            return resultSuccess.data.getTotalPages();
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Getter for movie list type
+     * @return movie list type
+     */
+    public String getType() {
+        return mType;
+    }
+
+    /**
+     * Setter for movie list type
+     * @param mType to set
+     */
+    public void setType(String mType) {
+        this.mType = mType;
     }
 }

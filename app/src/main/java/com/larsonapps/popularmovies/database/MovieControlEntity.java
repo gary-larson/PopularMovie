@@ -1,6 +1,7 @@
 package com.larsonapps.popularmovies.database;
 
 import androidx.room.ColumnInfo;
+import androidx.room.Delete;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -15,67 +16,72 @@ public class MovieControlEntity {
 
     // Generate columns
     @PrimaryKey(autoGenerate = true)
-    private int movieControlKey;
-    private String listType;
-    private Date downloadDate;
-    @ColumnInfo(defaultValue = "0")
-    private int page;
-    @ColumnInfo(defaultValue = "0")
-    private int totalPages;
-    @ColumnInfo(defaultValue = "0")
-    int movieId;
+    @ColumnInfo(name = "movie_control_key")
+    private int mMovieControlKey;
+
+    @ColumnInfo(name = "list_type")
+    private String mListType;
+
+    @ColumnInfo(name = "download_date")
+    private Date mDownloadDate;
+
+    @ColumnInfo(name = "highest_page", defaultValue = "0")
+    private int mHighestPage;
+
+    @ColumnInfo(name = "total_pages", defaultValue = "0")
+    private int mTotalPages;
+
+    @ColumnInfo(name = "movie_id", defaultValue = "0")
+    int mMovieId;
 
     /**
      * Constructor for room SELECT
      * @param listType to set
      * @param downloadDate to set
-     * @param page to set
+     * @param highestPage to set
      * @param totalPages to set
      * @param movieId to set
      */
     @Ignore
-    public MovieControlEntity(String listType, Date downloadDate, int page, int totalPages,
+    public MovieControlEntity(String listType, Date downloadDate, int highestPage, int totalPages,
                               int movieId) {
-        this.listType = listType;
-        this.downloadDate = downloadDate;
-        this.page = page;
-        this.totalPages = totalPages;
-        this.movieId = movieId;
+        this.mListType = listType;
+        this.mDownloadDate = downloadDate;
+        this.mHighestPage = highestPage;
+        this.mTotalPages = totalPages;
+        this.mMovieId = movieId;
     }
 
     /**
-     * Constructor for room INSERT
-     * @param movieControlKey to set
+     * Constructor for room SELECT
      * @param listType to set
      * @param downloadDate to set
-     * @param page to set
+     * @param highestPage to set
      * @param totalPages to set
      * @param movieId to set
      */
-    public MovieControlEntity(int movieControlKey, String listType, Date downloadDate, int page,
-                              int totalPages, int movieId) {
-        this.movieControlKey = movieControlKey;
-        this.listType = listType;
-        this.downloadDate = downloadDate;
-        this.page = page;
-        this.totalPages = totalPages;
-        this.movieId = movieId;
+    public MovieControlEntity(int movieControlKey, String listType, Date downloadDate, int highestPage, int totalPages,
+                              int movieId) {
+        this.mMovieControlKey = movieControlKey;
+        this.mListType = listType;
+        this.mDownloadDate = downloadDate;
+        this.mHighestPage = highestPage;
+        this.mTotalPages = totalPages;
+        this.mMovieId = movieId;
     }
 
     /**
      * Getter for movie control key
      * @return movie control key
      */
-    public int getMovieControlKey() {
-        return movieControlKey;
-    }
+    public int getMovieControlKey() {return mMovieControlKey;}
 
     /**
      * Getter for list type
      * @return list type
      */
     public String getListType() {
-        return listType;
+        return mListType;
     }
 
     /**
@@ -83,7 +89,7 @@ public class MovieControlEntity {
      * @param listType to set
      */
     public void setListType(String listType) {
-        this.listType = listType;
+        this.mListType = listType;
     }
 
     /**
@@ -91,7 +97,7 @@ public class MovieControlEntity {
      * @return download date
      */
     public Date getDownloadDate() {
-        return downloadDate;
+        return mDownloadDate;
     }
 
     /**
@@ -99,23 +105,23 @@ public class MovieControlEntity {
      * @param downloadDate download date
      */
     public void setDownloadDate(Date downloadDate) {
-        this.downloadDate = downloadDate;
+        this.mDownloadDate = downloadDate;
     }
 
     /**
      * Getter for page
      * @return page
      */
-    public int getPage() {
-        return page;
+    public int getHighestPage() {
+        return mHighestPage;
     }
 
     /**
      * Setter for page
      * @param page to set
      */
-    public void setPage(int page) {
-        this.page = page;
+    public void setHighestPage(int page) {
+        this.mHighestPage = page;
     }
 
     /**
@@ -123,7 +129,7 @@ public class MovieControlEntity {
      * @return total pages
      */
     public int getTotalPages() {
-        return totalPages;
+        return mTotalPages;
     }
 
     /**
@@ -131,7 +137,7 @@ public class MovieControlEntity {
      * @param totalPages to set
      */
     public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
+        this.mTotalPages = totalPages;
     }
 
     /**
@@ -139,7 +145,7 @@ public class MovieControlEntity {
      * @return movie id
      */
     public int getMovieId() {
-        return movieId;
+        return mMovieId;
     }
 
     /**
@@ -147,6 +153,6 @@ public class MovieControlEntity {
      * @param movieId to set
      */
     public void setMovieId(int movieId) {
-        this.movieId = movieId;
+        this.mMovieId = movieId;
     }
 }

@@ -9,7 +9,6 @@ public class MovieDetailVideo {
     private String mName;
     private String mSite;
 
-
     /**
      * Default Constructor for movie detail video
      */

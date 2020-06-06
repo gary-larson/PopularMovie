@@ -2,27 +2,42 @@ package com.larsonapps.popularmovies.data;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.os.Handler;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.larsonapps.popularmovies.R;
+import com.larsonapps.popularmovies.utilities.MovieExecutor;
 import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
 import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
+import com.larsonapps.popularmovies.utilities.Result;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.List;
+import java.util.concurrent.Executor;
+
+/**
+ * Interface for the callback
+ * @param <T>
+ */
+interface RepositoryCallback<T> {
+    void onComplete(Result<T> result);
+}
 
 /**
  * Class to retrieve movie list data
  */
 public class MovieListRepository {
+    // Declare variables
     private static String mApiKey;
-
+    private MovieExecutor executor;
     private static String mType;
     private MovieDetails mMovieDetails;
     private Application mApplication;
-    private static MutableLiveData<MovieMain> mMovieMain = new MutableLiveData<>();
+    private String mErrorMessage;
+    private static MutableLiveData<Result<MovieMain>> mMovieMain = new MutableLiveData<>();
 
 
     // TODO add room logic
@@ -35,88 +50,69 @@ public class MovieListRepository {
     public MovieListRepository (Application application) {
         mApplication = application;
         mApiKey = loadApiKey();
+        mErrorMessage = mApplication.getString(R.string.error_message);
+        executor = new MovieExecutor();
     }
 
     /**
      * Method to start background task to get movies result list
      */
-    public MutableLiveData<MovieMain> getMovieMain(String mType, int page) {
+    public MutableLiveData<Result<MovieMain>> getMovieMain(String mType, int page) {
         if (mType.equals(mApplication.getString(R.string.setting_movie_list_favorite_value))) {
             // TODO process favorite with room
-            MovieMain movieMain = new MovieMain();
-            movieMain.setErrorMessage(mApplication.getString(R.string.type_favorite_none_message));
-            mMovieMain.setValue(movieMain);
+            Result<MovieMain> result = new Result.Error<>(mApplication.getString(R.string.type_favorite_none_message));
         } else {
-            if (mMovieMain.getValue() != null) {
-                mMovieMain.getValue().setErrorMessage(null);
-            }
-            String[] myString = {mApiKey, mType, Integer.toString(page)};
-            // start background task
-            new FetchMovieListTask().execute(myString);
+            // TODO process with room
+            retrieveMovieList(mApiKey, mType, page, new RepositoryCallback<MovieMain>() {
+                @Override
+                public void onComplete(Result<MovieMain> result) {
+                    mMovieMain.postValue(result);
+                }
+            });
         }
         return mMovieMain;
     }
 
     /**
-     * Class to run background task
+     * Method to retrieve the movie list from the movie database
+     * @param apiKey to access the movie database
+     * @param type of list
+     * @param page page of the list
+     * @param callback to handle results
      */
-    static class FetchMovieListTask extends AsyncTask<String, Void, MovieMain> {
+    public void retrieveMovieList (
+            final String apiKey, final String type, final int page,
+            final RepositoryCallback<MovieMain> callback
+            ) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                // build url
+                URL movieRequestUrl = MovieNetworkUtilities.buildResultsUrl(apiKey, type,
+                        Integer.toString(page));
 
-        /**
-         * Method to run the background task
-         * @param params 0: api key, 1: type of query, 2: page number
-         * @return Movie Information responded from The Movie Database
-         */
-        @Override
-        protected MovieMain doInBackground(String... params) {
-
-            /* Without information we cannot look up Movies. */
-            if (params.length == 0) {
-                return null;
-            }
-
-            // build url
-            URL movieRequestUrl = MovieNetworkUtilities.buildResultsUrl(params[0], params[1], params[2]);
-
-            try {
-                // attempt to get movie information
-                String jsonMovieResponse = MovieNetworkUtilities
-                        .getResponseFromHttpUrl(movieRequestUrl);
-                // if null cancel task (Unknown error)
-                if (jsonMovieResponse == null) {
-                    cancel(true);
+                try {
+                    // attempt to get movie information
+                    String jsonMovieResponse = MovieNetworkUtilities
+                            .getResponseFromHttpUrl(movieRequestUrl);
+                    // if null cancel task (Unknown error)
+                    if (jsonMovieResponse == null) {
+                        Result<MovieMain> errorResult = new Result.Error<>(mErrorMessage);
+                        callback.onComplete(errorResult);
+                    }
+                    // return Json decoded movie Information
+                    Result<MovieMain> result = MovieJsonUtilities
+                            .getMovieResults(jsonMovieResponse);
+                    callback.onComplete(result);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // in case of an error return null
+                    Result<MovieMain> errorResult = new Result.Error<>(mErrorMessage);
+                    callback.onComplete(errorResult);
                 }
-                // return Json decoded movie Information
-                return MovieJsonUtilities
-                        .getMovieResults(jsonMovieResponse);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // in case of an error return null
-                return null;
             }
-        }
-
-        /**
-         * Method to clean up
-         * @param movieData to process
-         */
-        @Override
-        protected void onPostExecute(MovieMain movieData) {
-            // send data to fragment through live data
-            mMovieMain.postValue(movieData);
-        }
-
-        // if background task is cancelled show error message
-        @Override
-        protected void onCancelled(MovieMain movieData) {
-            super.onCancelled(movieData);
-            // send no data through live data
-            mMovieMain.postValue(null);
-        }
+        });
     }
-
-    public String getApiKey () {return mApiKey;}
 
     /**
      * Method to get the api key from the assets folder

@@ -3,6 +3,9 @@ package com.larsonapps.popularmovies;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,15 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.larsonapps.popularmovies.adapter.MovieDetailVideoRecyclerViewAdapter;
 import com.larsonapps.popularmovies.data.MovieDetailVideo;
-
 import com.larsonapps.popularmovies.databinding.FragmentMovieDetailVideoListBinding;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
 
@@ -32,6 +29,7 @@ public class MovieDetailVideoFragment extends Fragment {
     MovieDetailViewModel mMovieDetailViewModel;
     FragmentMovieDetailVideoListBinding binding;
     private OnListFragmentInteractionListener mListener;
+    private MovieDetailVideoRecyclerViewAdapter mAdapter;
 
     /**
      * Default constructor
@@ -67,6 +65,13 @@ public class MovieDetailVideoFragment extends Fragment {
 
         // get the context
         final Context context = view.getContext();
+        binding.rvMovieDetailVideoList.setLayoutManager(
+                new LinearLayoutManager(context));
+        binding.rvMovieDetailVideoList.setHasFixedSize(false);
+        // setup Movie adapter for RecyclerView
+        mAdapter = new MovieDetailVideoRecyclerViewAdapter(mListener);
+        binding.rvMovieDetailVideoList.setAdapter(mAdapter);
+
 
         // Create the observer which updates the UI and sets the adapter
         final Observer<List<MovieDetailVideo>> movieDetailVideoObserver =
@@ -77,15 +82,8 @@ public class MovieDetailVideoFragment extends Fragment {
                 if (newMovieDetailVideoList != null && newMovieDetailVideoList.size() > 0) {
                     // Update the UI, in this case, an adapter.
                     showRecyclerView();
-                    binding.rvMovieDetailVideoList.setLayoutManager(
-                            new LinearLayoutManager(context));
-                    binding.rvMovieDetailVideoList.setHasFixedSize(false);
-                    // setup Movie adapter for RecyclerView
-                    RecyclerView.Adapter<MovieDetailVideoRecyclerViewAdapter.ViewHolder>
-                            mAdapter = new MovieDetailVideoRecyclerViewAdapter(
-                            newMovieDetailVideoList, mListener);
-                    binding.rvMovieDetailVideoList.setAdapter(mAdapter);
-                    //showRecyclerView();
+
+                    mAdapter.setList(newMovieDetailVideoList);
                 } else {
                     showNoneMessage();
                 }

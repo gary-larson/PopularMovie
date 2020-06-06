@@ -12,9 +12,7 @@ public class MovieDetailReviewResult {
     /**
      * Default Constructor
      */
-    public MovieDetailReviewResult() {
-
-    }
+    public MovieDetailReviewResult() {}
 
     /**
      * Getter for author

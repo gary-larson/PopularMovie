@@ -2,11 +2,7 @@ package com.larsonapps.popularmovies.database;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
-import java.time.OffsetDateTime;
-import java.util.Date;
 
 /**
  * Class of the room table named movie_list
@@ -16,29 +12,41 @@ public class MovieListEntity {
 
     // Generate columns
     @PrimaryKey()
-    private int movieId;
-    private String posterPath;
-    @ColumnInfo(defaultValue = "0")
-    private int popularPage;
-    @ColumnInfo(defaultValue = "0")
-    private int popularOrder;
-    @ColumnInfo(defaultValue = "0")
-    private int topRatedPage;
-    @ColumnInfo(defaultValue = "0")
-    private int topRatedOrder;
-    @ColumnInfo(defaultValue = "0")
-    private int favoriteOrder;
+    @ColumnInfo(name = "movie_id")
+    private int mMovieId;
+
+    @ColumnInfo(name = "poster_path")
+    private String mPosterPath;
+
+    @ColumnInfo(name = "image_path")
+    private String mImagePath;
+
+    @ColumnInfo(name = "popular_page", defaultValue = "0")
+    private int mPopularPage;
+
+    @ColumnInfo(name = "popular_order", defaultValue = "0")
+    private int mPopularOrder;
+
+    @ColumnInfo(name = "top_rated_page", defaultValue = "0")
+    private int mTopRatedPage;
+
+    @ColumnInfo(name = "top_rated_order", defaultValue = "0")
+    private int mTopRatedOrder;
+
+    @ColumnInfo(name = "favorite_order", defaultValue = "0")
+    private int mFavoriteOrder;
 
 
-    public MovieListEntity(int movieId, String posterPath, int popularPage, int popularOrder,
+    public MovieListEntity(int movieId, String posterPath, String imagePath, int popularPage, int popularOrder,
                            int topRatedPage, int topRatedOrder, int favoriteOrder) {
-        this.movieId = movieId;
-        this.posterPath = posterPath;
-        this.popularPage = popularPage;
-        this.popularOrder = popularOrder;
-        this.topRatedPage = topRatedPage;
-        this.topRatedOrder = topRatedOrder;
-        this.favoriteOrder = favoriteOrder;
+        this.mMovieId = movieId;
+        this.mPosterPath = posterPath;
+        this.mImagePath = imagePath;
+        this.mPopularPage = popularPage;
+        this.mPopularOrder = popularOrder;
+        this.mTopRatedPage = topRatedPage;
+        this.mTopRatedOrder = topRatedOrder;
+        this.mFavoriteOrder = favoriteOrder;
     }
 
     /**
@@ -46,21 +54,21 @@ public class MovieListEntity {
      * @return movie id
      */
     public int getMovieId() {
-        return movieId;
+        return mMovieId;
     }
 
     /**
      * Setter for movie id
      * @param movieId to set
      */
-    public void setMovieId(int movieId) {this.movieId = movieId;}
+    public void setMovieId(int movieId) {this.mMovieId = movieId;}
 
     /**
      * Getter for poster path
      * @return poster path
      */
     public String getPosterPath() {
-        return posterPath;
+        return mPosterPath;
     }
 
     /**
@@ -68,7 +76,23 @@ public class MovieListEntity {
      * @param posterPath to set
      */
     public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
+        this.mPosterPath = posterPath;
+    }
+
+    /**
+     * Getter for image path
+     * @return image path
+     */
+    public String getImagePath() {
+        return mImagePath;
+    }
+
+    /**
+     * Setter for image path
+     * @param mImagePath to set
+     */
+    public void setImagePath(String mImagePath) {
+        this.mImagePath = mImagePath;
     }
 
     /**
@@ -76,7 +100,7 @@ public class MovieListEntity {
      * @return popular page
      */
     public int getPopularPage() {
-        return popularPage;
+        return mPopularPage;
     }
 
     /**
@@ -84,7 +108,7 @@ public class MovieListEntity {
      * @param popularPage to set
      */
     public void setPopularPage(int popularPage) {
-        this.popularPage = popularPage;
+        this.mPopularPage = popularPage;
     }
 
     /**
@@ -92,7 +116,7 @@ public class MovieListEntity {
      * @return popular order
      */
     public int getPopularOrder() {
-        return popularOrder;
+        return mPopularOrder;
     }
 
     /**
@@ -100,7 +124,7 @@ public class MovieListEntity {
      * @param popularOrder to set
      */
     public void setPopularOrder(int popularOrder) {
-        this.popularOrder = popularOrder;
+        this.mPopularOrder = popularOrder;
     }
 
     /**
@@ -108,7 +132,7 @@ public class MovieListEntity {
      * @return top rated page
      */
     public int getTopRatedPage() {
-        return topRatedPage;
+        return mTopRatedPage;
     }
 
     /**
@@ -116,7 +140,7 @@ public class MovieListEntity {
      * @param topRatedPage to set
      */
     public void setTopRatedPage(int topRatedPage) {
-        this.topRatedPage = topRatedPage;
+        this.mTopRatedPage = topRatedPage;
     }
 
     /**
@@ -124,7 +148,7 @@ public class MovieListEntity {
      * @return top rated order
      */
     public int getTopRatedOrder() {
-        return topRatedOrder;
+        return mTopRatedOrder;
     }
 
     /**
@@ -132,7 +156,7 @@ public class MovieListEntity {
      * @param topRatedOrder to set
      */
     public void setTopRatedOrder(int topRatedOrder) {
-        this.topRatedOrder = topRatedOrder;
+        this.mTopRatedOrder = topRatedOrder;
     }
 
     /**
@@ -140,7 +164,7 @@ public class MovieListEntity {
      * @return favorite order
      */
     public int getFavoriteOrder() {
-        return favoriteOrder;
+        return mFavoriteOrder;
     }
 
     /**
@@ -148,6 +172,6 @@ public class MovieListEntity {
      * @param favoriteOrder to set
      */
     public void setFavoriteOrder(int favoriteOrder) {
-        this.favoriteOrder = favoriteOrder;
+        this.mFavoriteOrder = favoriteOrder;
     }
 }

@@ -7,7 +7,6 @@ import java.util.List;
  */
 public class MovieDetailReview {
     // Declare variables
-    private String mErrorMessage;
     private int mPage;
     private int mTotalPages;
     private List<MovieDetailReviewResult> mReviewList;
@@ -16,22 +15,6 @@ public class MovieDetailReview {
      * Default constructor
      */
     public MovieDetailReview() {}
-
-    /**
-     * Getter for movie detail review error message
-     * @return movie error message
-     */
-    public String getErrorMessage() {
-        return mErrorMessage;
-    }
-
-    /**
-     * Setter for movie detail review error message
-     * @param mErrorMessage to set
-     */
-    public void setErrorMessage(String mErrorMessage) {
-        this.mErrorMessage = mErrorMessage;
-    }
 
     /**
      * Getter for movie detail review page

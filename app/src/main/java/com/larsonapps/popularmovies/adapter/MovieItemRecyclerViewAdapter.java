@@ -1,12 +1,15 @@
 package com.larsonapps.popularmovies.adapter;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.larsonapps.popularmovies.MovieActivity;
@@ -15,8 +18,11 @@ import com.larsonapps.popularmovies.R;
 import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.databinding.FragmentMovieItemBinding;
 import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
+import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
+import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -26,23 +32,23 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
     // Declare member variables
     private int mWidth;
     private int mHeight;
-    private ViewModel mViewModel;
+    private MovieListViewModel mViewModel;
     private FragmentMovieItemBinding binding;
     private List<MovieResult> mMovieData;
     Context context;
+    String mType;
 
     // Variable for listener
     private final OnListFragmentInteractionListener mListener;
 
     /**
      * Constructor for adapter
-     * @param items of the list
      * @param listener to process taps
+     * @param type of movie list
      */
-    public MovieItemRecyclerViewAdapter(List<MovieResult> items,
-                                        OnListFragmentInteractionListener listener) {
-        mMovieData = items;
+    public MovieItemRecyclerViewAdapter(OnListFragmentInteractionListener listener, String type) {
         mListener = listener;
+        mType = type;
     }
 
     /**
@@ -55,6 +61,8 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
+        //mViewModel = new ViewModelProvider(requireActivity())
+        //        .get(MovieListViewModel.class);
         // get visible width and height of the recyclerview
         mWidth  = parent.getMeasuredWidth();
         mHeight = parent.getMeasuredHeight();
@@ -88,14 +96,21 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
             }
             // Utilize Picasso to load the poster into the image view
             // resize images based on height, width and orientation of phone
-            Picasso.get().load(urlString +
-                     MovieActivity.mPosterSize +
-                    movieResults.get(position).getPosterPath())
-                    .error(R.mipmap.error)
-                    .noPlaceholder()
-                    .resize(mWidth / MovieActivity.mNumberHorizontalImages,
-                            mHeight / MovieActivity.mNumberVerticalImages)
-                    .into(binding.ivListItem);
+            if (mType.equals(context.getString(R.string.setting_movie_list_favorite_value))) {
+                ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
+                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+                File myImageFile = new File(directory, movieResults.get(position).getImagePath());
+                Picasso.get().load(myImageFile).into(holder.mImageView);
+            } else {
+                Picasso.get().load(urlString +
+                        MovieActivity.mPosterSize +
+                        movieResults.get(position).getPosterPath())
+                        .error(R.mipmap.error)
+                        .noPlaceholder()
+                        .resize(mWidth / MovieActivity.mNumberHorizontalImages,
+                                mHeight / MovieActivity.mNumberVerticalImages)
+                        .into(holder.mImageView);
+            }
         }
 
         // set up on click listener
@@ -109,6 +124,15 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
                 }
             }
         });
+    }
+
+    /**
+     * Method to set list data and notify adapter
+     * @param list to set
+     */
+    public void setList(List<MovieResult> list) {
+        mMovieData = list;
+        notifyDataSetChanged();
     }
 
     /**
@@ -130,6 +154,7 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
         // Declare variables
         final View mView;
         public MovieResult mMovieResult;
+        public ImageView mImageView;
 
         /**
          * Constructor for the view holder class
@@ -138,16 +163,7 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
         ViewHolder(View view) {
             super(view);
             mView = view;
+            mImageView = binding.ivListItem;
         }
-
-    }
-
-    /**
-     * Method to set the movie data when it changes and notify the RecyclerView when this happens
-     * @param movieData to set
-     */
-    public void setMovieData(List<MovieResult> movieData) {
-        mMovieData = movieData;
-        notifyDataSetChanged();
     }
 }

@@ -22,6 +22,7 @@ import com.larsonapps.popularmovies.adapter.MovieItemRecyclerViewAdapter;
 import com.larsonapps.popularmovies.data.MovieMain;
 import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.databinding.FragmentMovieItemListBinding;
+import com.larsonapps.popularmovies.utilities.Result;
 import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 
 /**
@@ -32,12 +33,12 @@ public class MovieItemFragment extends Fragment {
     private final int MORE_MOVIES_MENU_ITEM_ID = 111;
     private final String MORE_MOVIES_IS_ENABLED_KEY = "more_movies_is_enabled";
     // Declare variables
-    private int mColumnCount = 2;
+    int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
     private MovieListViewModel mMovieListViewModel;
     private FragmentMovieItemListBinding binding;
     private MovieItemRecyclerViewAdapter mAdapter;
-    private MovieActivity mMovieActivity;
+    MovieActivity mMovieActivity;
     private MenuItem mMoreMoviesMenuItem;
     private boolean isMoreMoviesEnabled;
 
@@ -77,47 +78,55 @@ public class MovieItemFragment extends Fragment {
         // Initialize movie list view model from activity
         mMovieListViewModel = new ViewModelProvider(requireActivity())
                 .get(MovieListViewModel.class);
+        final String mType = mMovieListViewModel.getType();
         mMovieActivity = (MovieActivity) getActivity();
         // set the column based on screen size and orientation
         mColumnCount = getResources().getInteger(R.integer.number_horizontal_posters);
         // get the context
         final Context context = mView.getContext();
+        // set title of activity
+        mMovieActivity.convertTypeToTitleAndSet(
+                mMovieActivity.mMovieListViewModel.getType());
+        // Setup layout manager
+        if (mColumnCount <= 1) {
+            binding.rvList.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            binding.rvList.setLayoutManager(new GridLayoutManager(context,
+                    mColumnCount));
+        }
+        // indicate all poster are the same size
+        binding.rvList.setHasFixedSize(true);
+        // setup Movie adapter for RecyclerView
+        mAdapter = new MovieItemRecyclerViewAdapter(mListener, mType);
+        binding.rvList.setAdapter(mAdapter);
+
 
         // Create the observer which updates the UI and sets the adapter
-        final Observer<MovieMain> movieMainObserver = new Observer<MovieMain>() {
+        final Observer<Result<MovieMain>> movieMainObserver = new Observer<Result<MovieMain>>() {
             @Override
-            public void onChanged(@Nullable final MovieMain newMovieMain) {
-                // test if data is available
-                if (newMovieMain == null) {
-                    showErrorMessage();
-                    // test if there is an error
-                } else if (newMovieMain.getErrorMessage() != null) {
-                    binding.tvErrorMessage.setText(newMovieMain.getErrorMessage());
+            public void onChanged(@Nullable final Result<MovieMain> newMovieMain) {
+                // test if ther is an error
+                if (newMovieMain instanceof Result.Error) {
+                    Result.Error<MovieMain> result = (Result.Error<MovieMain>) newMovieMain;
+                    String errorMessage = result.mErrorMessage;
+                    binding.tvErrorMessage.setText(errorMessage);
                     showErrorMessage();
                 } else {
-                    // Update the UI, in this case, an adapter.
-                    // set title of activity
-                    mMovieActivity.convertTypeToTitleAndSet(
-                            mMovieActivity.mMovieListViewModel.getType());
-                    // Setup layout manager
-                    if (mColumnCount <= 1) {
-                        binding.rvList.setLayoutManager(new LinearLayoutManager(context));
-                    } else {
-                        binding.rvList.setLayoutManager(new GridLayoutManager(context,
-                                mColumnCount));
+                    //extract movie main
+                    Result.Success<MovieMain> result = (Result.Success<MovieMain>) newMovieMain;
+                    if (result != null) {
+                        MovieMain movieMain = result.data;
+                        // Update the UI, in this case, an adapter.
+                        // if menu exists set its state
+                        if (mMoreMoviesMenuItem != null) {
+                            isMoreMoviesEnabled = mMovieListViewModel.getPage() != movieMain.getTotalPages();
+                            mMoreMoviesMenuItem.setEnabled(isMoreMoviesEnabled);
+                        }
+                        if (movieMain.getMovieList() != null) {
+                            mAdapter.setList(movieMain.getMovieList());
+                            showRecyclerView();
+                        }
                     }
-                    // if menu exists set its state
-                    if (mMoreMoviesMenuItem != null) {
-                        isMoreMoviesEnabled = mMovieListViewModel.getPage() != newMovieMain.getTotalPages();
-                        mMoreMoviesMenuItem.setEnabled(isMoreMoviesEnabled);
-                    }
-                    // indicate all poster are the same size
-                    binding.rvList.setHasFixedSize(true);
-                    // setup Movie adapter for RecyclerView
-                    mAdapter = new MovieItemRecyclerViewAdapter(newMovieMain.getMovieList(),
-                            mListener);
-                    binding.rvList.setAdapter(mAdapter);
-                    showRecyclerView();
                 }
             }
         };
