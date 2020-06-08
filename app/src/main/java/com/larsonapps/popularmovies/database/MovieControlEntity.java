@@ -54,6 +54,7 @@ public class MovieControlEntity {
 
     /**
      * Constructor for room SELECT
+     * @param movieControlKey to set
      * @param listType to set
      * @param downloadDate to set
      * @param highestPage to set

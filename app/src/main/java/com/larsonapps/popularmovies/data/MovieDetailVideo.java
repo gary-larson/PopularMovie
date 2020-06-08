@@ -1,5 +1,8 @@
 package com.larsonapps.popularmovies.data;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+
 /**
  * Class to structure movie detail video data
  */

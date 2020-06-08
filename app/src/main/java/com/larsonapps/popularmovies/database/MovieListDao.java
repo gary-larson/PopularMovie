@@ -1,14 +1,11 @@
 package com.larsonapps.popularmovies.database;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
-
-import com.larsonapps.popularmovies.data.MovieResult;
 
 import java.util.List;
 
@@ -32,12 +29,15 @@ public interface MovieListDao {
     @Query("SELECT * FROM movie_list WHERE movie_id = :movieId")
     MovieListEntity getMovieListEntry(int movieId);
 
-    @Query("SELECT poster_path, movie_id FROM movie_list WHERE popular_order > 0 ORDER BY popular_page ASC, popular_order ASC")
-    List<MovieResult> getAllPopularMovies();
+    @Query("SELECT * FROM movie_list WHERE popular_order > 0 ORDER BY popular_page ASC, popular_order ASC")
+    List<MovieListEntity> getAllPopularMovies();
 
-    @Query("SELECT poster_path, movie_id FROM movie_list WHERE top_rated_order > 0 ORDER BY top_rated_page ASC, top_rated_order ASC")
-    List<MovieResult> getAllTopRatedMovies();
+    @Query("SELECT * FROM movie_list WHERE top_rated_order > 0 ORDER BY top_rated_page ASC, top_rated_order ASC")
+    List<MovieListEntity> getAllTopRatedMovies();
 
-    @Query("SELECT poster_path, image_path, movie_id FROM movie_list WHERE favorite_order > 0 ORDER BY favorite_order ASC")
-    List<MovieResult> getAllFavoriteMovies();
+    @Query("SELECT * FROM movie_list WHERE favorite_order > 0 ORDER BY favorite_order ASC")
+    List<MovieListEntity> getAllFavoriteMovies();
+
+    @Query("SELECT MAX(favorite_order) FROM movie_list")
+    int getMaximumFavoriteOrder();
 }

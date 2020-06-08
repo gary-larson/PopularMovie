@@ -24,6 +24,8 @@ public class MovieDetailViewModel extends AndroidViewModel {
     private int mMovieID;
     private int mReviewPage;
     private String mType;
+    private boolean isFavorite;
+    // live data variables
     private LiveData<Result<MovieDetailInfo>> mMovieDetailInfo;
     private LiveData<MovieDetailSummary> mMovieDetailSummary;
     private LiveData<List<MovieDetailVideo>> mMovieDetailVideo;
@@ -38,6 +40,7 @@ public class MovieDetailViewModel extends AndroidViewModel {
         this.mApplication = application;
         mMovieDetailRepository = new MovieDetailRepository(mApplication);
         mReviewPage = 1;
+        isFavorite = false;
     }
 
     /**
@@ -50,15 +53,16 @@ public class MovieDetailViewModel extends AndroidViewModel {
                     (Result.Success<MovieDetailInfo>) mMovieDetailInfo.getValue();
             if (resultSuccess != null) {
                 MovieDetailInfo movieDetailinfo = resultSuccess.data;
-                if (movieDetailinfo.getmMovieId() != mMovieID) {
-                    mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID, mType);
+                isFavorite = movieDetailinfo.getImagePath() == null;
+                if (movieDetailinfo.getMovieId() != mMovieID) {
+                    mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID);
                 }
             }
             else {
-                mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID, mType);
+                mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID);
             }
         } else {
-            mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID, mType);
+            mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID);
         }
         return mMovieDetailInfo;
     }
@@ -129,6 +133,22 @@ public class MovieDetailViewModel extends AndroidViewModel {
      */
     public void setReviewPage(int mReviewPage) {
         this.mReviewPage = mReviewPage;
+    }
+
+    /**
+     * Getter for isFavorite
+     * @return isFavorite
+     */
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    /**
+     * Setter for isFavorite
+     * @param favorite to set
+     */
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 
     /**

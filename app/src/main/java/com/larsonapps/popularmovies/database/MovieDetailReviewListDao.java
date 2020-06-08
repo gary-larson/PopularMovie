@@ -18,14 +18,23 @@ import java.util.List;
 @Dao
 public interface MovieDetailReviewListDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertControl(MovieDetailReviewListEntity movieDetailReviewListEntity);
+    void insertReviewEntry(MovieDetailReviewListEntity movieDetailReviewListEntity);
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertAllReviewEntries(List<MovieDetailReviewListEntity> list);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateControl (MovieDetailReviewListEntity movieDetailReviewListEntity);
+    void updateReviewEntry (MovieDetailReviewListEntity movieDetailReviewListEntity);
 
     @Delete
-    void deleteControl (MovieDetailReviewListEntity movieDetailReviewListEntity);
+    void deleteReviewEntry (MovieDetailReviewListEntity movieDetailReviewListEntity);
 
-    @Query("SELECT author, content, url  FROM movie_detail_review_list WHERE movie_id = :movieId")
-    List<MovieDetailReviewResult> getAllReviews(int movieId);
+    @Query("DELETE FROM movie_detail_review_list WHERE movie_id = :movieId")
+    void deleteAllReviews (int movieId);
+
+    @Query("SELECT EXISTS (SELECT 1 FROM movie_detail_review_list WHERE movie_id = :movieId LIMIT 1)")
+    boolean isReviews(int movieId);
+
+    @Query("SELECT *  FROM movie_detail_review_list WHERE movie_id = :movieId ORDER BY review_list_key ASC")
+    List<MovieDetailReviewListEntity> getAllReviews(int movieId);
 }

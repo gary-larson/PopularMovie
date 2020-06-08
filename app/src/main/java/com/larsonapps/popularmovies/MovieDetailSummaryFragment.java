@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.larsonapps.popularmovies.data.MovieDetailInfo;
 import com.larsonapps.popularmovies.data.MovieDetailSummary;
 import com.larsonapps.popularmovies.databinding.FragmentDetailSummaryBinding;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
@@ -51,30 +52,42 @@ public class MovieDetailSummaryFragment extends Fragment {
         // Declare variables
         mMovieDetailViewModel = new ViewModelProvider(requireActivity()).
                 get(MovieDetailViewModel.class);
+        binding.starImageView.setOnClickListener(v -> {
+            // TODO add Favorites
+            if (mMovieDetailViewModel.isFavorite()) {
+                binding.starImageView.setImageResource(R.drawable.ic_star);
+                mMovieDetailViewModel.setFavorite(false);
+            } else {
+                binding.starImageView.setImageResource(R.drawable.ic_star_outline);
+                mMovieDetailViewModel.setFavorite(true);
+            }
+        });
         hideSummary();
 
         // Create observer for fragment data
-        final Observer<MovieDetailSummary> movieDetailSummaryObserver = new Observer<MovieDetailSummary>() {
-            @Override
-            public void onChanged(@Nullable final MovieDetailSummary newMovieDetailSummary) {
-                if (newMovieDetailSummary != null) {
-                    // Update the UI.
-                    // Retrieve Release date and display it
-                    // Release date is stored as a Date type so we can format the Date
-                    Date releaseDate = newMovieDetailSummary.getReleaseDate();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy",
-                            Locale.getDefault());
-                    binding.releaseDateTextView.setText(dateFormat.format(releaseDate));
-                    // Retrieve runtime and display it
-                    String tempString = String.format(Locale.getDefault(), "%d Minutes",
-                            newMovieDetailSummary.getRuntime());
-                    binding.runtimeTextView.setText(tempString);
-                    // Retrieve Voter average and display it
-                    tempString = String.format(Locale.getDefault(), "%.1f/10",
-                            newMovieDetailSummary.getVoteAverage());
-                    binding.voterRatingTextView.setText(tempString);
-                    showSummary();
+        final Observer<MovieDetailSummary> movieDetailSummaryObserver = newMovieDetailSummary -> {
+            if (newMovieDetailSummary != null) {
+                // Update the UI.
+                // Retrieve Release date and display it
+                // Release date is stored as a Date type so we can format the Date
+                Date releaseDate = newMovieDetailSummary.getReleaseDate();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy",
+                        Locale.getDefault());
+                binding.releaseDateTextView.setText(dateFormat.format(releaseDate));
+                // Retrieve runtime and display it
+                String tempString = String.format(Locale.getDefault(), "%d Minutes",
+                        newMovieDetailSummary.getRuntime());
+                binding.runtimeTextView.setText(tempString);
+                // Retrieve Voter average and display it
+                tempString = String.format(Locale.getDefault(), "%.1f/10",
+                        newMovieDetailSummary.getVoteAverage());
+                binding.voterRatingTextView.setText(tempString);
+                if (mMovieDetailViewModel.isFavorite()) {
+                    binding.starImageView.setImageResource(R.drawable.ic_star);
+                } else {
+                    binding.starImageView.setImageResource(R.drawable.ic_star_outline);
                 }
+                showSummary();
             }
         };
         // setup live data observing

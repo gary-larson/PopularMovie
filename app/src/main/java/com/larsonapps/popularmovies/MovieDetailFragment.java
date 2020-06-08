@@ -75,27 +75,24 @@ public class MovieDetailFragment extends Fragment {
         // display loading indicator until there is data in fields
         showLoadingIndicator();
         // Setup observer for Live data
-        final Observer<Result<MovieDetailInfo>> movieDetailInfoObserver = new Observer<Result<MovieDetailInfo>>() {
-            @Override
-            public void onChanged(@Nullable final Result<MovieDetailInfo> newMovieDetailInfo) {
-                // Test for data
-                if (newMovieDetailInfo instanceof Result.Error) {
-                    Result.Error<MovieDetailInfo> resultError =
-                            (Result.Error<MovieDetailInfo>) newMovieDetailInfo;
-                    // Display error message
-                    binding.tvErrorMessage.setText(resultError.mErrorMessage);
-                    // set visability to see error message
-                    showErrorMessage();
-                } else {
-                    Result.Success<MovieDetailInfo> resultSuccess =
-                            (Result.Success<MovieDetailInfo>) newMovieDetailInfo;
-                    if (resultSuccess != null && resultSuccess.data != null) {
-                        if (resultSuccess.data.getmMovieId() == mMovieDetailViewModel.getMovieId()) {
-                            // Update the UI.
-                            movieDetailInfoUpdateUI(resultSuccess.data);
-                        } else {
-                            showLoadingIndicator();
-                        }
+        final Observer<Result<MovieDetailInfo>> movieDetailInfoObserver = newMovieDetailInfo -> {
+            // Test for data
+            if (newMovieDetailInfo instanceof Result.Error) {
+                Result.Error<MovieDetailInfo> resultError =
+                        (Result.Error<MovieDetailInfo>) newMovieDetailInfo;
+                // Display error message
+                binding.tvErrorMessage.setText(resultError.mErrorMessage);
+                // set visability to see error message
+                showErrorMessage();
+            } else {
+                Result.Success<MovieDetailInfo> resultSuccess =
+                        (Result.Success<MovieDetailInfo>) newMovieDetailInfo;
+                if (resultSuccess != null && resultSuccess.data != null) {
+                    if (resultSuccess.data.getMovieId() == mMovieDetailViewModel.getMovieId()) {
+                        // Update the UI.
+                        movieDetailInfoUpdateUI(resultSuccess.data);
+                    } else {
+                        showLoadingIndicator();
                     }
                 }
             }

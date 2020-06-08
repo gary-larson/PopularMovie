@@ -31,9 +31,6 @@ public interface MovieDetailDao {
     @Query("SELECT EXISTS(SELECT 1 FROM movie_detail WHERE movie_id = :movieId LIMIT 1)")
     boolean isMovieDetailEntry(int movieId);
 
-    @Query("SELECT movie_id, title, backdrop_path, image_path, overview FROM movie_detail WHERE movie_id = :movieId")
-    MovieDetailInfo getMovieInfo( int movieId);
-
-    @Query("SELECT release_date, runtime, vote_average FROM movie_detail WHERE movie_id = :movieId")
-    MovieDetailSummary getMovieSummary(int movieId);
+    @Query("SELECT * FROM movie_detail WHERE movie_id = :movieId")
+    MovieDetailEntity getMovieDetails( int movieId);
 }

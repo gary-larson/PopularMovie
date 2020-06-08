@@ -7,10 +7,6 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.larsonapps.popularmovies.data.MovieControl;
-
-import java.util.Date;
-
 /**
  * Data Access Object class for the MovieControlEntity class
  */
@@ -25,8 +21,11 @@ public interface MovieControlDao {
     @Delete
     void deleteControl (MovieControlEntity movieControlEntity);
 
+    @Query("SELECT EXISTS(SELECT 1 FROM movie_control WHERE movie_id = :movieId AND list_type = :listType LIMIT 1)")
+    boolean isEntry(int movieId, String listType);
+
     @Query("SELECT * FROM movie_control WHERE list_type = :listType")
-    MovieControl getMovieControlEntry(String listType);
+    MovieControlEntity getMovieControlEntry(String listType);
 
     @Query("SELECT highest_page FROM movie_control WHERE list_type = :listType")
     int getHighestPage(String listType);
