@@ -12,6 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.larsonapps.popularmovies.data.MovieDetailReviewResult;
 import com.larsonapps.popularmovies.data.MovieDetailVideo;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -56,8 +57,36 @@ public abstract class MovieRoomDatabase extends RoomDatabase {
      */
     private static RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
-        public void onCreate(@NonNull SupportSQLiteDatabase db) {
-            super.onCreate(db);
+        public void onOpen(@NonNull SupportSQLiteDatabase db) {
+            super.onOpen(db);
+            // do preliminary maintenance
+            databaseWriteExecutor.execute(() -> {
+                MovieControlDao movieControlDao = INSTANCE.movieControlDao();
+                MovieListDao movieListDao = INSTANCE.movieListDao();
+                // TODO remove before production
+//                movieControlDao.deleteAllMovieControl();
+//                List<MovieControlEntity> movieControlEntities =
+//                        movieControlDao.getAllMovieControlEntrys();
+//                movieListDao.deleteAllMovieList();
+//                List<MovieListEntity> movieListEntities = movieListDao.getAllMovieListEntrys();
+//                MovieDetailDao movieDetailDao = INSTANCE.movieDetailDao();
+//                movieDetailDao.deleteAllMovieDetail();
+//                List<MovieDetailEntity> movieDetailEntities =
+//                        movieDetailDao.getAllMovieDetailEntrys();
+//                MovieDetailReviewListDao movieDetailReviewListDao =
+//                        INSTANCE.movieDetailReviewListDao();
+//                movieDetailReviewListDao.deleteAllMovieDetailReviewList();
+//                List<MovieDetailReviewListEntity> movieDetailReviewListEntities =
+//                        movieDetailReviewListDao.getAllMovieDetailReviewListEntrys();
+//                MovieDetailVideoListDao movieDetailVideoListDao =
+//                        INSTANCE.movieDetailVideoListDao();
+//                movieDetailVideoListDao.deleteAllMovieDetailVideoList();
+//                List<MovieDetailVideoListEntity> movieDetailVideoListEntities =
+//                        movieDetailVideoListDao.getAllMovieDetailVideoListEntrys();
+                // TODO remove out of date popular and top rated lists
+            });
         }
     };
+
+
 }

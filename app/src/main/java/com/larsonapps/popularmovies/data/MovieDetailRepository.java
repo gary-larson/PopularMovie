@@ -50,7 +50,7 @@ public class MovieDetailRepository {
     private static MutableLiveData<Result<MovieDetailReview>> mMovieDetailReview = new MutableLiveData<>();
     private static MutableLiveData<List<MovieDetailVideo>> mMovieDetailVideoList =
             new MutableLiveData<>();
-// TODO trailers not getting saved
+
     /**
      * Constructor for movie detail repository
      *
@@ -100,20 +100,22 @@ public class MovieDetailRepository {
                 movieDetailSummary.setVoteAverage(movieDetails.getVoteAverage());
                 // transfer data in live data variable
                 mMovieDetailSummary.postValue(movieDetailSummary);
-                // create variable to hold movie ddetail review data
+                // create variable to hold movie detail review data
                 MovieDetailReview movieDetailReview = new MovieDetailReview();
                 // get control information for review
                 MovieControlEntity movieControlEntity =
-                        mMovieControlDao.getMovieControlEntry(LIST_TYPE_REVIEW);
+                        mMovieControlDao.getMovieReviewControlEntry(LIST_TYPE_REVIEW, movieId);
                 // transfer data from entity to movie detail review
-                movieDetailReview.setPage(movieControlEntity.getHighestPage());
-                movieDetailReview.setTotalPages(movieControlEntity.getTotalPages());
+                if (movieControlEntity != null) {
+                    movieDetailReview.setPage(movieControlEntity.getHighestPage());
+                    movieDetailReview.setTotalPages(movieControlEntity.getTotalPages());
+                }
                 // get review list from database
                 List<MovieDetailReviewListEntity> movieReviewListEntity =
                         mMovieDetailReviewListDao.getAllReviews(movieId);
                 // create variable to hold review list
                 List<MovieDetailReviewResult> movieDetailReviewResults = new ArrayList<>();
-                // transfer data from entity to revies list
+                // transfer data from entity to review list
                 for (int i = 0; i < movieReviewListEntity.size(); i++) {
                     MovieDetailReviewResult movieDetailReviewResult = new MovieDetailReviewResult();
                     movieDetailReviewResult.setAuthor(movieReviewListEntity.get(i).getAuthor());
@@ -149,24 +151,24 @@ public class MovieDetailRepository {
                     if (result instanceof Result.Success) {
                         Result.Success<MovieDetails> resultSuccess =
                                 (Result.Success<MovieDetails>) result;
-                        MovieDetails movieDetails1 = resultSuccess.data;
+                        MovieDetails movieDetailsResult = resultSuccess.data;
                         // add movieId to movie detail info
-                        movieDetails1.getMovieDetailInfo().setMovieId(movieId);
+                        movieDetailsResult.getMovieDetailInfo().setMovieId(movieId);
                         Result<MovieDetailInfo> movieDetailInfoResult = new
-                                Result.Success<>(movieDetails1.getMovieDetailInfo());
+                                Result.Success<>(movieDetailsResult.getMovieDetailInfo());
                         mMovieDetailInfo.postValue(movieDetailInfoResult);
-                        MovieDetailSummary movieDetailSummary = movieDetails1.
+                        MovieDetailSummary movieDetailSummary = movieDetailsResult.
                                 getMovieDetailSummary();
                         mMovieDetailSummary.postValue(movieDetailSummary);
                         // add data to the movie detail entity variable
                         MovieDetailEntity movieDetailEntity = new MovieDetailEntity(movieId,
-                                movieDetails1.getMovieDetailInfo().getTitle(),
-                                movieDetails1.getMovieDetailInfo().getBackdropPath(),
+                                movieDetailsResult.getMovieDetailInfo().getTitle(),
+                                movieDetailsResult.getMovieDetailInfo().getBackdropPath(),
                                 null,
-                                movieDetails1.getMovieDetailInfo().getOverview(),
-                                movieDetails1.getMovieDetailSummary().getReleaseDate(),
-                                movieDetails1.getMovieDetailSummary().getRuntime(),
-                                movieDetails1.getMovieDetailSummary().getVoteAverage());
+                                movieDetailsResult.getMovieDetailInfo().getOverview(),
+                                movieDetailsResult.getMovieDetailSummary().getReleaseDate(),
+                                movieDetailsResult.getMovieDetailSummary().getRuntime(),
+                                movieDetailsResult.getMovieDetailSummary().getVoteAverage());
                         // insert or update data in database
                         if (mMovieDetailDao.isMovieDetailEntry(movieId)) {
                             mMovieDetailDao.updateMovieDetailEntry(movieDetailEntity);
@@ -175,61 +177,53 @@ public class MovieDetailRepository {
                         }
                         // send results through live data movie detail reviews
                         Result<MovieDetailReview> movieDetailReviewResult = new
-                                Result.Success<>(movieDetails1.getMovieDetailReview());
+                                Result.Success<>(movieDetailsResult.getMovieDetailReview());
                         mMovieDetailReview.postValue(movieDetailReviewResult);
                         // Add entry for movie control
                         MovieControlEntity movieControlEntity = new
                                 MovieControlEntity(LIST_TYPE_REVIEW,
                                 new Date(System.currentTimeMillis()),
-                                movieDetails1.getMovieDetailReview().getPage(),
-                                movieDetails1.getMovieDetailReview().getTotalPages(), movieId);
+                                movieDetailsResult.getMovieDetailReview().getPage(),
+                                movieDetailsResult.getMovieDetailReview().getTotalPages(), movieId);
                         // add reviews to database
                         if (mMovieControlDao.isEntry(movieId, LIST_TYPE_REVIEW)) {
                             mMovieControlDao.updateControl(movieControlEntity);
                             // delete the movie review list
                             mMovieDetailReviewListDao.deleteAllReviews(movieId);
-                            // get movie detail review list
-                            List<MovieDetailReviewResult> movieDetailReviewResults =
-                                    movieDetails1.getMovieDetailReview().getReviewList();
-                            // Create review entity list to hold movie review list
-                            List<MovieDetailReviewListEntity> movieDetailReviewListEntities =
-                                    getMovieDetailReviewListEntities(movieDetailReviewResults, movieId);
-                            // add data to the movie detail review list entity
-                            mMovieDetailReviewListDao.insertAllReviewEntries(
-                                    movieDetailReviewListEntities);
                         } else {
                             mMovieControlDao.insertControl(movieControlEntity);
-                            List<MovieDetailReviewResult> movieDetailReviewResults =
-                                    movieDetails1.getMovieDetailReview().getReviewList();
-                            // Create review entity list to hold movie review list
-                            List<MovieDetailReviewListEntity> movieDetailReviewListEntities =
-                                    getMovieDetailReviewListEntities(movieDetailReviewResults, movieId);
-                            // add data to the movie detail review list entity
-                            mMovieDetailReviewListDao.insertAllReviewEntries(
-                                    movieDetailReviewListEntities);
                         }
+                        // get movie detail review list
+                        List<MovieDetailReviewResult> movieDetailReviewResults =
+                                movieDetailsResult.getMovieDetailReview().getReviewList();
+                        // Create review entity list to hold movie review list
+                        List<MovieDetailReviewListEntity> movieDetailReviewListEntities =
+                                getMovieDetailReviewListEntities(movieDetailReviewResults, movieId);
+                        // add data to the movie detail review list entity
+                        mMovieDetailReviewListDao.insertAllReviewEntries(
+                                movieDetailReviewListEntities);
                         // send results through live data movie detail videos
-                        List<MovieDetailVideo> movieDetailVideos = movieDetails1.getVideoList();
+                        List<MovieDetailVideo> movieDetailVideos = movieDetailsResult.getVideoList();
                         mMovieDetailVideoList.postValue(movieDetailVideos);
                         // add videos to database
                         if (mMovieDetailVideoListDao.isVideos(movieId)) {
                             // delete all videos
                             mMovieDetailVideoListDao.deleteAllVideos(movieId);
-                            // Create entity list to hold data
-                            List<MovieDetailVideoListEntity> movieDetailVideoListEntities =
-                                    new ArrayList<>();
-                            // Trasfer data to entity
-                            for (int i = 0; i < movieDetailVideos.size(); i++) {
-                                MovieDetailVideoListEntity movieDetailVideoListEntity =
-                                        new MovieDetailVideoListEntity(movieId,
-                                                movieDetailVideos.get(i).getKey(),
-                                                movieDetailVideos.get(i).getName(),
-                                                movieDetailVideos.get(i).getSite());
-                                movieDetailVideoListEntities.add(movieDetailVideoListEntity);
-                            }
-                            // add all videos
-                            mMovieDetailVideoListDao.insertAllVideos(movieDetailVideoListEntities);
                         }
+                        // Create entity list to hold data
+                        List<MovieDetailVideoListEntity> movieDetailVideoListEntities =
+                                new ArrayList<>();
+                        // Trasfer data to entity
+                        for (int i = 0; i < movieDetailVideos.size(); i++) {
+                            MovieDetailVideoListEntity movieDetailVideoListEntity =
+                                    new MovieDetailVideoListEntity(movieId,
+                                            movieDetailVideos.get(i).getKey(),
+                                            movieDetailVideos.get(i).getName(),
+                                            movieDetailVideos.get(i).getSite());
+                            movieDetailVideoListEntities.add(movieDetailVideoListEntity);
+                        }
+                        // add all videos
+                        mMovieDetailVideoListDao.insertAllVideos(movieDetailVideoListEntities);
                     } else {
                         Result.Error<MovieDetails> resulterror = (Result.Error<MovieDetails>)
                                 result;
@@ -290,12 +284,11 @@ public class MovieDetailRepository {
                         (Result.Success<MovieDetailReview>) result;
                 // Check page number
                 MovieControlEntity movieControlEntity =
-                        mMovieControlDao.getMovieControlEntry(LIST_TYPE_REVIEW);
+                        mMovieControlDao.getMovieReviewControlEntry(LIST_TYPE_REVIEW, mMovieId);
                 List<MovieDetailReviewListEntity> movieDetailReviewListEntities =
                         new ArrayList<>();
                 if (movieControlEntity != null && page <= movieControlEntity.getHighestPage()) {
                     mMovieDetailReviewListDao.deleteAllReviews(mMovieId);
-
                 } else {
                     movieDetailReviewListEntities.addAll(
                             mMovieDetailReviewListDao.getAllReviews(mMovieId));
@@ -317,12 +310,13 @@ public class MovieDetailRepository {
                             resultSuccess.data.getPage(),
                             resultSuccess.data.getTotalPages(),
                             mMovieId);
+                    mMovieControlDao.insertControl(movieControlEntity);
                 } else {
                     movieControlEntity.setHighestPage(resultSuccess.data.getPage());
                     movieControlEntity.setDownloadDate(new Date(System.currentTimeMillis()));
                     movieControlEntity.setTotalPages(resultSuccess.data.getTotalPages());
+                    mMovieControlDao.updateControl(movieControlEntity);
                 }
-                mMovieControlDao.updateControl(movieControlEntity);
                 mMovieDetailReviewListDao.insertAllReviewEntries(movieDetailReviewListEntities);
                 // covert new review list back to data
                 movieDetailReviewResults.clear();
@@ -337,7 +331,6 @@ public class MovieDetailRepository {
                 // save list
                 resultSuccess.data.setReviewList(movieDetailReviewResults);
                 // create a result success variable and store data
-                result = new Result.Success<>(resultSuccess.data);
             }
             //
             mMovieDetailReview.postValue(result);

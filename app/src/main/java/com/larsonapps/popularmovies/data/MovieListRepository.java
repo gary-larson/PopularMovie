@@ -71,7 +71,7 @@ public class MovieListRepository {
                     MovieMain movieMain = new MovieMain();
                     List<MovieResult> movieResults = getMovieResults(movieEntityResults);
                     movieMain.setMovieList(movieResults);
-                    MovieControlEntity movieControl = mMovieControlDao.getMovieControlEntry(
+                    MovieControlEntity movieControl = mMovieControlDao.getMovieListControlEntry(
                             mApplication.getString(R.string.setting_movie_list_favorite_value));
                     if (movieControl != null) {
                         movieMain.setTotalPages(movieControl.getTotalPages());
@@ -86,7 +86,7 @@ public class MovieListRepository {
                 }
                 isDone = true;
             } else if (mType.equals(mApplication.getString(R.string.setting_movie_list_popular_value))) {
-                MovieControlEntity movieControl = mMovieControlDao.getMovieControlEntry(
+                MovieControlEntity movieControl = mMovieControlDao.getMovieListControlEntry(
                         mApplication.getString(R.string.setting_movie_list_popular_value));
                 if (movieControl != null && page <= movieControl.getHighestPage()) {
                     List<MovieListEntity> movieEntityResults = mMovieListDao.getAllPopularMovies();
@@ -101,7 +101,7 @@ public class MovieListRepository {
                     }
                 }
             } else {
-                MovieControlEntity movieControl = mMovieControlDao.getMovieControlEntry(
+                MovieControlEntity movieControl = mMovieControlDao.getMovieListControlEntry(
                         mApplication.getString(R.string.setting_movie_list_top_rated_value));
                 if (movieControl != null && page <= movieControl.getHighestPage()) {
                     List<MovieListEntity> movieEntityResults = mMovieListDao.getAllTopRatedMovies();
@@ -122,11 +122,15 @@ public class MovieListRepository {
                         Result.Success<MovieMain> movieMainSuccess = (Result.Success<MovieMain>)
                                 result;
                         MovieControlEntity movieControlEntity =
-                                mMovieControlDao.getMovieControlEntry(mType);
+                                mMovieControlDao.getMovieListControlEntry(mType);
                         if (movieControlEntity == null) {
                             movieControlEntity = new MovieControlEntity(mType,
                                     new Date(System.currentTimeMillis()), page,
                                     movieMainSuccess.data.getTotalPages(), 0);
+                        } else {
+                            movieControlEntity.setHighestPage(page);
+                            movieControlEntity.setTotalPages(movieMainSuccess.data.getTotalPages());
+                            movieControlEntity.setDownloadDate(new Date(System.currentTimeMillis()));
                         }
                         if (mMovieControlDao.isEntry(0, mType)) {
                             mMovieControlDao.updateControl(movieControlEntity);
@@ -163,7 +167,6 @@ public class MovieListRepository {
                                 mMovieListDao.insertMovieListEntry(movieListEntity);
                             }
                         }
-                        mMovieControlDao.updateControl(movieControlEntity);
                         List<MovieListEntity> movieListEntities;
                         if (mType.equals(mApplication.getString(
                                 R.string.setting_movie_list_popular_value))) {

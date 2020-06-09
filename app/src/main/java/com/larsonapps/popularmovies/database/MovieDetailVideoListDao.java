@@ -29,6 +29,12 @@ public interface MovieDetailVideoListDao {
     @Delete
     void deleteTrailer (MovieDetailVideoListEntity movieDetailVideoListEntity);
 
+    @Query("DELETE FROM movie_detail_video_list")
+    void deleteAllMovieDetailVideoList();
+
+    @Query("SELECT * FROM movie_detail_video_list")
+    List<MovieDetailVideoListEntity> getAllMovieDetailVideoListEntrys();
+
     @Query("DELETE FROM movie_detail_video_list WHERE movie_id = :movieId")
     void deleteAllVideos (int movieId);
 

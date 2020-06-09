@@ -102,30 +102,27 @@ public class MovieItemFragment extends Fragment {
 
 
         // Create the observer which updates the UI and sets the adapter
-        final Observer<Result<MovieMain>> movieMainObserver = new Observer<Result<MovieMain>>() {
-            @Override
-            public void onChanged(@Nullable final Result<MovieMain> newMovieMain) {
-                // test if ther is an error
-                if (newMovieMain instanceof Result.Error) {
-                    Result.Error<MovieMain> result = (Result.Error<MovieMain>) newMovieMain;
-                    String errorMessage = result.mErrorMessage;
-                    binding.tvErrorMessage.setText(errorMessage);
-                    showErrorMessage();
-                } else {
-                    //extract movie main
-                    Result.Success<MovieMain> result = (Result.Success<MovieMain>) newMovieMain;
-                    if (result != null) {
-                        MovieMain movieMain = result.data;
-                        // Update the UI, in this case, an adapter.
-                        // if menu exists set its state
-                        if (mMoreMoviesMenuItem != null) {
-                            isMoreMoviesEnabled = mMovieListViewModel.getPage() != movieMain.getTotalPages();
-                            mMoreMoviesMenuItem.setEnabled(isMoreMoviesEnabled);
-                        }
-                        if (movieMain.getMovieList() != null) {
-                            mAdapter.setList(movieMain.getMovieList());
-                            showRecyclerView();
-                        }
+        final Observer<Result<MovieMain>> movieMainObserver = newMovieMain -> {
+            // test if ther is an error
+            if (newMovieMain instanceof Result.Error) {
+                Result.Error<MovieMain> result = (Result.Error<MovieMain>) newMovieMain;
+                String errorMessage = result.mErrorMessage;
+                binding.tvErrorMessage.setText(errorMessage);
+                showErrorMessage();
+            } else {
+                //extract movie main
+                Result.Success<MovieMain> result = (Result.Success<MovieMain>) newMovieMain;
+                if (result != null) {
+                    MovieMain movieMain = result.data;
+                    // Update the UI, in this case, an adapter.
+                    // if menu exists set its state
+                    if (mMoreMoviesMenuItem != null) {
+                        isMoreMoviesEnabled = mMovieListViewModel.getPage() != movieMain.getTotalPages();
+                        mMoreMoviesMenuItem.setEnabled(isMoreMoviesEnabled);
+                    }
+                    if (movieMain.getMovieList() != null) {
+                        mAdapter.setList(movieMain.getMovieList());
+                        showRecyclerView();
                     }
                 }
             }
@@ -159,7 +156,6 @@ public class MovieItemFragment extends Fragment {
         int itemId = item.getItemId();
         if (itemId == MORE_MOVIES_MENU_ITEM_ID) {
             // Get Next Page of Movies
-            // TODO fix add to list instead of replace list use room
             // Set page number in movie list view model
             mMovieListViewModel.setPage(mMovieListViewModel.getPage() + 1);
             // If on last page disable more movies menu item

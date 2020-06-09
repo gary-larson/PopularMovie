@@ -92,36 +92,33 @@ public class MovieDetailReviewFragment extends Fragment {
 
         // Create the observer which updates the UI and sets the adapter
         final Observer<Result<MovieDetailReview>> movieDetailReviewObserver =
-                new Observer<Result<MovieDetailReview>>() {
-            @Override
-            public void onChanged(@Nullable final Result<MovieDetailReview> newMovieDetailReview) {
-                // test if data is available
-                if (newMovieDetailReview instanceof Result.Error) {
-                    Result.Error<MovieDetailReview> resultError =
-                            (Result.Error<MovieDetailReview>) newMovieDetailReview;
-                    String error = String.format("Error: %s", resultError.mErrorMessage);
-                    Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-                } else {
-                    Result.Success<MovieDetailReview> resultSuccess =
-                            (Result.Success<MovieDetailReview>) newMovieDetailReview;
-
-                    if (resultSuccess != null && resultSuccess.data != null &&
-                            resultSuccess.data.getReviewList().size() > 0) {
-                        // if menu exists set its state
-                        if (mMoreReviewsMenuItem != null) {
-                            isMoreReviewsEnabled = resultSuccess.data.getPage() !=
-                                    resultSuccess.data.getTotalPages();
-                            mMoreReviewsMenuItem.setEnabled(isMoreReviewsEnabled);
-                        }
-                        // Update the UI, in this case, an adapter.
-                        mAdapter.setList(resultSuccess.data.getReviewList());
-                        showRecyclerView();
+                newMovieDetailReview -> {
+                    // test if data is available
+                    if (newMovieDetailReview instanceof Result.Error) {
+                        Result.Error<MovieDetailReview> resultError =
+                                (Result.Error<MovieDetailReview>) newMovieDetailReview;
+                        String error = String.format("Error: %s", resultError.mErrorMessage);
+                        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
                     } else {
-                        showNoneMessage();
+                        Result.Success<MovieDetailReview> resultSuccess =
+                                (Result.Success<MovieDetailReview>) newMovieDetailReview;
+
+                        if (resultSuccess != null && resultSuccess.data != null &&
+                                resultSuccess.data.getReviewList().size() > 0) {
+                            // if menu exists set its state
+                            if (mMoreReviewsMenuItem != null) {
+                                isMoreReviewsEnabled = resultSuccess.data.getPage() !=
+                                        resultSuccess.data.getTotalPages();
+                                mMoreReviewsMenuItem.setEnabled(isMoreReviewsEnabled);
+                            }
+                            // Update the UI, in this case, an adapter.
+                            mAdapter.setList(resultSuccess.data.getReviewList());
+                            showRecyclerView();
+                        } else {
+                            showNoneMessage();
+                        }
                     }
-                }
-            }
-        };
+                };
         mMovieDetailViewModel.getMovieDetailReview().observe(getViewLifecycleOwner(), movieDetailReviewObserver);
 
         return view;
@@ -152,7 +149,6 @@ public class MovieDetailReviewFragment extends Fragment {
         int itemId = item.getItemId();
         if (itemId == MORE_REVIEWS_MENU_ITEM_ID) {
             // Get Next Page of Movies
-            // TODO fix add to list instead of replace list use room
             // Set page number in movie list view model
             mMovieDetailViewModel.setReviewPage(mMovieDetailViewModel.getReviewPage() + 1);
             // If on last page disable more movies menu item

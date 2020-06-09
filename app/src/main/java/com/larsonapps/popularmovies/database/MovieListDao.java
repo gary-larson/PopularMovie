@@ -23,6 +23,12 @@ public interface MovieListDao {
     @Delete
     void deleteMovieListEntry (MovieListEntity movieListEntity);
 
+    @Query("DELETE FROM movie_list")
+    void deleteAllMovieList();
+
+    @Query("SELECT * FROM movie_list")
+    List<MovieListEntity> getAllMovieListEntrys();
+
     @Query("SELECT EXISTS(SELECT 1 FROM movie_list WHERE movie_id = :movieId LIMIT 1)")
     boolean isMovieListEntry(int movieId);
 

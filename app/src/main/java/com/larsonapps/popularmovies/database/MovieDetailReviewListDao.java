@@ -29,6 +29,12 @@ public interface MovieDetailReviewListDao {
     @Delete
     void deleteReviewEntry (MovieDetailReviewListEntity movieDetailReviewListEntity);
 
+    @Query("DELETE FROM movie_detail_review_list")
+    void deleteAllMovieDetailReviewList();
+
+    @Query("SELECT * FROM movie_detail_review_list")
+    List<MovieDetailReviewListEntity> getAllMovieDetailReviewListEntrys();
+
     @Query("DELETE FROM movie_detail_review_list WHERE movie_id = :movieId")
     void deleteAllReviews (int movieId);
 
