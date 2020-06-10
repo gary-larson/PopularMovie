@@ -1,15 +1,12 @@
 package com.larsonapps.popularmovies.adapter;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.larsonapps.popularmovies.MovieActivity;
@@ -18,8 +15,6 @@ import com.larsonapps.popularmovies.R;
 import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.databinding.FragmentMovieItemBinding;
 import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
-import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
-import com.larsonapps.popularmovies.viewmodels.MovieListViewModel;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -32,7 +27,6 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
     // Declare member variables
     private int mWidth;
     private int mHeight;
-    private MovieListViewModel mViewModel;
     private FragmentMovieItemBinding binding;
     private List<MovieResult> mMovieData;
     Context context;
@@ -96,11 +90,13 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
             }
             // Utilize Picasso to load the poster into the image view
             // resize images based on height, width and orientation of phone
-            if (mType.equals(context.getString(R.string.setting_movie_list_favorite_value))) {
-                ContextWrapper cw = new ContextWrapper(context.getApplicationContext());
-                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-                File myImageFile = new File(directory, movieResults.get(position).getImagePath());
-                Picasso.get().load(myImageFile).into(holder.mImageView);
+            if (movieResults.get(position).getImagePath() != null) {
+                Picasso.get().load(new File(movieResults.get(position).getImagePath()))
+                        .error(R.mipmap.error)
+                        .noPlaceholder()
+                        .resize(mWidth / MovieActivity.mNumberHorizontalImages,
+                                mHeight / MovieActivity.mNumberVerticalImages)
+                        .into(holder.mImageView);
             } else {
                 Picasso.get().load(urlString +
                         MovieActivity.mPosterSize +
@@ -114,14 +110,11 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
         }
 
         // set up on click listener
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mMovieResult);
-                }
+        holder.mView.setOnClickListener(v -> {
+            if (null != mListener) {
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                mListener.onListFragmentInteraction(holder.mMovieResult);
             }
         });
     }

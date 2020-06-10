@@ -10,24 +10,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <ImageView
+            android:id="@+id/star_image_view"
+            android:layout_width="@dimen/favorite_image_size"
+            android:layout_height="@dimen/favorite_image_size"
+            android:layout_gravity="end"
+            android:paddingRight="@dimen/detail_small_padding"
+            android:paddingEnd="@dimen/detail_small_padding"
+            android:paddingLeft="@dimen/detail_small_padding"
+            android:paddingTop="@dimen/detail_small_padding"
+            android:background="@drawable/list_item_selector"
+            android:contentDescription="@string/favorite_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
         <TextView
             android:id="@+id/release_date_text_view"
             style="@style/DetailText"
             android:visibility="invisible"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-            <ImageView
-            android:id="@+id/star_image_view"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:scaleType="fitCenter"
-            android:layout_gravity="end"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/favorite_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/star_image_view"/>
 
         <TextView
             android:id="@+id/runtime_text_view"

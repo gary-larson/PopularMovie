@@ -1,6 +1,10 @@
 package com.larsonapps.popularmovies.data;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -13,19 +17,27 @@ import com.larsonapps.popularmovies.database.MovieDetailReviewListDao;
 import com.larsonapps.popularmovies.database.MovieDetailReviewListEntity;
 import com.larsonapps.popularmovies.database.MovieDetailVideoListDao;
 import com.larsonapps.popularmovies.database.MovieDetailVideoListEntity;
+import com.larsonapps.popularmovies.database.MovieListDao;
+import com.larsonapps.popularmovies.database.MovieListEntity;
 import com.larsonapps.popularmovies.database.MovieRoomDatabase;
 import com.larsonapps.popularmovies.utilities.MovieExecutor;
 import com.larsonapps.popularmovies.utilities.MovieJsonUtilities;
 import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
 import com.larsonapps.popularmovies.utilities.Result;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Class to handle retrieving movie detail data
@@ -33,6 +45,7 @@ import java.util.List;
 public class MovieDetailRepository {
     // Declare constants
     public final String LIST_TYPE_REVIEW = "review";
+    public final String IMAGE_DIRECTORY = "images";
     // Declare variables
     private static String mApiKey;
     private Application mApplication;
@@ -44,6 +57,7 @@ public class MovieDetailRepository {
     private MovieDetailDao mMovieDetailDao;
     private MovieDetailReviewListDao mMovieDetailReviewListDao;
     private MovieDetailVideoListDao mMovieDetailVideoListDao;
+    private MovieListDao mMovieListDao;
     // Live data variables
     private static MutableLiveData<Result<MovieDetailInfo>> mMovieDetailInfo = new MutableLiveData<>();
     private static MutableLiveData<MovieDetailSummary> mMovieDetailSummary = new MutableLiveData<>();
@@ -66,6 +80,7 @@ public class MovieDetailRepository {
         mMovieDetailDao = db.movieDetailDao();
         mMovieDetailReviewListDao = db.movieDetailReviewListDao();
         mMovieDetailVideoListDao = db.movieDetailVideoListDao();
+        mMovieListDao = db.movieListDao();
     }
 
     /**
@@ -238,18 +253,29 @@ public class MovieDetailRepository {
         return mMovieDetailInfo;
     }
 
-    private List<MovieDetailReviewListEntity> getMovieDetailReviewListEntities(List<MovieDetailReviewResult> movieDetailReviewResults, int movieId) {
+    /**
+     * Method to transfer Review resiults list to entity list
+     * @param movieDetailReviewResults to transfer to entity list
+     * @param movieId of the movie in question
+     * @return entity list
+     */
+    private List<MovieDetailReviewListEntity> getMovieDetailReviewListEntities(
+            List<MovieDetailReviewResult> movieDetailReviewResults, int movieId) {
+        // Create a review entity list to return
         List<MovieDetailReviewListEntity> movieDetailReviewListEntities =
                 new ArrayList<>();
-        // Transfer data from variable to entity
+        // loop through review result list
         for (int i = 0; i < movieDetailReviewResults.size(); i++) {
+            // Create entity entry and populate with review result data
             MovieDetailReviewListEntity movieDetailReviewListEntity =
                     new MovieDetailReviewListEntity(movieId,
                             movieDetailReviewResults.get(i).getAuthor(),
                             movieDetailReviewResults.get(i).getContent(),
                             movieDetailReviewResults.get(i).getUrl());
+            // add entity entry to entity list
             movieDetailReviewListEntities.add(movieDetailReviewListEntity);
         }
+        // return rntity list
         return movieDetailReviewListEntities;
     }
 
@@ -277,25 +303,36 @@ public class MovieDetailRepository {
         return mMovieDetailVideoList;
     }
 
+    /**
+     * Method to add an additional review page to database
+     * @param page number to add
+     */
     public void getMovieDetailReviewNextPage(final int page) {
         retrieveMovieDetailReviews(mApiKey, mMovieId, page, result -> {
+            // test result
             if (result instanceof Result.Success) {
+                // get results from result success
                 Result.Success<MovieDetailReview> resultSuccess =
                         (Result.Success<MovieDetailReview>) result;
-                // Check page number
+                // Check page numberGet movie control entity
                 MovieControlEntity movieControlEntity =
                         mMovieControlDao.getMovieReviewControlEntry(LIST_TYPE_REVIEW, mMovieId);
+                // Create a review entity list for room database
                 List<MovieDetailReviewListEntity> movieDetailReviewListEntities =
                         new ArrayList<>();
+                // test for movie control entity and if page is new or replacement
                 if (movieControlEntity != null && page <= movieControlEntity.getHighestPage()) {
+                    // delete all review entries to be replaced
                     mMovieDetailReviewListDao.deleteAllReviews(mMovieId);
                 } else {
+                    // add all review entries from room database to entity list
                     movieDetailReviewListEntities.addAll(
                             mMovieDetailReviewListDao.getAllReviews(mMovieId));
                 }
+                // Create review result list and populate with review from internet
                 List<MovieDetailReviewResult> movieDetailReviewResults =
                         resultSuccess.data.getReviewList();
-                // transfer data to entity
+                // Add result review results to review entity list
                 for (int i = 0; i < movieDetailReviewResults.size(); i++){
                     MovieDetailReviewListEntity movieDetailReviewListEntity =
                             new MovieDetailReviewListEntity(mMovieId,
@@ -304,19 +341,25 @@ public class MovieDetailRepository {
                                     movieDetailReviewResults.get(i).getUrl());
                     movieDetailReviewListEntities.add(movieDetailReviewListEntity);
                 }
+                // test movie control entry
                 if (movieControlEntity == null) {
+                    // Create control entry and populate
                     movieControlEntity = new MovieControlEntity(LIST_TYPE_REVIEW,
                             new Date(System.currentTimeMillis()),
                             resultSuccess.data.getPage(),
                             resultSuccess.data.getTotalPages(),
                             mMovieId);
+                    // insert control entry in room database
                     mMovieControlDao.insertControl(movieControlEntity);
                 } else {
+                    // populate control entry with new information
                     movieControlEntity.setHighestPage(resultSuccess.data.getPage());
                     movieControlEntity.setDownloadDate(new Date(System.currentTimeMillis()));
                     movieControlEntity.setTotalPages(resultSuccess.data.getTotalPages());
+                    // update control entity in room database
                     mMovieControlDao.updateControl(movieControlEntity);
                 }
+                // Insert all review entity entries into room database
                 mMovieDetailReviewListDao.insertAllReviewEntries(movieDetailReviewListEntities);
                 // covert new review list back to data
                 movieDetailReviewResults.clear();
@@ -328,11 +371,10 @@ public class MovieDetailRepository {
                     movieDetailReviewResult.setUrl(movieDetailReviewListEntities.get(i).getUrl());
                     movieDetailReviewResults.add(movieDetailReviewResult);
                 }
-                // save list
-                resultSuccess.data.setReviewList(movieDetailReviewResults);
                 // create a result success variable and store data
+                resultSuccess.data.setReviewList(movieDetailReviewResults);
             }
-            //
+            // send review result list though live data
             mMovieDetailReview.postValue(result);
         });
     }
@@ -430,72 +472,187 @@ public class MovieDetailRepository {
         });
     }
 
-//// TODO save favorite images
-////    2. To use the Picasso for saving image file, you need to define a Target class.
-//// This method creates a target object that you can use with Picasso.
-//// Target is an interface defined in Picasso’s library.
-//// You can define this method in your Activity class or an util class.
-//    private Target saveImage(Context context, final String imageDir, final String imageName) {
-//        Log.d("picassoImageTarget", " picassoImageTarget");
-//        ContextWrapper cw = new ContextWrapper(context);
-//        final File directory = cw.getDir(imageDir, Context.MODE_PRIVATE); // path to /data/data/yourapp/app_imageDir
-//        return new Target() {
-//            @Override
-//            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        final File myImageFile = new File(directory, imageName); // Create image file
-//                        FileOutputStream fos = null;
-//                        try {
-//                            fos = new FileOutputStream(myImageFile);
-//                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        } finally {
-//                            try {
-//                                fos.close();
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                        Log.i("image", "image saved to >>>" + myImageFile.getAbsolutePath());
-//
-//                    }
-//                }).start();
-//            }
-//
-//            @Override
-//            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-//
-//            }
-//
-//
-//            @Override
-//            public void onPrepareLoad(Drawable placeHolderDrawable) {
-//                if (placeHolderDrawable != null) {
-//                }
-//            }
-//        };
-//    }
+    public void addFavorite(int movieId, String posterPath, String backdropPath) {
+        // create url
+        String urlString;
+        String tempString = String.format(Locale.getDefault(), "backdrop%d", movieId);
+        // Set whether or not to use ssl based on API build
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+            urlString = MovieNetworkUtilities.POSTER_BASE_HTTPS_URL;
+        } else{
+            urlString = MovieNetworkUtilities.POSTER_BASE_HTTP_URL;
+        }
+        String url = urlString + mApplication.getString(R.string.backdrop_size) + backdropPath;
+        Picasso.get().load(url)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .into(saveImage(tempString, false));
+        tempString = String.format(Locale.getDefault(), "poster%d", movieId);
+        url = urlString + mApplication.getString(R.string.poster_size) + posterPath;
+        Picasso.get().load(url)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .into(saveImage(tempString, true));
+    }
 
+    public void removeFavorite(int movieId, String listImagePath, String detailImagePath) {
+        // start on database thread
+        MovieRoomDatabase.databaseWriteExecutor.execute(() -> {
+            // delete list image
+            if (deleteFile(listImagePath)) {
+                // get list entity from room database
+                MovieListEntity movieListEntity = mMovieListDao.getMovieListEntry(movieId);
+                // clear image path
+                movieListEntity.setImagePath(null);
+                // clear favorite order
+                movieListEntity.setFavoriteOrder(0);
+                // save list entity to room database
+                mMovieListDao.updateMovieListEntry(movieListEntity);
+            }
 
-//3. Now let’s use Picasso to download the image using the Target defined above.
-// We use imageDir as the image directory, and my_image.jpeg for the image name,
-// the image will be saved to /data/data/com.your.app.package.path/app_imageDir/my_image.png
-//
-//Picasso.with(this).load(anImageUrl).into(saveImage(getApplicationContext(),
-//          "imageDir", "my_image.jpeg"));
+            // delete detail image
+            if (deleteFile(detailImagePath)) {
+                // get detail entity from room database
+                MovieDetailEntity movieDetailEntity = mMovieDetailDao.getMovieDetails(movieId);
+                // clear detail image path
+                movieDetailEntity.setImagePath(null);
+                // save detail entity to room database
+                mMovieDetailDao.updateMovieDetailEntry(movieDetailEntity);
+                // update live data
+                // test for success
+                if (mMovieDetailInfo.getValue() instanceof Result.Success) {
+                    // get result
+                    Result.Success<MovieDetailInfo> result = (Result.Success<MovieDetailInfo>)
+                            mMovieDetailInfo.getValue();
+                    // set detail image path to null
+                    result.data.setImagePath(null);
+                    // send live data
+                    mMovieDetailInfo.postValue(result);
+                    mMovieDetailSummary.postValue(mMovieDetailSummary.getValue());
+                }
+            }
+        });
+    }
 
-    // 4. To load the image after it’s downloaded.
-//    ContextWrapper cw = new ContextWrapper(mApplication.getApplicationContext());
-//    File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-//    File myImageFile = new File(directory, "my_image.jpeg");
-//    Picasso.get().load(myImageFile).into(ivImage);
+    private boolean deleteFile (String imagePath) {
+        // get context wrapper
+        ContextWrapper contextWrapper = new ContextWrapper(mApplication.getApplicationContext());
+        // set directory
+        File directory = contextWrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE);
+        // declare variable
+        String fileName;
+        // extract file name from image path
+        if (imagePath.indexOf("poster") > 0) {
+            fileName = imagePath.substring(imagePath.indexOf("poster"));
+        } else {
+            fileName = imagePath.substring(imagePath.indexOf("backdrop"));
+        }
+        // get image file
+        File imageFile = new File(directory, fileName);
+        // delete image file
+        return imageFile.delete();
+    }
 
-   // 5. To delete the image from the internal storage.
-//   ContextWrapper cw = new ContextWrapper(mApplication.getApplicationContext());
-//    File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-//    File myImageFile = new File(directory, "my_image.jpeg");
-//if (myImageFile.delete()) log("image on the disk deleted successfully!");
+    public void saveFavoriteBackdropImage (int movieId, String imagePath) {
+        // start on database thread
+        MovieRoomDatabase.databaseWriteExecutor.execute(() -> {
+            MovieDetailEntity movieDetailEntity = mMovieDetailDao.getMovieDetails(movieId);
+            // test if good (should always be)
+            if (movieDetailEntity != null) {
+                //add backdrop image path to movie detail entity
+                movieDetailEntity.setImagePath(imagePath);
+                // update movie detail entity
+                mMovieDetailDao.updateMovieDetailEntry(movieDetailEntity);
+                if (mMovieDetailInfo.getValue() instanceof Result.Success) {
+                    // get result
+                    Result.Success<MovieDetailInfo> result = (Result.Success<MovieDetailInfo>)
+                            mMovieDetailInfo.getValue();
+                    // set detail image path to image path
+                    result.data.setImagePath(imagePath);
+                    // send live data
+                    mMovieDetailInfo.postValue(result);
+                    mMovieDetailSummary.postValue(mMovieDetailSummary.getValue());
+                }
+            }
+        });
+    }
+
+    private void saveFavoritePosterImage (int movieId, String imagePath) {
+        // start on database thread
+        MovieRoomDatabase.databaseWriteExecutor.execute(() -> {
+            // Get movie list entry and movie detail entity
+            MovieListEntity movieListEntity = mMovieListDao.getMovieListEntry(movieId);
+            if (movieListEntity != null) {
+                // add poster image path to movie list entity
+                movieListEntity.setImagePath(imagePath);
+                // get and set movie favorite order
+                movieListEntity.setFavoriteOrder(mMovieListDao.getMaximumFavoriteOrder() + 1);
+                // update movie list dao
+                mMovieListDao.updateMovieListEntry(movieListEntity);
+            }
+        });
+    }
+
+    /**
+     * Method to save image file with picasso
+     * @param imageName to save
+     * @return target
+     */
+    private Target saveImage(final String imageName, boolean isPoster) {
+        // Get context
+        Context context = mApplication.getApplicationContext();
+        // Put context in a wrapper
+        ContextWrapper contextWrapper = new ContextWrapper(context);
+        // Get directory
+        final File directory = contextWrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE);
+        // save file
+        return new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                // Create file that will be saved
+                final File imageFile = new File(directory, imageName);
+                // Create filestream
+                FileOutputStream fileOutputStream = null;
+                try {
+                    // make new filestream
+                    fileOutputStream = new FileOutputStream(imageFile);
+                    // compress and save imagefile
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+                    if (isPoster) {
+                        saveFavoritePosterImage(mMovieId, imageFile.getAbsolutePath());
+                    } else {
+                        saveFavoriteBackdropImage(mMovieId, imageFile.getAbsolutePath());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (fileOutputStream != null) {
+                            // close filestream
+                            fileOutputStream.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            /**
+             * Method to deal with failure
+             * @param e excaption thrown
+             * @param errorDrawable that failed
+             */
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+            }
+
+            /**
+             * Method to deal with placeholder (Not used)
+             * @param placeHolderDrawable to set
+             */
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+    }
 }

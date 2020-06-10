@@ -24,7 +24,6 @@ public class MovieDetailViewModel extends AndroidViewModel {
     private int mMovieID;
     private int mReviewPage;
     private String mType;
-    private boolean isFavorite;
     // live data variables
     private LiveData<Result<MovieDetailInfo>> mMovieDetailInfo;
     private LiveData<MovieDetailSummary> mMovieDetailSummary;
@@ -40,7 +39,6 @@ public class MovieDetailViewModel extends AndroidViewModel {
         this.mApplication = application;
         mMovieDetailRepository = new MovieDetailRepository(mApplication);
         mReviewPage = 1;
-        isFavorite = false;
     }
 
     /**
@@ -53,7 +51,6 @@ public class MovieDetailViewModel extends AndroidViewModel {
                     (Result.Success<MovieDetailInfo>) mMovieDetailInfo.getValue();
             if (resultSuccess != null) {
                 MovieDetailInfo movieDetailinfo = resultSuccess.data;
-                isFavorite = movieDetailinfo.getImagePath() == null;
                 if (movieDetailinfo.getMovieId() != mMovieID) {
                     mMovieDetailInfo = mMovieDetailRepository.getMovieDetailInfo(mMovieID);
                 }
@@ -108,6 +105,50 @@ public class MovieDetailViewModel extends AndroidViewModel {
     }
 
     /**
+     * Method to call repository add favorite
+     * @param movieId to add
+     */
+    public void addFavorite(int movieId, String posterPath, String backdropPath) {
+        mMovieDetailRepository.addFavorite(movieId, posterPath, backdropPath);
+    }
+
+    /**
+     * Method to call repository remove favorite
+     * @param movieId to pass
+     * @param listImagePath to pass
+     * @param detailImagePath to pass
+     */
+    public void removeFavorite(int movieId, String listImagePath, String detailImagePath) {
+        mMovieDetailRepository.removeFavorite(movieId, listImagePath, detailImagePath);
+    }
+
+    /**
+     * Getter for title
+     * @return title
+     */
+    public String getTitle() {
+        Result.Success<MovieDetailInfo> resultSuccess = (Result.Success<MovieDetailInfo>)
+                mMovieDetailInfo.getValue();
+        if (resultSuccess != null) {
+            return resultSuccess.data.getTitle();
+        }
+        return null;
+    }
+
+    /**
+     * Getter for detail image path
+     * @return detail image path
+     */
+    public String getImagePath() {
+        Result.Success<MovieDetailInfo> resultSuccess = (Result.Success<MovieDetailInfo>)
+                mMovieDetailInfo.getValue();
+        if (resultSuccess != null) {
+            return resultSuccess.data.getImagePath();
+        }
+        return null;
+    }
+
+    /**
      * Getter for movie id
      * @return movie id
      */
@@ -140,15 +181,12 @@ public class MovieDetailViewModel extends AndroidViewModel {
      * @return isFavorite
      */
     public boolean isFavorite() {
-        return isFavorite;
-    }
-
-    /**
-     * Setter for isFavorite
-     * @param favorite to set
-     */
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
+        Result.Success<MovieDetailInfo> resultSuccess = (Result.Success<MovieDetailInfo>)
+                mMovieDetailInfo.getValue();
+        if (resultSuccess != null) {
+            return resultSuccess.data.getImagePath() != null;
+        }
+        return false;
     }
 
     /**
@@ -163,6 +201,15 @@ public class MovieDetailViewModel extends AndroidViewModel {
         } else {
             return 0;
         }
+    }
+
+    public String getBackdropPath () {
+        if (mMovieDetailInfo != null && mMovieDetailInfo.getValue() != null) {
+            Result.Success<MovieDetailInfo> resultSuccess =
+                    (Result.Success<MovieDetailInfo>) mMovieDetailInfo.getValue();
+            return resultSuccess.data.getBackdropPath();
+        }
+        return null;
     }
 
     /**

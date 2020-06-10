@@ -7,8 +7,11 @@ import androidx.lifecycle.LiveData;
 
 import com.larsonapps.popularmovies.data.MovieListRepository;
 import com.larsonapps.popularmovies.data.MovieMain;
+import com.larsonapps.popularmovies.data.MovieResult;
 import com.larsonapps.popularmovies.utilities.MovieNetworkUtilities;
 import com.larsonapps.popularmovies.utilities.Result;
+
+import java.util.List;
 
 /**
  * Class for movie list view model
@@ -102,5 +105,64 @@ public class MovieListViewModel extends AndroidViewModel {
             }
         }
         return 0;
+    }
+
+    /**
+     * Getter for poster path
+     * @param movieId to use to find poster path
+     * @return poster path
+     */
+    public String getPosterPath (int movieId) {
+        if (mMovieMain != null && mMovieMain.getValue() != null) {
+            if (mMovieMain.getValue() instanceof Result.Success) {
+                Result.Success<MovieMain> result = (Result.Success<MovieMain>) mMovieMain.getValue();
+                List<MovieResult> movieResults = result.data.getMovieList();
+                for (int i = 0; i < movieResults.size(); i++) {
+                    if (movieResults.get(i).getMovieID() == movieId) {
+                        return movieResults.get(i).getPosterPath();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Getter for list image path
+     * @param movieId to use to find list image path
+     * @return list image path
+     */
+    public String getImagePath (int movieId) {
+        if (mMovieMain != null && mMovieMain.getValue() != null) {
+            if (mMovieMain.getValue() instanceof Result.Success) {
+                Result.Success<MovieMain> result = (Result.Success<MovieMain>) mMovieMain.getValue();
+                List<MovieResult> movieResults = result.data.getMovieList();
+                for (int i = 0; i < movieResults.size(); i++) {
+                    if (movieResults.get(i).getMovieID() == movieId) {
+                        return movieResults.get(i).getImagePath();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Setter for list image path
+     * @param movieId to find the correct image path to set
+     * @param imagePath to set
+     */
+    public void setImagePath (int movieId, String imagePath) {
+        if (mMovieMain != null && mMovieMain.getValue() != null) {
+            if (mMovieMain.getValue() instanceof Result.Success) {
+                Result.Success<MovieMain> result = (Result.Success<MovieMain>) mMovieMain.getValue();
+                List<MovieResult> movieResults = result.data.getMovieList();
+                for (int i = 0; i < movieResults.size(); i++) {
+                    if (movieResults.get(i).getMovieID() == movieId) {
+                        movieResults.get(i).setImagePath(imagePath);
+                    }
+                }
+            }
+        }
     }
 }

@@ -26,6 +26,12 @@ public interface MovieListDao {
     @Query("DELETE FROM movie_list")
     void deleteAllMovieList();
 
+    @Query("UPDATE movie_list SET popular_page = 0, popular_order = 0 WHERE popular_order > 0")
+    void deleteMoviePopularList();
+
+    @Query("UPDATE movie_list SET top_rated_page = 0, top_rated_order = 0 WHERE top_rated_order > 0")
+    void detletMovieTopRatedList();
+
     @Query("SELECT * FROM movie_list")
     List<MovieListEntity> getAllMovieListEntrys();
 

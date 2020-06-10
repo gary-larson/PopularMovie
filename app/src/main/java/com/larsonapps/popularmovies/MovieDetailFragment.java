@@ -19,6 +19,8 @@ import com.larsonapps.popularmovies.utilities.Result;
 import com.larsonapps.popularmovies.viewmodels.MovieDetailViewModel;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+
 /**
  * Class to deal with movie details
  */
@@ -123,14 +125,22 @@ public class MovieDetailFragment extends Fragment {
                 urlString = MovieNetworkUtilities.POSTER_BASE_HTTP_URL;
             }
             // Utilize Picasso to load the poster into the image view
-            // using noPlaceHolder because picasso had blank spaces on some emulators
-            // and this fixed the issue
-            Picasso.get().load(urlString +
-                    getResources().getString(R.string.backdrop_size) + backDropPath)
-                    .noPlaceholder()
-                    .error(R.mipmap.error)
-                    .resize(mWidth, (mWidth * 9) / 16)
-                    .into(binding.posterImageView);
+            // resize images based on height, width and orientation of phone
+            if (newMovieDetailInfo.getImagePath() != null) {
+                Picasso.get().load(new File(newMovieDetailInfo.getImagePath()))
+                        .error(R.mipmap.error)
+                        .noPlaceholder()
+                        .error(R.mipmap.error)
+                        .resize(mWidth, (mWidth * 9) / 16)
+                        .into(binding.posterImageView);
+            } else {
+                Picasso.get().load(urlString +
+                        getResources().getString(R.string.backdrop_size) + backDropPath)
+                        .noPlaceholder()
+                        .error(R.mipmap.error)
+                        .resize(mWidth, (mWidth * 9) / 16)
+                        .into(binding.posterImageView);
+            }
         }
         binding.overviewTextView.setText(newMovieDetailInfo.getOverview());
         showDetails();

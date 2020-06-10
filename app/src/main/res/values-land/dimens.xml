@@ -4,4 +4,5 @@
     <dimen name="detail_large_padding">40dp</dimen>
     <dimen name="detail_normal_padding">24dp</dimen>
     <dimen name="detail_small_padding">16dp</dimen>
+    <dimen name="favorite_image_size">72dp</dimen>
 </resources>
