@@ -1,6 +1,5 @@
 package com.larsonapps.popularmovies.database;
 
-import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -18,16 +17,16 @@ public class MovieDetailReviewListEntity {
     private int mReviewListKey;
 
     @ColumnInfo(name = "movie_id", defaultValue = "0")
-    private int mMovieId;
+    private final int mMovieId;
 
     @ColumnInfo(name = "author")
-    private String mAuthor;
+    private final String mAuthor;
 
     @ColumnInfo(name = "content")
-    private String mContent;
+    private final String mContent;
 
     @ColumnInfo(name = "url")
-    private String mUrl;
+    private final String mUrl;
 
     /**
      * Constructor used for room INSERT
@@ -78,27 +77,11 @@ public class MovieDetailReviewListEntity {
     }
 
     /**
-     * Setter for movie id (foreign key)
-     * @param movieId to set
-     */
-    public void setMovieId(int movieId) {
-        this.mMovieId = movieId;
-    }
-
-    /**
      * Getter for author
      * @return author
      */
     public String getAuthor() {
         return mAuthor;
-    }
-
-    /**
-     * Setter for author
-     * @param author to set
-     */
-    public void setAuthor(String author) {
-        this.mAuthor = author;
     }
 
     /**
@@ -110,26 +93,10 @@ public class MovieDetailReviewListEntity {
     }
 
     /**
-     * Setter for content
-     * @param content to set
-     */
-    public void setContent(String content) {
-        this.mContent = content;
-    }
-
-    /**
      * Getter for URL
      * @return URL
      */
     public String getUrl() {
         return mUrl;
-    }
-
-    /**
-     * Setter for URL
-     * @param url to set
-     */
-    public void setUrl(String url) {
-        this.mUrl = url;
     }
 }

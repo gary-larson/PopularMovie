@@ -1,7 +1,6 @@
 package com.larsonapps.popularmovies.database;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -20,20 +19,11 @@ public interface MovieListDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateMovieListEntry (MovieListEntity movieListEntity);
 
-    @Delete
-    void deleteMovieListEntry (MovieListEntity movieListEntity);
-
-    @Query("DELETE FROM movie_list")
-    void deleteAllMovieList();
-
     @Query("UPDATE movie_list SET popular_page = 0, popular_order = 0 WHERE popular_order > 0")
     void deleteMoviePopularList();
 
     @Query("UPDATE movie_list SET top_rated_page = 0, top_rated_order = 0 WHERE top_rated_order > 0")
-    void detletMovieTopRatedList();
-
-    @Query("SELECT * FROM movie_list")
-    List<MovieListEntity> getAllMovieListEntrys();
+    void deleteMovieTopRatedList();
 
     @Query("SELECT EXISTS(SELECT 1 FROM movie_list WHERE movie_id = :movieId LIMIT 1)")
     boolean isMovieListEntry(int movieId);

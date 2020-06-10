@@ -1,6 +1,5 @@
 package com.larsonapps.popularmovies.database;
 
-import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -16,28 +15,28 @@ public class MovieDetailEntity {
     // Generate columns
     @PrimaryKey
     @ColumnInfo(name = "movie_id")
-    private int mMovieId;
+    private final int mMovieId;
 
     @ColumnInfo(name = "title")
-    private String mTitle;
+    private final String mTitle;
 
     @ColumnInfo(name = "backdrop_path")
-    private String mBackdropPath;
+    private final String mBackdropPath;
 
     @ColumnInfo(name = "image_path")
     private String mImagePath;
 
     @ColumnInfo(name = "overview")
-    private String mOverview;
+    private final String mOverview;
 
     @ColumnInfo(name = "release_date")
-    private Date mReleaseDate;
+    private final Date mReleaseDate;
 
     @ColumnInfo(name = "runtime")
-    private int mRuntime;
+    private final int mRuntime;
 
     @ColumnInfo(name = "vote_average")
-    private double mVoteAverage;
+    private final double mVoteAverage;
 
     /**
      * Constructor for room
@@ -71,27 +70,11 @@ public class MovieDetailEntity {
     }
 
     /**
-     * Setter for movie id
-     * @param movieId to set
-     */
-    public void setMovieId(int movieId) {
-        this.mMovieId = movieId;
-    }
-
-    /**
      * Getter for title
      * @return title
      */
     public String getTitle() {
         return mTitle;
-    }
-
-    /**
-     * Setter for title
-     * @param title to set
-     */
-    public void setTitle(String title) {
-        this.mTitle = title;
     }
 
     /**
@@ -103,14 +86,6 @@ public class MovieDetailEntity {
     }
 
     /**
-     * Setter for backdrop path
-     * @param backdropPath to set
-     */
-    public void setBackdropPath(String backdropPath) {
-        this.mBackdropPath = backdropPath;
-    }
-
-    /**
      * Getter for image path
      * @return image path
      */
@@ -118,28 +93,13 @@ public class MovieDetailEntity {
         return mImagePath;
     }
 
-    /**
-     * Setter for image path
-     * @param mImagePath to set
-     */
-    public void setImagePath(String mImagePath) {
-        this.mImagePath = mImagePath;
-    }
-
+    public void setImagePath(String imagePath) {mImagePath = imagePath;}
     /**
      * Getter for overview
      * @return overview
      */
     public String getOverview() {
         return mOverview;
-    }
-
-    /**
-     * Setter for overview
-     * @param overview to set
-     */
-    public void setOverview(String overview) {
-        this.mOverview = overview;
     }
 
     /**
@@ -151,14 +111,6 @@ public class MovieDetailEntity {
     }
 
     /**
-     * Setter for release date
-     * @param releaseDate to set
-     */
-    public void setReleaseDate(Date releaseDate) {
-        this.mReleaseDate = releaseDate;
-    }
-
-    /**
      * Getter for runtime
      * @return runtime
      */
@@ -167,26 +119,11 @@ public class MovieDetailEntity {
     }
 
     /**
-     * Setter for runtime
-     * @param runtime to set
-     */
-    public void setRuntime(int runtime) {
-        this.mRuntime = runtime;
-    }
-
-    /**
-     * Getter for vote avaerage
+     * Getter for vote average
      * @return vote average
      */
     public double getVoteAverage() {
         return mVoteAverage;
     }
 
-    /**
-     * Setter for vote average
-     * @param voteAverage to set
-     */
-    public void setVoteAverage(double voteAverage) {
-        this.mVoteAverage = voteAverage;
-    }
 }

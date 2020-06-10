@@ -84,7 +84,7 @@ public class MovieDetailFragment extends Fragment {
                         (Result.Error<MovieDetailInfo>) newMovieDetailInfo;
                 // Display error message
                 binding.tvErrorMessage.setText(resultError.mErrorMessage);
-                // set visability to see error message
+                // set visibility to see error message
                 showErrorMessage();
             } else {
                 Result.Success<MovieDetailInfo> resultSuccess =
@@ -106,7 +106,7 @@ public class MovieDetailFragment extends Fragment {
 
     /**
      * Method to update the user interface
-     * @param newMovieDetailInfo data to populate the user inteface
+     * @param newMovieDetailInfo data to populate the user interface
      */
     private void movieDetailInfoUpdateUI(@Nullable MovieDetailInfo newMovieDetailInfo) {
         if (newMovieDetailInfo == null) {

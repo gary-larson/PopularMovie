@@ -1,6 +1,5 @@
 package com.larsonapps.popularmovies.database;
 
-import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -17,16 +16,16 @@ public class MovieDetailVideoListEntity {
     private int mVideoListKey;
 
     @ColumnInfo(name = "movie_id")
-    private int mMovieId;
+    private final int mMovieId;
 
     @ColumnInfo(name = "site_key")
-    private String mKey;
+    private final String mKey;
 
     @ColumnInfo(name = "name")
-    private String mName;
+    private final String mName;
 
     @ColumnInfo(name = "site")
-    private String mSite;
+    private final String mSite;
 
     /**
      * Constructor for room INSERT
@@ -77,27 +76,11 @@ public class MovieDetailVideoListEntity {
     }
 
     /**
-     * Setter for movie id (foreign key)
-     * @param movieId to set
-     */
-    public void setMovieId(int movieId) {
-        this.mMovieId = movieId;
-    }
-
-    /**
      * Getter for site's key
      * @return site's key
      */
     public String getKey() {
         return mKey;
-    }
-
-    /**
-     * Setter for site's key
-     * @param key to set
-     */
-    public void setKey(String key) {
-        this.mKey = key;
     }
 
     /**
@@ -109,26 +92,10 @@ public class MovieDetailVideoListEntity {
     }
 
     /**
-     * Setter for reviewer's name
-     * @param name to set
-     */
-    public void setName(String name) {
-        this.mName = name;
-    }
-
-    /**
      * Getter for site where video is located
      * @return site
      */
     public String getSite() {
         return mSite;
-    }
-
-    /**
-     * Setter for site where video is located
-     * @param site to set
-     */
-    public void setSite(String site) {
-        this.mSite = site;
     }
 }

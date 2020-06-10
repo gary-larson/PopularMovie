@@ -1,14 +1,9 @@
 package com.larsonapps.popularmovies.database;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Update;
-
-import com.larsonapps.popularmovies.data.MovieDetailVideo;
 
 import java.util.List;
 
@@ -17,23 +12,8 @@ import java.util.List;
  */
 @Dao
 public interface MovieDetailVideoListDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertTrailer(MovieDetailVideoListEntity movieDetailVideoListEntity);
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAllVideos(List<MovieDetailVideoListEntity> list);
-
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateTrailer (MovieDetailVideoListEntity movieDetailVideoListEntity);
-
-    @Delete
-    void deleteTrailer (MovieDetailVideoListEntity movieDetailVideoListEntity);
-
-    @Query("DELETE FROM movie_detail_video_list")
-    void deleteAllMovieDetailVideoList();
-
-    @Query("SELECT * FROM movie_detail_video_list")
-    List<MovieDetailVideoListEntity> getAllMovieDetailVideoListEntrys();
 
     @Query("DELETE FROM movie_detail_video_list WHERE movie_id = :movieId")
     void deleteAllVideos (int movieId);

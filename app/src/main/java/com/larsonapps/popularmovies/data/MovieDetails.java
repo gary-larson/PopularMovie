@@ -19,7 +19,7 @@ public class MovieDetails {
     public MovieDetails () {}
 
     /**
-     * Getter for Mmovie detail info
+     * Getter for movie detail info
      * @return movie detail info
      */
     public MovieDetailInfo getMovieDetailInfo() {

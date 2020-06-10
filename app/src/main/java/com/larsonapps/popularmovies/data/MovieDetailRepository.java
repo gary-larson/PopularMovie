@@ -48,21 +48,24 @@ public class MovieDetailRepository {
     public final String IMAGE_DIRECTORY = "images";
     // Declare variables
     private static String mApiKey;
-    private Application mApplication;
-    private MovieExecutor executor;
-    private String mErrorMessage;
+    private final Application mApplication;
+    private final MovieExecutor executor;
+    private final String mErrorMessage;
     private static int mMovieId;
     // Database variables
-    private MovieControlDao mMovieControlDao;
-    private MovieDetailDao mMovieDetailDao;
-    private MovieDetailReviewListDao mMovieDetailReviewListDao;
-    private MovieDetailVideoListDao mMovieDetailVideoListDao;
-    private MovieListDao mMovieListDao;
+    private final MovieControlDao mMovieControlDao;
+    private final MovieDetailDao mMovieDetailDao;
+    private final MovieDetailReviewListDao mMovieDetailReviewListDao;
+    private final MovieDetailVideoListDao mMovieDetailVideoListDao;
+    private final MovieListDao mMovieListDao;
     // Live data variables
-    private static MutableLiveData<Result<MovieDetailInfo>> mMovieDetailInfo = new MutableLiveData<>();
-    private static MutableLiveData<MovieDetailSummary> mMovieDetailSummary = new MutableLiveData<>();
-    private static MutableLiveData<Result<MovieDetailReview>> mMovieDetailReview = new MutableLiveData<>();
-    private static MutableLiveData<List<MovieDetailVideo>> mMovieDetailVideoList =
+    private static final MutableLiveData<Result<MovieDetailInfo>> mMovieDetailInfo =
+            new MutableLiveData<>();
+    private static final MutableLiveData<MovieDetailSummary> mMovieDetailSummary =
+            new MutableLiveData<>();
+    private static final MutableLiveData<Result<MovieDetailReview>> mMovieDetailReview =
+            new MutableLiveData<>();
+    private static final MutableLiveData<List<MovieDetailVideo>> mMovieDetailVideoList =
             new MutableLiveData<>();
 
     /**
@@ -228,7 +231,7 @@ public class MovieDetailRepository {
                         // Create entity list to hold data
                         List<MovieDetailVideoListEntity> movieDetailVideoListEntities =
                                 new ArrayList<>();
-                        // Trasfer data to entity
+                        // Transfer data to entity
                         for (int i = 0; i < movieDetailVideos.size(); i++) {
                             MovieDetailVideoListEntity movieDetailVideoListEntity =
                                     new MovieDetailVideoListEntity(movieId,
@@ -240,10 +243,10 @@ public class MovieDetailRepository {
                         // add all videos
                         mMovieDetailVideoListDao.insertAllVideos(movieDetailVideoListEntities);
                     } else {
-                        Result.Error<MovieDetails> resulterror = (Result.Error<MovieDetails>)
+                        Result.Error<MovieDetails> resultError = (Result.Error<MovieDetails>)
                                 result;
                         Result.Error<MovieDetailInfo> movieDetailInfoError =
-                                new Result.Error<>(resulterror.mErrorMessage);
+                                new Result.Error<>(resultError.mErrorMessage);
                         mMovieDetailInfo.postValue(movieDetailInfoError);
                     }
                 });
@@ -254,7 +257,7 @@ public class MovieDetailRepository {
     }
 
     /**
-     * Method to transfer Review resiults list to entity list
+     * Method to transfer Review results list to entity list
      * @param movieDetailReviewResults to transfer to entity list
      * @param movieId of the movie in question
      * @return entity list
@@ -275,7 +278,7 @@ public class MovieDetailRepository {
             // add entity entry to entity list
             movieDetailReviewListEntities.add(movieDetailReviewListEntity);
         }
-        // return rntity list
+        // return entity list
         return movieDetailReviewListEntities;
     }
 
@@ -609,12 +612,12 @@ public class MovieDetailRepository {
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 // Create file that will be saved
                 final File imageFile = new File(directory, imageName);
-                // Create filestream
+                // Create file stream
                 FileOutputStream fileOutputStream = null;
                 try {
-                    // make new filestream
+                    // make new file stream
                     fileOutputStream = new FileOutputStream(imageFile);
-                    // compress and save imagefile
+                    // compress and save image file
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
                     if (isPoster) {
                         saveFavoritePosterImage(mMovieId, imageFile.getAbsolutePath());
@@ -626,7 +629,7 @@ public class MovieDetailRepository {
                 } finally {
                     try {
                         if (fileOutputStream != null) {
-                            // close filestream
+                            // close file stream
                             fileOutputStream.close();
                         }
                     } catch (IOException e) {
@@ -637,7 +640,7 @@ public class MovieDetailRepository {
 
             /**
              * Method to deal with failure
-             * @param e excaption thrown
+             * @param e exception thrown
              * @param errorDrawable that failed
              */
             @Override

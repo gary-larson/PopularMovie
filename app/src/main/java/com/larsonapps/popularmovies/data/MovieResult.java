@@ -1,8 +1,6 @@
 package com.larsonapps.popularmovies.data;
 
 
-import androidx.room.ColumnInfo;
-
 /**
  * Class to structure movie result data
  */

@@ -13,10 +13,10 @@ public class MovieListEntity {
     // Generate columns
     @PrimaryKey()
     @ColumnInfo(name = "movie_id")
-    private int mMovieId;
+    private final int mMovieId;
 
     @ColumnInfo(name = "poster_path")
-    private String mPosterPath;
+    private  final String mPosterPath;
 
     @ColumnInfo(name = "image_path")
     private String mImagePath;
@@ -58,25 +58,11 @@ public class MovieListEntity {
     }
 
     /**
-     * Setter for movie id
-     * @param movieId to set
-     */
-    public void setMovieId(int movieId) {this.mMovieId = movieId;}
-
-    /**
      * Getter for poster path
      * @return poster path
      */
     public String getPosterPath() {
         return mPosterPath;
-    }
-
-    /**
-     * Setter for poster path
-     * @param posterPath to set
-     */
-    public void setPosterPath(String posterPath) {
-        this.mPosterPath = posterPath;
     }
 
     /**

@@ -28,7 +28,7 @@ public class MovieActivity extends AppCompatActivity implements
         MovieDetailVideoFragment.OnListFragmentInteractionListener,
         MovieDetailReviewFragment.OnListFragmentInteractionListener {
     // Declare constants
-    final String SETINGS_FRAGMENT = "SettingsFragment";
+    final String SETTINGS_FRAGMENT = "SettingsFragment";
     final String ABOUT_FRAGMENT = "AboutFragment";
     final String DETAILS_FRAGMENT = "DetailsFragment";
     // Declare variables
@@ -51,7 +51,7 @@ public class MovieActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 
-        // Get information from demension to apply changes is screen size and orientation
+        // Get information from dimension to apply changes is screen size and orientation
         mNumberVerticalImages = getResources().getInteger(R.integer.number_vertical_posters);
         mNumberHorizontalImages = getResources().getInteger(R.integer.number_horizontal_posters);
         mPosterSize = getResources().getString(R.string.poster_size);
@@ -170,7 +170,7 @@ public class MovieActivity extends AppCompatActivity implements
                 mFragmentManager
                         .beginTransaction()
                         .replace(R.id.movie_fragment_container_view, new MovieSettingsFragment())
-                        .addToBackStack(SETINGS_FRAGMENT)
+                        .addToBackStack(SETTINGS_FRAGMENT)
                         .commit();
                 return true;
             case R.id.action_about:

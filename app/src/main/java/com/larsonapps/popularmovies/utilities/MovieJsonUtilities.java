@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Class to parse data fron JSON objects
+ * Class to parse data from JSON objects
  */
 final public class MovieJsonUtilities {
     // Declare constants

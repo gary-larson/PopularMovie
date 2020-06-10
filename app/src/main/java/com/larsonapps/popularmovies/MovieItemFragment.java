@@ -103,7 +103,7 @@ public class MovieItemFragment extends Fragment {
 
         // Create the observer which updates the UI and sets the adapter
         final Observer<Result<MovieMain>> movieMainObserver = newMovieMain -> {
-            // test if ther is an error
+            // test if there is an error
             if (newMovieMain instanceof Result.Error) {
                 Result.Error<MovieMain> result = (Result.Error<MovieMain>) newMovieMain;
                 String errorMessage = result.mErrorMessage;

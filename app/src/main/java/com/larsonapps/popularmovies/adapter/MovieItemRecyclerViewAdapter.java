@@ -30,7 +30,7 @@ public class MovieItemRecyclerViewAdapter extends RecyclerView.Adapter<MovieItem
     private FragmentMovieItemBinding binding;
     private List<MovieResult> mMovieData;
     Context context;
-    String mType;
+    final String mType;
 
     // Variable for listener
     private final OnListFragmentInteractionListener mListener;

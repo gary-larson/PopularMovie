@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class MovieDetailViewModel extends AndroidViewModel {
     // Declare variables
-    Application mApplication;
-    private MovieDetailRepository mMovieDetailRepository;
+    final Application mApplication;
+    private final MovieDetailRepository mMovieDetailRepository;
     private int mMovieID;
     private int mReviewPage;
     private String mType;

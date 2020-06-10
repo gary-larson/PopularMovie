@@ -1,10 +1,8 @@
 package com.larsonapps.popularmovies;
 
-import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 

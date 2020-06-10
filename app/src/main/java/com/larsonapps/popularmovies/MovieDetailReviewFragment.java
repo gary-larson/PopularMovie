@@ -31,7 +31,7 @@ public class MovieDetailReviewFragment extends Fragment {
     // Declare constants
     private final String MORE_REVIEWS_IS_ENABLED_KEY = "more_movies_is_enabled_key";
     private final int MORE_REVIEWS_MENU_ITEM_ID = 222;
-    // Declare variavles
+    // Declare variables
     MovieDetailViewModel mMovieDetailViewModel;
     FragmentMovieDetailReviewListBinding binding;
     MovieDetailReviewRecyclerViewAdapter mAdapter;

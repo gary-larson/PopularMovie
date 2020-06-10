@@ -1,7 +1,5 @@
 package com.larsonapps.popularmovies.data;
 
-import androidx.room.ColumnInfo;
-
 public class MovieDetailInfo {
     // Declare variables
     private int mMovieId;

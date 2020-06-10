@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /**
- * Class to deal with url's and retrieveing data from the internet
+ * Class to deal with url's and retrieving data from the internet
  */
 final public class MovieNetworkUtilities {
     // Constants for requests (BASE + type + API_KEY_QUERY + apiKey + [PAGE_QUERY + page #])

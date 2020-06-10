@@ -39,13 +39,13 @@ interface RepositoryCallback<T> {
 public class MovieListRepository {
     // Declare variables
     private static String mApiKey;
-    private MovieExecutor executor;
-    private Application mApplication;
-    private String mErrorMessage;
-    private static MutableLiveData<Result<MovieMain>> mMovieMain = new MutableLiveData<>();
+    private final MovieExecutor executor;
+    private final Application mApplication;
+    private final String mErrorMessage;
+    private final static MutableLiveData<Result<MovieMain>> mMovieMain = new MutableLiveData<>();
     // database variables
-    private MovieControlDao mMovieControlDao;
-    private MovieListDao mMovieListDao;
+    private final MovieControlDao mMovieControlDao;
+    private final MovieListDao mMovieListDao;
 
     /**
      * Constructor for movie list repository
@@ -94,7 +94,7 @@ public class MovieListRepository {
             // if download date prior to today delete list
             if (controlEntity != null && controlEntity.getDownloadDate().before(now)) {
                 mMovieControlDao.deleteControl(controlEntity);
-                mMovieListDao.detletMovieTopRatedList();
+                mMovieListDao.deleteMovieTopRatedList();
             }
             // check if type is favorite and get list if any have been selected
             if (mType.equals(mApplication.getString(R.string.setting_movie_list_favorite_value))) {
@@ -245,7 +245,7 @@ public class MovieListRepository {
                         }
                         // transfer movie entity list to movie result list
                         List<MovieResult> movieResults = getMovieResults(movieListEntities);
-                        // Creat a Result success entry to pass list through live data
+                        // Create a Result success entry to pass list through live data
                         movieMainSuccess.data.setMovieList(movieResults);
                     }
                     // post results to live data
@@ -273,7 +273,7 @@ public class MovieListRepository {
             movieResult.setImagePath(movieEntityResults.get(i).getImagePath());
             movieResult.setMovieID(movieEntityResults.get(i).getMovieId());
             movieResult.setPosterPath(movieEntityResults.get(i).getPosterPath());
-            // add movie result to lisr
+            // add movie result to list
             movieResults.add(movieResult);
         }
         // return result list

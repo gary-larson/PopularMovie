@@ -1,18 +1,16 @@
 package com.larsonapps.popularmovies.adapter;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.larsonapps.popularmovies.MovieDetailVideoFragment.OnListFragmentInteractionListener;
-import com.larsonapps.popularmovies.R;
 import com.larsonapps.popularmovies.data.MovieDetailVideo;
 import com.larsonapps.popularmovies.databinding.FragmentMovieDetailVideoBinding;
-
 
 import java.util.List;
 
@@ -39,7 +37,7 @@ public class MovieDetailVideoRecyclerViewAdapter extends
      * Method to create the view holder
      * @param parent of the view holder
      * @param viewType of the view holder
-     * @return vieww holder that is created
+     * @return view holder that is created
      */
     @NonNull
     @Override
@@ -60,14 +58,11 @@ public class MovieDetailVideoRecyclerViewAdapter extends
         holder.mMovieDetailVideo = mMovieDetailVideoList.get(position);
         holder.mName.setText(mMovieDetailVideoList.get(position).getName());
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mMovieDetailVideo);
-                }
+        holder.mView.setOnClickListener(v -> {
+            if (null != mListener) {
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                mListener.onListFragmentInteraction(holder.mMovieDetailVideo);
             }
         });
     }

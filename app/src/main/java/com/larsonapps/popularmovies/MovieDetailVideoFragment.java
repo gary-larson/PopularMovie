@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -75,20 +74,17 @@ public class MovieDetailVideoFragment extends Fragment {
 
         // Create the observer which updates the UI and sets the adapter
         final Observer<List<MovieDetailVideo>> movieDetailVideoObserver =
-                new Observer<List<MovieDetailVideo>>() {
-            @Override
-            public void onChanged(@Nullable final List<MovieDetailVideo> newMovieDetailVideoList) {
-                // test if data is available
-                if (newMovieDetailVideoList != null && newMovieDetailVideoList.size() > 0) {
-                    // Update the UI, in this case, an adapter.
-                    showRecyclerView();
+                newMovieDetailVideoList -> {
+                    // test if data is available
+                    if (newMovieDetailVideoList != null && newMovieDetailVideoList.size() > 0) {
+                        // Update the UI, in this case, an adapter.
+                        showRecyclerView();
 
-                    mAdapter.setList(newMovieDetailVideoList);
-                } else {
-                    showNoneMessage();
-                }
-            }
-        };
+                        mAdapter.setList(newMovieDetailVideoList);
+                    } else {
+                        showNoneMessage();
+                    }
+                };
         mMovieDetailViewModel.getMovieDetailVideo().observe(getViewLifecycleOwner(),
                 movieDetailVideoObserver);
         return view;

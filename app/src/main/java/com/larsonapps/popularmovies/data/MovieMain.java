@@ -11,7 +11,7 @@ public class MovieMain {
     private int mTotalPages;
 
     /**
-     * Defailt constructor for movie main
+     * Default constructor for movie main
      */
     public MovieMain () {}
 

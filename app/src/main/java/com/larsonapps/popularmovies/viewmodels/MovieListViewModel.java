@@ -18,8 +18,8 @@ import java.util.List;
  */
 public class MovieListViewModel extends AndroidViewModel {
     // Declare Variables
-    Application mApplication;
-    private MovieListRepository mMovieListRepository;
+    final Application mApplication;
+    private final MovieListRepository mMovieListRepository;
     private int mPage;
     private String mType;
     // Declare LiveData variables
@@ -36,14 +36,6 @@ public class MovieListViewModel extends AndroidViewModel {
         mMovieListRepository = new MovieListRepository(mApplication);
         mPage = 1;
         mType = MovieNetworkUtilities.POPULAR_REQUEST_URL;
-    }
-
-    /**
-     * Method to clear the view model and observers
-     */
-    @Override
-    protected void onCleared() {
-        super.onCleared();
     }
 
     /**

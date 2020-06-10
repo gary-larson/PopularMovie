@@ -16,7 +16,7 @@ public abstract class Result<T> {
      */
     public final static class Success<T> extends Result<T> {
         // Declare variables
-        public T data;
+        public final T data;
 
         /**
          * Constructor for success
@@ -33,7 +33,7 @@ public abstract class Result<T> {
      */
     public final static class Error<T> extends Result<T> {
         // Declare variables
-        public String mErrorMessage;
+        public final String mErrorMessage;
 
         /**
          * Constructor for Error

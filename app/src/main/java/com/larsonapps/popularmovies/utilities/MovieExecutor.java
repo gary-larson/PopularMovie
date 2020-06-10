@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import java.util.concurrent.Executor;
 
 /**
- * Class to deal with Executer
+ * Class to deal with Executor
  */
 public class MovieExecutor implements Executor {
 

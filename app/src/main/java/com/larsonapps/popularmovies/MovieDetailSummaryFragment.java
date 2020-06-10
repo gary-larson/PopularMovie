@@ -36,10 +36,10 @@ public class MovieDetailSummaryFragment extends Fragment {
     public MovieDetailSummaryFragment() {}
 
     /**
-     * Methot to create the view for detail summary fragment
+     * Method to create the view for detail summary fragment
      * @param inflater to inflate the xml layout
      * @param container that holds the fragment
-     * @param savedInstanceState to restore data through lifecycles
+     * @param savedInstanceState to restore data through life cycles
      * @return the view
      */
     @Override

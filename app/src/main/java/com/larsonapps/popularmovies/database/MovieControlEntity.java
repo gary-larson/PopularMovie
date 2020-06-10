@@ -1,7 +1,6 @@
 package com.larsonapps.popularmovies.database;
 
 import androidx.room.ColumnInfo;
-import androidx.room.Delete;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -20,7 +19,7 @@ public class MovieControlEntity {
     private int mMovieControlKey;
 
     @ColumnInfo(name = "list_type")
-    private String mListType;
+    private final String mListType;
 
     @ColumnInfo(name = "download_date")
     private Date mDownloadDate;
@@ -32,7 +31,7 @@ public class MovieControlEntity {
     private int mTotalPages;
 
     @ColumnInfo(name = "movie_id", defaultValue = "0")
-    int mMovieId;
+    final int mMovieId;
 
     /**
      * Constructor for room SELECT
@@ -83,14 +82,6 @@ public class MovieControlEntity {
      */
     public String getListType() {
         return mListType;
-    }
-
-    /**
-     * Setter for list type
-     * @param listType to set
-     */
-    public void setListType(String listType) {
-        this.mListType = listType;
     }
 
     /**
@@ -147,13 +138,5 @@ public class MovieControlEntity {
      */
     public int getMovieId() {
         return mMovieId;
-    }
-
-    /**
-     * Setter for movie id
-     * @param movieId to set
-     */
-    public void setMovieId(int movieId) {
-        this.mMovieId = movieId;
     }
 }
